@@ -1,0 +1,352 @@
+"use client";
+
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Info } from "lucide-react";
+import { cn } from "@/lib/utils/cn";
+import { GoogleShipmentMap } from "./google-shipment-map";
+import { googleMapsKey } from "@/lib/maps/google-loader";
+import {
+  MARKER_COLORS,
+  MARKER_ICONS,
+  MARKER_LABELS,
+  type MapPoint,
+} from "./map-shared";
+
+export type { MapPoint } from "./map-shared";
+
+interface ShipmentMapProps {
+  points: MapPoint[];
+  className?: string;
+  /** Tailwind height classes — the map must adapt to small screens. */
+  heightClassName?: string;
+  /** Draw a route line through the points in order. Off for network views. */
+  connect?: boolean;
+}
+
+/**
+ * Picks the best map provider available, in order:
+ *
+ *   1. Google Maps  — when NEXT_PUBLIC_GOOGLE_MAPS_API_KEY is set
+ *   2. Mapbox GL    — when NEXT_PUBLIC_MAPBOX_TOKEN is set
+ *   3. A schematic plot of the same coordinates
+ *
+ * Each provider degrades to the next if it fails at runtime, so the page is
+ * never left with an empty grey box.
+ */
+export function ShipmentMap({
+  points,
+  className,
+  heightClassName = "h-72 sm:h-96 lg:h-[28rem]",
+  connect = true,
+}: ShipmentMapProps) {
+  const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [failed, setFailed] = useState(false);
+  const [googleFailed, setGoogleFailed] = useState(false);
+
+  const useGoogle = Boolean(googleMapsKey()) && !googleFailed && points.length > 0;
+  const onGoogleFailure = useCallback(() => setGoogleFailed(true), []);
+
+  useEffect(() => {
+    if (useGoogle || !token || !containerRef.current || points.length === 0) return;
+
+    let map: import("mapbox-gl").Map | undefined;
+    let cancelled = false;
+
+    (async () => {
+      try {
+        const mapboxgl = (await import("mapbox-gl")).default;
+        await import("mapbox-gl/dist/mapbox-gl.css");
+        if (cancelled || !containerRef.current) return;
+
+        mapboxgl.accessToken = token;
+        map = new mapboxgl.Map({
+          container: containerRef.current,
+          style: "mapbox://styles/mapbox/light-v11",
+          bounds: bounds(points),
+          fitBoundsOptions: { padding: 64, maxZoom: 6 },
+          attributionControl: true,
+          cooperativeGestures: true,
+        });
+
+        map.addControl(new mapboxgl.NavigationControl({ showCompass: false }), "top-right");
+
+        map.on("load", () => {
+          if (!map) return;
+
+          if (connect && points.length > 1) {
+          map.addSource("route", {
+            type: "geojson",
+            data: {
+              type: "Feature",
+              properties: {},
+              geometry: {
+                type: "LineString",
+                coordinates: points.map((p) => [p.lng, p.lat]),
+              },
+            },
+          });
+
+          map.addLayer({
+            id: "route-line",
+            type: "line",
+            source: "route",
+            layout: { "line-cap": "round", "line-join": "round" },
+            paint: {
+              "line-color": "#1c3fd8",
+              "line-width": 3,
+              "line-opacity": 0.85,
+              "line-dasharray": [1.5, 2],
+            },
+          });
+          }
+
+          for (const point of points) {
+            const el = document.createElement("div");
+            el.className = "aerolink-marker";
+            el.setAttribute("aria-label", `${MARKER_LABELS[point.kind]}: ${point.label}`);
+            el.style.cssText = [
+              "width:20px",
+              "height:20px",
+              "border-radius:9999px",
+              "border:3px solid #fff",
+              `background:${MARKER_COLORS[point.kind]}`,
+              "box-shadow:0 2px 8px rgba(11,14,20,.35)",
+              point.kind === "current" ? "animation:aerolink-pulse 2.4s ease-out infinite" : "",
+            ].join(";");
+
+            new mapboxgl.Marker({ element: el })
+              .setLngLat([point.lng, point.lat])
+              .setPopup(
+                new mapboxgl.Popup({ offset: 18, closeButton: false }).setHTML(
+                  `<strong style="font-size:12px">${MARKER_LABELS[point.kind]}</strong><br/><span style="font-size:13px">${escapeHtml(point.label)}</span>`,
+                ),
+              )
+              .addTo(map);
+          }
+        });
+
+        map.on("error", () => setFailed(true));
+      } catch {
+        setFailed(true);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+      map?.remove();
+    };
+  }, [token, points, connect, useGoogle]);
+
+  if (useGoogle) {
+    return (
+      <GoogleShipmentMap
+        points={points}
+        className={className}
+        heightClassName={heightClassName}
+        connect={connect}
+        onFailure={onGoogleFailure}
+      />
+    );
+  }
+
+  if (!token || failed || points.length === 0) {
+    return (
+      <SchematicMap
+        points={points}
+        className={className}
+        heightClassName={heightClassName}
+        connect={connect}
+      />
+    );
+  }
+
+  return (
+    <div className={cn("relative overflow-hidden rounded-xl bg-ink-100", className)}>
+      <style>{`@keyframes aerolink-pulse{0%{box-shadow:0 0 0 0 rgba(251,92,17,.55)}70%{box-shadow:0 0 0 14px rgba(251,92,17,0)}100%{box-shadow:0 0 0 0 rgba(251,92,17,0)}}`}</style>
+      <div ref={containerRef} className={cn("w-full", heightClassName)} />
+      <MapLegend className="pointer-events-none absolute bottom-3 left-3" points={points} />
+    </div>
+  );
+}
+
+function bounds(points: MapPoint[]): [[number, number], [number, number]] {
+  const lngs = points.map((p) => p.lng);
+  const lats = points.map((p) => p.lat);
+  return [
+    [Math.min(...lngs), Math.min(...lats)],
+    [Math.max(...lngs), Math.max(...lats)],
+  ];
+}
+
+function escapeHtml(value: string): string {
+  return value.replace(/[&<>"']/g, (c) =>
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c] as string,
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Token-free fallback                                                 */
+/* ------------------------------------------------------------------ */
+
+function SchematicMap({
+  points,
+  className,
+  heightClassName,
+  connect,
+}: Required<Pick<ShipmentMapProps, "points">> & {
+  className?: string;
+  heightClassName?: string;
+  connect?: boolean;
+}) {
+  if (points.length === 0) {
+    return (
+      <div
+        className={cn(
+          "flex items-center justify-center rounded-xl border border-dashed border-ink-300 bg-ink-50 p-6 text-center text-sm text-ink-600",
+          heightClassName,
+          className,
+        )}
+      >
+        No location coordinates are available for this shipment yet.
+      </div>
+    );
+  }
+
+  const W = 640;
+  const H = 360;
+  const pad = 64;
+  // Marker labels sit above and below each point, so the vertical inset has to
+  // clear them or the outermost city labels touch the card edge.
+  const padY = 84;
+
+  const lngs = points.map((p) => p.lng);
+  const lats = points.map((p) => p.lat);
+  const minLng = Math.min(...lngs);
+  const maxLng = Math.max(...lngs);
+  const minLat = Math.min(...lats);
+  const maxLat = Math.max(...lats);
+  const spanLng = Math.max(maxLng - minLng, 0.5);
+  const spanLat = Math.max(maxLat - minLat, 0.5);
+
+  const project = (p: MapPoint) => ({
+    x: pad + ((p.lng - minLng) / spanLng) * (W - pad * 2),
+    y: H - padY - ((p.lat - minLat) / spanLat) * (H - padY * 2),
+  });
+
+  // Too many pins to label without overlapping — show dots only.
+  const dense = points.length > 8;
+  const projected = points.map((p) => ({ ...p, ...project(p) }));
+  const path = projected
+    .map((p, i) => (i === 0 ? `M${p.x},${p.y}` : `L${p.x},${p.y}`))
+    .join(" ");
+
+  return (
+    <div className={cn("relative overflow-hidden rounded-xl bg-ink-950", className)}>
+      <svg
+        viewBox={`0 0 ${W} ${H}`}
+        preserveAspectRatio="xMidYMid meet"
+        role="img"
+        aria-label={`Route plot: ${points.map((p) => p.label).join(" to ")}`}
+        className={cn("w-full", heightClassName)}
+      >
+        <rect width={W} height={H} fill="#0b0e14" />
+        <g stroke="#ffffff" strokeOpacity="0.07" strokeWidth="1">
+          {Array.from({ length: 9 }, (_, i) => (
+            <line key={`h${i}`} x1="0" y1={(i + 1) * (H / 10)} x2={W} y2={(i + 1) * (H / 10)} />
+          ))}
+          {Array.from({ length: 15 }, (_, i) => (
+            <line key={`v${i}`} x1={(i + 1) * (W / 16)} y1="0" x2={(i + 1) * (W / 16)} y2={H} />
+          ))}
+        </g>
+
+        {connect && points.length > 1 ? (
+          <path
+            d={path}
+            fill="none"
+            stroke="#598aff"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeDasharray="2 7"
+          />
+        ) : null}
+
+        {projected.map((p) => (
+          <g key={`${p.kind}-${p.label}-${p.x}-${p.y}`}>
+            {p.kind === "current" ? (
+              <circle cx={p.x} cy={p.y} r="16" fill="#fb5c11" fillOpacity="0.2">
+                <animate attributeName="r" values="10;22;10" dur="2.6s" repeatCount="indefinite" />
+                <animate
+                  attributeName="fill-opacity"
+                  values="0.28;0;0.28"
+                  dur="2.6s"
+                  repeatCount="indefinite"
+                />
+              </circle>
+            ) : null}
+            <circle
+              cx={p.x}
+              cy={p.y}
+              r={dense ? 4.5 : 7}
+              fill={MARKER_COLORS[p.kind]}
+              stroke="#fff"
+              strokeWidth={dense ? 1.5 : 2.5}
+            />
+            {dense ? null : (
+              <>
+            <text
+              x={p.x}
+              y={p.y - 16}
+              textAnchor="middle"
+              fill="#ffffff"
+              fontSize="13"
+              fontWeight="700"
+            >
+              {p.label}
+            </text>
+            <text
+              x={p.x}
+              y={p.y + 26}
+              textAnchor="middle"
+              fill="#909cb0"
+              fontSize="10.5"
+              fontWeight="600"
+            >
+              {MARKER_LABELS[p.kind]}
+            </text>
+              </>
+            )}
+          </g>
+        ))}
+      </svg>
+
+      <p className="absolute bottom-2.5 right-3 inline-flex items-center gap-1.5 rounded-md bg-white/10 px-2 py-1 text-[0.6875rem] font-semibold text-ink-300 backdrop-blur">
+        <Info aria-hidden className="size-3" />
+        Schematic view — add a Google Maps or Mapbox key for the live map
+      </p>
+    </div>
+  );
+}
+
+function MapLegend({ points, className }: { points: MapPoint[]; className?: string }) {
+  const kinds = Array.from(new Set(points.map((p) => p.kind)));
+
+  return (
+    <ul
+      className={cn(
+        "flex flex-wrap gap-x-3 gap-y-1 rounded-lg bg-white/92 px-2.5 py-1.5 text-[0.6875rem] font-semibold text-ink-700 shadow-sm backdrop-blur",
+        className,
+      )}
+    >
+      {kinds.map((kind) => {
+        const Icon = MARKER_ICONS[kind];
+        return (
+          <li key={kind} className="inline-flex items-center gap-1.5">
+            <Icon aria-hidden className="size-3" style={{ color: MARKER_COLORS[kind] }} />
+            {MARKER_LABELS[kind]}
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
