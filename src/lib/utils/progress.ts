@@ -86,28 +86,83 @@ export function timeProgress(
 }
 
 /**
- * How long the marker takes to travel the *whole* route on screen, per mode.
+ * How fast each mode actually travels, in km/h.
  *
- * A real journey takes days, so the on-screen reveal is a compression of it —
- * but the modes stay in proportion, and none of them are quick. A truck
- * crossing the map should read as road haulage, not as a courier sprinting.
+ * Road haulage runs at 60 km/h — a lorry's realistic average once stops,
+ * traffic and driver hours are folded in, not its top speed. Sea freight is a
+ * container ship's ~20 knots; air is a loaded freighter's cruise.
  */
-const FULL_ROUTE_REVEAL_MS: Record<CargoType, number> = {
-  plane: 11_000,
-  motorbike: 16_000,
-  car: 18_000,
-  van: 19_000,
-  package: 20_000,
-  truck: 24_000,
-  ship: 30_000,
+export const MODE_SPEED_KMH: Record<CargoType, number> = {
+  car: 60,
+  van: 60,
+  truck: 60,
+  motorbike: 60,
+  package: 60,
+  plane: 800,
+  ship: 37,
 };
 
+export function speedKmhFor(cargoType: CargoType): number {
+  return MODE_SPEED_KMH[cargoType] ?? MODE_SPEED_KMH.package;
+}
+
+const EARTH_RADIUS_KM = 6371;
+
+/** Great-circle distance between two points, in kilometres. */
+export function haversineKm(
+  a: { lat: number; lng: number },
+  b: { lat: number; lng: number },
+): number {
+  const toRad = (deg: number) => (deg * Math.PI) / 180;
+  const dLat = toRad(b.lat - a.lat);
+  const dLng = toRad(b.lng - a.lng);
+  const lat1 = toRad(a.lat);
+  const lat2 = toRad(b.lat);
+
+  const h =
+    Math.sin(dLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) ** 2;
+  return 2 * EARTH_RADIUS_KM * Math.asin(Math.min(1, Math.sqrt(h)));
+}
+
 /**
- * Time to animate the portion of the route actually covered. Scaling by the
- * distance keeps the speed constant: a shipment 10% along arrives on screen
- * quickly, one 90% along takes most of the full duration.
+ * Length of the whole drawn route, following every leg rather than cutting
+ * straight from origin to destination.
  */
-export function revealDurationMs(cargoType: CargoType, progress: number): number {
-  const full = FULL_ROUTE_REVEAL_MS[cargoType] ?? FULL_ROUTE_REVEAL_MS.package;
-  return Math.max(full * Math.min(Math.max(progress, 0), 1), 1_500);
+export function routeLengthKm(points: { lat: number; lng: number }[]): number {
+  let total = 0;
+  for (let i = 1; i < points.length; i++) total += haversineKm(points[i - 1], points[i]);
+  return total;
+}
+
+/**
+ * Where the shipment has genuinely got to: distance covered at its mode's real
+ * speed since it shipped, as a fraction of the route.
+ *
+ * A 5,500 km run at 60 km/h takes about 92 hours, so on screen the marker
+ * barely creeps — which is the point. It is moving at the speed the thing
+ * actually moves, not at a speed chosen to look like motion.
+ *
+ * Returns null when there is nothing to measure, so the caller can fall back.
+ */
+export function distanceProgress(
+  shipDate: string | null | undefined,
+  routeKm: number,
+  cargoType: CargoType,
+  now: number = Date.now(),
+): number | null {
+  if (!shipDate || !(routeKm > 0)) return null;
+
+  const start = new Date(shipDate).getTime();
+  if (Number.isNaN(start)) return null;
+
+  const hoursElapsed = (now - start) / 3_600_000;
+  if (hoursElapsed <= 0) return 0;
+
+  const kmCovered = hoursElapsed * speedKmhFor(cargoType);
+  return Math.min(kmCovered / routeKm, 1);
+}
+
+/** Hours the route takes at the mode's real speed. */
+export function travelHours(routeKm: number, cargoType: CargoType): number {
+  return routeKm / speedKmhFor(cargoType);
 }

@@ -1,7 +1,7 @@
 import { Flag, MapPin, Navigation, type LucideIcon } from "lucide-react";
 
 import type { CargoType } from "@/types";
-import { CARGO_ICONS } from "@/lib/utils/progress";
+import { CARGO_ICONS, haversineKm } from "@/lib/utils/progress";
 
 export interface MapPoint {
   kind: "origin" | "current" | "destination" | "hub";
@@ -49,6 +49,10 @@ export interface CargoOnRoute {
   /** The journey's real span, so the marker can advance with the clock. */
   shipDate: string | null;
   deliveryDate: string | null;
+  /** Real travel speed for this mode, km/h — 60 on land. */
+  speedKmh: number;
+  /** Length of the drawn route in km, used with the speed to place the marker. */
+  routeKm: number;
 }
 
 /**
@@ -90,7 +94,14 @@ export function cargoMarkerElement(cargo: CargoOnRoute): HTMLElement {
   return wrapper;
 }
 
-/** Linear interpolation along an ordered list of points. */
+/**
+ * Interpolation along an ordered list of points, weighted by real distance.
+ *
+ * Giving each leg an equal share of the progress would make the marker sprint
+ * across a long ocean leg and crawl through a short one. Progress here is a
+ * fraction of the route's *length*, so a constant 60 km/h stays constant
+ * wherever on the route the package happens to be.
+ */
 export function pointAtProgress(
   points: { lat: number; lng: number }[],
   progress: number,
@@ -99,15 +110,23 @@ export function pointAtProgress(
   if (points.length === 1) return points[0];
 
   const clamped = Math.min(Math.max(progress, 0), 1);
-  const legs = points.length - 1;
-  const scaled = clamped * legs;
-  const index = Math.min(Math.floor(scaled), legs - 1);
-  const t = scaled - index;
 
-  const a = points[index];
-  const b = points[index + 1];
-  return {
-    lat: a.lat + (b.lat - a.lat) * t,
-    lng: a.lng + (b.lng - a.lng) * t,
-  };
+  const legs = points.slice(1).map((p, i) => haversineKm(points[i], p));
+  const total = legs.reduce((sum, km) => sum + km, 0);
+
+  // Degenerate route (every point identical): nothing to interpolate along.
+  if (total === 0) return points[0];
+
+  let remaining = clamped * total;
+  for (let i = 0; i < legs.length; i++) {
+    if (remaining <= legs[i] || i === legs.length - 1) {
+      const t = legs[i] === 0 ? 0 : Math.min(remaining / legs[i], 1);
+      const a = points[i];
+      const b = points[i + 1];
+      return { lat: a.lat + (b.lat - a.lat) * t, lng: a.lng + (b.lng - a.lng) * t };
+    }
+    remaining -= legs[i];
+  }
+
+  return points[points.length - 1];
 }

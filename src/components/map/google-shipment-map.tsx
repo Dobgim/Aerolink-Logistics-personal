@@ -11,7 +11,7 @@ import {
   type CargoOnRoute,
   type MapPoint,
 } from "./map-shared";
-import { revealDurationMs, timeProgress } from "@/lib/utils/progress";
+import { distanceProgress, timeProgress } from "@/lib/utils/progress";
 
 interface Props {
   points: MapPoint[];
@@ -81,7 +81,6 @@ export function GoogleShipmentMap({
 
     let cancelled = false;
     let retryTimer: number | undefined;
-    let frame: number | undefined;
     let tick: number | undefined;
     const cleanups: (() => void)[] = [];
 
@@ -183,47 +182,32 @@ export function GoogleShipmentMap({
           });
 
           /*
-           * The package eases out from the origin to the distance it has
-           * actually covered, at a pace set by how it travels — a truck reads
-           * as road haulage, not as a courier sprinting across the map. A held
-           * shipment (pending, delayed, in customs) is placed without
-           * animation, because movement would misrepresent its state.
+           * The package sits where it has genuinely got to: distance covered
+           * since it shipped, at its mode's real speed. A lorry does 60 km/h,
+           * so a 5,500 km run takes about 92 hours and the marker moves a few
+           * pixels an hour — imperceptibly, because that is how fast a lorry
+           * actually crosses a continent. There is no reveal animation: any
+           * dash from the origin would be a speed the shipment never travels.
+           *
+           * A held shipment (pending, delayed, in customs) stops advancing and
+           * stands at the distance it had covered.
            */
-          const target = () =>
-            timeProgress(cargo.shipDate, cargo.deliveryDate) ?? cargo.progress;
+          const positionNow = () =>
+            distanceProgress(cargo.shipDate, cargo.routeKm, cargo.cargoType) ??
+            timeProgress(cargo.shipDate, cargo.deliveryDate) ??
+            cargo.progress;
+
+          cargoMarker.position = pointAtProgress(path, positionNow());
 
           if (cargo.moving) {
-            const destination = target();
-            const start = performance.now();
-            const durationMs = revealDurationMs(cargo.cargoType, destination);
-
-            const step = (now: number) => {
+            /*
+             * Re-read the clock every second so it keeps creeping while the
+             * page is open rather than freezing where it loaded.
+             */
+            tick = window.setInterval(() => {
               if (cancelled) return;
-              const t = Math.min((now - start) / durationMs, 1);
-              // Ease out only at the very end, so most of the trip is at a
-              // steady speed rather than a lunge that slows to a crawl.
-              const eased = t < 0.9 ? t : 1 - Math.pow(1 - t, 2) * 0.9;
-              cargoMarker.position = pointAtProgress(path, destination * eased);
-
-              if (t < 1) {
-                frame = requestAnimationFrame(step);
-                return;
-              }
-
-              /*
-               * Once it has arrived at "now", keep it honest: the journey
-               * spans days, so re-read the clock periodically and creep
-               * forward rather than freezing at the position it loaded with.
-               */
-              tick = window.setInterval(() => {
-                if (cancelled) return;
-                cargoMarker.position = pointAtProgress(path, target());
-              }, 30_000);
-            };
-
-            frame = requestAnimationFrame(step);
-          } else {
-            cargoMarker.position = pointAtProgress(path, target());
+              cargoMarker.position = pointAtProgress(path, positionNow());
+            }, 1_000);
           }
 
           cleanups.push(() => {
@@ -283,7 +267,6 @@ export function GoogleShipmentMap({
     return () => {
       cancelled = true;
       if (retryTimer) window.clearTimeout(retryTimer);
-      if (frame) cancelAnimationFrame(frame);
       if (tick) window.clearInterval(tick);
       for (const cleanup of cleanups) cleanup();
     };

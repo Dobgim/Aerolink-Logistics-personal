@@ -8,7 +8,15 @@ import { TrackingTimeline } from "./timeline";
 import { ShipmentDetails } from "./shipment-details";
 import { ShipmentMap, type MapPoint } from "@/components/map/shipment-map";
 import { geocodeCity } from "@/lib/constants/geo";
-import { CARGO_LABELS, isMoving, progressFor, timeProgress } from "@/lib/utils/progress";
+import {
+  CARGO_LABELS,
+  distanceProgress,
+  isMoving,
+  progressFor,
+  routeLengthKm,
+  speedKmhFor,
+  timeProgress,
+} from "@/lib/utils/progress";
 import type { CargoOnRoute } from "@/components/map/map-shared";
 
 /** Builds origin → current → destination markers, skipping anything unplaceable. */
@@ -57,18 +65,24 @@ export function cargoFor(shipment: ShipmentWithEvents, points: MapPoint[]): Carg
   const byScan =
     currentIndex > 0 && points.length > 1 ? currentIndex / (points.length - 1) : null;
 
+  const routeKm = routeLengthKm(points);
+  const cargoType = shipment.cargo_type;
+
   return {
     /*
-     * Preference order: where the clock says it is, then the last scan, then
-     * the status. The map re-derives the clock position as the page stays
-     * open, so this is only the starting point.
+     * Preference order: how far it has actually travelled at its real speed,
+     * then the date span, then the last scan, then the status. The map
+     * re-derives this as the page stays open, so it is only a starting point.
      */
     progress:
+      distanceProgress(shipment.ship_date, routeKm, cargoType) ??
       timeProgress(shipment.ship_date, shipment.estimated_delivery) ??
       byScan ??
       progressFor(shipment.status),
     shipDate: shipment.ship_date,
     deliveryDate: shipment.estimated_delivery,
+    speedKmh: speedKmhFor(cargoType),
+    routeKm,
     moving: isMoving(shipment.status),
     cargoType: shipment.cargo_type,
     imageUrl: shipment.cargo_image_url,
