@@ -7,7 +7,7 @@ import {
 } from "@/lib/data/repository";
 import { createShipmentSchema } from "@/lib/validations/schemas";
 import { badRequest, handle, isResponse, ok, requireAdmin } from "@/lib/api/respond";
-import { generateTrackingNumber } from "@/lib/utils/format";
+import { generateOrderNumber, generateTrackingNumber } from "@/lib/utils/format";
 import { geocodeCity } from "@/lib/constants/geo";
 import type { ShipmentStatus } from "@/types";
 
@@ -57,14 +57,36 @@ export async function POST(request: NextRequest) {
             input.origin_country,
           );
 
+    /*
+     * The order number is a separate commercial reference from the tracking
+     * number — different prefix and length, so the two can never be confused.
+     */
+    const orderNumber = input.order_number?.trim() || generateOrderNumber();
+
     const shipment = await createShipment({
       tracking_number: trackingNumber,
+      order_number: orderNumber,
+
       sender_name: input.sender_name,
+      sender_company: input.sender_company ?? null,
       sender_email: input.sender_email ?? null,
       sender_phone: input.sender_phone ?? null,
+      sender_address: input.sender_address ?? null,
+      sender_city: input.sender_city ?? input.origin_city,
+      sender_state: input.sender_state ?? null,
+      sender_postcode: input.sender_postcode ?? null,
+      sender_country: input.sender_country ?? input.origin_country,
+
       receiver_name: input.receiver_name,
+      receiver_company: input.receiver_company ?? null,
       receiver_email: input.receiver_email ?? null,
       receiver_phone: input.receiver_phone ?? null,
+      receiver_address: input.receiver_address ?? null,
+      receiver_city: input.receiver_city ?? input.destination_city,
+      receiver_state: input.receiver_state ?? null,
+      receiver_postcode: input.receiver_postcode ?? null,
+      receiver_country: input.receiver_country ?? input.destination_country,
+
       origin_country: input.origin_country,
       origin_city: input.origin_city,
       destination_country: input.destination_country,
@@ -73,6 +95,15 @@ export async function POST(request: NextRequest) {
       weight: input.weight,
       packages: input.packages,
       shipping_service: input.shipping_service,
+      goods_description: input.goods_description ?? null,
+
+      currency: input.currency,
+      declared_value: input.declared_value,
+      freight_cost: input.freight_cost,
+      insurance_cost: input.insurance_cost,
+      tax_amount: input.tax_amount,
+      payment_status: input.payment_status,
+
       status: input.status,
       current_location:
         input.current_location ?? `${input.origin_city}, ${input.origin_country}`,

@@ -1,5 +1,6 @@
 import type {
   PackageType,
+  PaymentStatus,
   ShipmentStatus,
   ShippingService,
   SupportStatus,
@@ -139,7 +140,49 @@ export function generateTrackingNumber(year = new Date().getUTCFullYear()): stri
   return `RPL-${year}-${digits}`;
 }
 
-/** Users paste `alx 2026 938456`, `alx2026938456`, etc. Normalise all of them. */
+/**
+ * `ORD-2026-4837201` — the commercial order reference printed on the invoice.
+ * Deliberately a different shape and length from the tracking number so the
+ * two can never be mistaken for one another.
+ */
+export function generateOrderNumber(year = new Date().getUTCFullYear()): string {
+  const digits = Math.floor(1_000_000 + Math.random() * 9_000_000);
+  return `ORD-${year}-${digits}`;
+}
+
+export const PAYMENT_STATUS_LABELS: Record<PaymentStatus, string> = {
+  unpaid: "Unpaid",
+  paid: "Paid",
+  refunded: "Refunded",
+};
+
+/** Money on the invoice. Falls back gracefully on an unknown currency code. */
+export function formatMoney(amount: number, currency = "USD"): string {
+  try {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency,
+      minimumFractionDigits: 2,
+    }).format(amount);
+  } catch {
+    return `${currency} ${amount.toFixed(2)}`;
+  }
+}
+
+/** Freight + insurance + tax. The invoice never adds these up by hand. */
+export function invoiceTotal(shipment: {
+  freight_cost: number;
+  insurance_cost: number;
+  tax_amount: number;
+}): number {
+  return (
+    Number(shipment.freight_cost ?? 0) +
+    Number(shipment.insurance_cost ?? 0) +
+    Number(shipment.tax_amount ?? 0)
+  );
+}
+
+/** Users paste `rpl 2026 938456`, `rpl2026938456`, etc. Normalise all of them. */
 export function normalizeTrackingNumber(input: string): string {
   return input.trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
 }

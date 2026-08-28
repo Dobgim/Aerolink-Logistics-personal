@@ -137,3 +137,27 @@
     transition-duration: 0.001ms !important;
   }
 }
+
+/* The invoice is meant to be printed or saved as a PDF. */
+@media print {
+  @page {
+    margin: 14mm;
+  }
+
+  body {
+    background: #fff;
+  }
+
+  /* Chrome drops background colours in print unless asked to keep them, which
+     would flatten the paid/unpaid badge and the table rules. */
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  header nav,
+  footer,
+  .print\:hidden {
+    display: none !important;
+  }
+}

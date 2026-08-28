@@ -35,15 +35,48 @@ export interface AppUser {
   created_at: string;
 }
 
+/** A party on the waybill — the sender or the receiver. */
+export interface PartyDetails {
+  name: string;
+  company: string | null;
+  email: string | null;
+  phone: string | null;
+  address: string | null;
+  city: string | null;
+  state: string | null;
+  postcode: string | null;
+  country: string | null;
+}
+
+export type PaymentStatus = "unpaid" | "paid" | "refunded";
+
 export interface Shipment {
   id: string;
+  /** Scan-level tracking reference shown to the public: RPL-YYYY-NNNNNN. */
   tracking_number: string;
+  /** Commercial order reference printed on the invoice: ORD-YYYY-NNNNNNN. */
+  order_number: string;
+
   sender_name: string;
+  sender_company: string | null;
   sender_email: string | null;
   sender_phone: string | null;
+  sender_address: string | null;
+  sender_city: string | null;
+  sender_state: string | null;
+  sender_postcode: string | null;
+  sender_country: string | null;
+
   receiver_name: string;
+  receiver_company: string | null;
   receiver_email: string | null;
   receiver_phone: string | null;
+  receiver_address: string | null;
+  receiver_city: string | null;
+  receiver_state: string | null;
+  receiver_postcode: string | null;
+  receiver_country: string | null;
+
   origin_country: string;
   origin_city: string;
   destination_country: string;
@@ -52,6 +85,16 @@ export interface Shipment {
   weight: number;
   packages: number;
   shipping_service: ShippingService;
+  goods_description: string | null;
+
+  /* Commercial totals, all in `currency`. */
+  currency: string;
+  declared_value: number;
+  freight_cost: number;
+  insurance_cost: number;
+  tax_amount: number;
+  payment_status: PaymentStatus;
+
   status: ShipmentStatus;
   current_location: string | null;
   latitude: number | null;

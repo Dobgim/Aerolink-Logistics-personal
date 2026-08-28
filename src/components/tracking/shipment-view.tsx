@@ -1,6 +1,8 @@
-import { History, MapPinned } from "lucide-react";
+import { FileText, History, MapPinned } from "lucide-react";
 import type { ShipmentWithEvents } from "@/types";
 import { Card } from "@/components/ui/primitives";
+import { ButtonLink } from "@/components/ui/button";
+import { formatMoney, invoiceTotal } from "@/lib/utils/format";
 import { StatusHeader } from "./status-header";
 import { TrackingTimeline } from "./timeline";
 import { ShipmentDetails } from "./shipment-details";
@@ -47,6 +49,32 @@ export function ShipmentView({ shipment }: { shipment: ShipmentWithEvents }) {
   return (
     <div className="space-y-5">
       <StatusHeader shipment={shipment} />
+
+      {/* The commercial record for this shipment, ready to print. */}
+      <Card className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-start gap-3">
+          <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-700">
+            <FileText aria-hidden className="size-5" />
+          </span>
+          <div>
+            <h3 className="text-base font-bold text-ink-900">
+              Invoice {shipment.order_number}
+            </h3>
+            <p className="mt-0.5 text-sm text-ink-600">
+              Sender and receiver details, goods and charges —{" "}
+              {formatMoney(invoiceTotal(shipment), shipment.currency)} total.
+            </p>
+          </div>
+        </div>
+
+        <ButtonLink
+          href={`/invoice/${encodeURIComponent(shipment.tracking_number)}`}
+          size="md"
+          className="shrink-0"
+        >
+          View invoice
+        </ButtonLink>
+      </Card>
 
       <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]">
         <Card padded={false} className="overflow-hidden">

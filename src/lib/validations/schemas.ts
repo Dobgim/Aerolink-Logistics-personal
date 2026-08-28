@@ -49,8 +49,21 @@ const optionalText = z
   .nullable()
   .optional();
 
+const optionalLongText = z
+  .string()
+  .trim()
+  .max(400)
+  .or(z.literal(""))
+  .transform((v) => (v === "" ? null : v))
+  .nullable()
+  .optional();
+
 const latitude = z.coerce.number().min(-90).max(90).nullable().optional();
 const longitude = z.coerce.number().min(-180).max(180).nullable().optional();
+
+export const paymentStatusSchema = z.enum(["unpaid", "paid", "refunded"]);
+
+const money = z.coerce.number().min(0).max(10_000_000).default(0);
 
 export const createShipmentSchema = z.object({
   tracking_number: z
@@ -60,12 +73,27 @@ export const createShipmentSchema = z.object({
     .max(32)
     .optional()
     .or(z.literal("")),
+  order_number: z.string().trim().min(6).max(32).optional().or(z.literal("")),
+
   sender_name: z.string().trim().min(2, "Sender name is required").max(120),
+  sender_company: optionalText,
   sender_email: optionalEmail,
   sender_phone: optionalText,
+  sender_address: optionalLongText,
+  sender_city: optionalText,
+  sender_state: optionalText,
+  sender_postcode: optionalText,
+  sender_country: optionalText,
+
   receiver_name: z.string().trim().min(2, "Receiver name is required").max(120),
+  receiver_company: optionalText,
   receiver_email: optionalEmail,
   receiver_phone: optionalText,
+  receiver_address: optionalLongText,
+  receiver_city: optionalText,
+  receiver_state: optionalText,
+  receiver_postcode: optionalText,
+  receiver_country: optionalText,
   origin_country: z.string().trim().min(2, "Origin country is required").max(80),
   origin_city: z.string().trim().min(2, "Origin city is required").max(80),
   destination_country: z.string().trim().min(2, "Destination country is required").max(80),
@@ -74,6 +102,15 @@ export const createShipmentSchema = z.object({
   weight: z.coerce.number().min(0.01, "Weight must be greater than zero").max(100_000),
   packages: z.coerce.number().int().min(1, "At least one package").max(10_000),
   shipping_service: shippingServiceSchema,
+  goods_description: optionalLongText,
+
+  currency: z.string().trim().length(3, "Use a 3-letter currency code").default("USD"),
+  declared_value: money,
+  freight_cost: money,
+  insurance_cost: money,
+  tax_amount: money,
+  payment_status: paymentStatusSchema.default("unpaid"),
+
   status: shipmentStatusSchema.default("pending"),
   current_location: optionalText,
   latitude,

@@ -153,6 +153,32 @@ supabase/
 
 ---
 
+## References and invoicing
+
+Each shipment carries two independent references:
+
+| Reference       | Shape              | Purpose                                        |
+| --------------- | ------------------ | ---------------------------------------------- |
+| Tracking number | `RPL-YYYY-NNNNNN`  | Public scan history; the credential for tracking |
+| Order number    | `ORD-YYYY-NNNNNNN` | Commercial reference printed on the invoice     |
+
+Both are generated on create when left blank, and their prefixes and lengths
+differ so the two can never be mistaken for one another.
+
+Entering a tracking number produces an invoice at `/invoice/<tracking-number>`,
+linked from the tracking result. It renders server-side from the full record —
+both parties in full, the goods description, and freight, insurance and tax
+summed into a total — and is styled to print or save as a PDF.
+
+> **Privacy note.** Tracking is deliberately open: anyone holding the tracking
+> number can view it, which is how couriers normally work. The invoice, though,
+> shows both parties' full names, addresses, phone numbers and email addresses,
+> so anyone with the tracking number sees them too. If that is broader than you
+> want, gate the invoice route behind `getSessionUser()` — the same one-line
+> check the admin pages use — or match the receiver's postcode before rendering.
+
+---
+
 ## Content model
 
 The marketing pages describe coverage by **capability**, not by a published country list:

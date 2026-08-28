@@ -26,10 +26,26 @@ interface EventBlueprint {
   hour: number;
 }
 
+interface Party {
+  name: string;
+  company?: string;
+  email: string;
+  phone: string;
+  address: string;
+  city: string;
+  state?: string;
+  postcode: string;
+  country: string;
+}
+
 interface ShipmentBlueprint {
   tracking_number: string;
-  sender: [name: string, email: string, phone: string];
-  receiver: [name: string, email: string, phone: string];
+  order_number: string;
+  sender: Party;
+  receiver: Party;
+  goods: string;
+  money: { declared: number; freight: number; insurance: number; tax: number };
+  paid?: boolean;
   origin: [country: string, city: string];
   destination: [country: string, city: string];
   package_type: Shipment["package_type"];
@@ -154,10 +170,14 @@ function chain(
 const BLUEPRINTS: ShipmentBlueprint[] = [
   {
     tracking_number: "RPL-2026-983456",
-    sender: ["Daniel Whitfield", "daniel.whitfield@example.com", "+1 (212) 555-0117"],
-    receiver: ["Camille Moreau", "camille.moreau@example.com", "+33 6 12 88 40 21"],
+    order_number: "ORD-2026-1810111",
+    sender: { name: "Daniel Whitfield", email: "daniel.whitfield@example.com", phone: "+1 (212) 555-0117", address: "177 W 38th Street", city: "New York", state: "NY", postcode: "10018", country: "United States" },
+    receiver: { name: "Camille Moreau", email: "camille.moreau@example.com", phone: "+33 6 12 88 40 21", address: "89 Rue Oberkampf", city: "Paris", state: "Île-de-France", postcode: "75011", country: "France" },
     origin: ["United States", "New York"],
     destination: ["France", "Paris"],
+    goods: "Assorted retail apparel",
+    money: { declared: 514.41, freight: 90.7, insurance: 6.17, tax: 19.37 },
+    paid: true,
     package_type: "parcel",
     weight: 12.4,
     packages: 3,
@@ -180,10 +200,13 @@ const BLUEPRINTS: ShipmentBlueprint[] = [
   },
   {
     tracking_number: "RPL-2026-114872",
-    sender: ["Brightline Logistics LLC", "ops@brightlinelogistics.example", "+1 (312) 555-0164"],
-    receiver: ["Oliver Bennett", "oliver.bennett@example.com", "+44 7700 900211"],
+    order_number: "ORD-2026-7135241",
+    sender: { name: "Brightline Logistics LLC", company: "Brightline Logistics LLC", email: "ops@brightlinelogistics.example", phone: "+1 (312) 555-0164", address: "49 W Randolph Street", city: "Chicago", state: "IL", postcode: "60607", country: "United States" },
+    receiver: { name: "Oliver Bennett", email: "oliver.bennett@example.com", phone: "+44 7700 900211", address: "432 Paul Street", city: "London", state: "Greater London", postcode: "EC2A 4NE", country: "United Kingdom" },
     origin: ["United States", "Chicago"],
     destination: ["United Kingdom", "London"],
+    goods: "Printed commercial documents",
+    money: { declared: 266.92, freight: 41.4, insurance: 3.2, tax: 8.92 },
     package_type: "document",
     weight: 0.8,
     packages: 1,
@@ -202,10 +225,13 @@ const BLUEPRINTS: ShipmentBlueprint[] = [
   },
   {
     tracking_number: "RPL-2026-550193",
-    sender: ["Atlas Textiles Inc.", "export@atlastextiles.example", "+1 (212) 555-0193"],
-    receiver: ["Sofia Rossi", "sofia.rossi@example.com", "+39 340 118 2277"],
+    order_number: "ORD-2026-4602037",
+    sender: { name: "Atlas Textiles Inc.", company: "Atlas Textiles Inc.", email: "export@atlastextiles.example", phone: "+1 (212) 555-0193", address: "310 W 38th Street", city: "New York", state: "NY", postcode: "10018", country: "United States" },
+    receiver: { name: "Sofia Rossi", email: "sofia.rossi@example.com", phone: "+39 340 118 2277", address: "41 Via Vittor Pisani", city: "Milan", state: "Lombardia", postcode: "20124", country: "Italy" },
     origin: ["United States", "New York"],
     destination: ["Italy", "Milan"],
+    goods: "Woven textile rolls",
+    money: { declared: 8996.57, freight: 1058.0, insurance: 107.96, tax: 233.19 },
     package_type: "pallet",
     weight: 240,
     packages: 4,
@@ -218,10 +244,14 @@ const BLUEPRINTS: ShipmentBlueprint[] = [
   },
   {
     tracking_number: "RPL-2026-206741",
-    sender: ["Rachel Adeyemi", "rachel.adeyemi@example.com", "+1 (404) 555-0148"],
-    receiver: ["Lukas Weber", "lukas.weber@example.com", "+49 151 2233 4455"],
+    order_number: "ORD-2026-2171979",
+    sender: { name: "Rachel Adeyemi", email: "rachel.adeyemi@example.com", phone: "+1 (404) 555-0148", address: "31 Marietta Street NW", city: "Atlanta", state: "GA", postcode: "30318", country: "United States" },
+    receiver: { name: "Lukas Weber", email: "lukas.weber@example.com", phone: "+49 151 2233 4455", address: "56 Invalidenstraße", city: "Berlin", state: "Berlin", postcode: "10115", country: "Germany" },
     origin: ["United States", "Atlanta"],
     destination: ["Germany", "Berlin"],
+    goods: "Consumer electronics accessories",
+    money: { declared: 378.7, freight: 64.35, insurance: 4.54, tax: 13.78 },
+    paid: true,
     package_type: "parcel",
     weight: 6.2,
     packages: 2,
@@ -240,10 +270,13 @@ const BLUEPRINTS: ShipmentBlueprint[] = [
   },
   {
     tracking_number: "RPL-2026-338920",
-    sender: ["Harborline Seafoods", "logistics@harborlineseafoods.example", "+1 (617) 555-0129"],
-    receiver: ["Anne de Vries", "anne.devries@example.com", "+31 6 2244 8899"],
+    order_number: "ORD-2026-1991709",
+    sender: { name: "Harborline Seafoods", company: "Harborline Seafoods", email: "logistics@harborlineseafoods.example", phone: "+1 (617) 555-0129", address: "135 W 38th Street", city: "New York", state: "NY", postcode: "10018", country: "United States" },
+    receiver: { name: "Anne de Vries", email: "anne.devries@example.com", phone: "+31 6 2244 8899", address: "58 Weena", city: "Rotterdam", state: "Zuid-Holland", postcode: "3011 AA", country: "Netherlands" },
     origin: ["United States", "New York"],
     destination: ["Netherlands", "Rotterdam"],
+    goods: "Chilled seafood, temperature controlled",
+    money: { declared: 2704.52, freight: 414.12, insurance: 32.45, tax: 89.31 },
     package_type: "perishable",
     weight: 88.5,
     packages: 6,
@@ -263,10 +296,13 @@ const BLUEPRINTS: ShipmentBlueprint[] = [
   },
   {
     tracking_number: "RPL-2026-472018",
-    sender: ["Nova Commerce", "ship@novacommerce.example", "+1 (646) 555-0175"],
-    receiver: ["Diego Fernández", "diego.fernandez@example.com", "+34 611 22 33 44"],
+    order_number: "ORD-2026-4745328",
+    sender: { name: "Nova Commerce", company: "Nova Commerce", email: "ship@novacommerce.example", phone: "+1 (646) 555-0175", address: "435 W 38th Street", city: "New York", state: "NY", postcode: "10018", country: "United States" },
+    receiver: { name: "Diego Fernández", email: "diego.fernandez@example.com", phone: "+34 611 22 33 44", address: "301 Calle Gran Vía", city: "Madrid", state: "Comunidad de Madrid", postcode: "28013", country: "Spain" },
     origin: ["United States", "New York"],
     destination: ["Spain", "Madrid"],
+    goods: "Online order — household goods",
+    money: { declared: 213.94, freight: 51.17, insurance: 2.57, tax: 10.75 },
     package_type: "parcel",
     weight: 3.1,
     packages: 1,
@@ -279,10 +315,14 @@ const BLUEPRINTS: ShipmentBlueprint[] = [
   },
   {
     tracking_number: "RPL-2026-619355",
-    sender: ["Beacon Coffee Roasters", "export@beaconcoffee.example", "+1 (617) 555-0182"],
-    receiver: ["Elise Janssens", "elise.janssens@example.com", "+32 470 55 66 77"],
+    order_number: "ORD-2026-2037872",
+    sender: { name: "Beacon Coffee Roasters", company: "Beacon Coffee Roasters", email: "export@beaconcoffee.example", phone: "+1 (617) 555-0182", address: "334 Seaport Boulevard", city: "Boston", state: "MA", postcode: "02210", country: "United States" },
+    receiver: { name: "Elise Janssens", email: "elise.janssens@example.com", phone: "+32 470 55 66 77", address: "333 Meir", city: "Antwerp", state: "Antwerpen", postcode: "2000", country: "Belgium" },
     origin: ["United States", "Boston"],
     destination: ["Belgium", "Antwerp"],
+    goods: "Roasted coffee, 24 sacks",
+    money: { declared: 35883.04, freight: 5350.5, insurance: 430.6, tax: 1156.22 },
+    paid: true,
     package_type: "freight",
     weight: 1250,
     packages: 18,
@@ -301,10 +341,13 @@ const BLUEPRINTS: ShipmentBlueprint[] = [
   },
   {
     tracking_number: "RPL-2026-728104",
-    sender: ["Marcus Delaney", "marcus.delaney@example.com", "+1 (212) 555-0136"],
-    receiver: ["Sean O'Connor", "sean.oconnor@example.com", "+353 85 123 4567"],
+    order_number: "ORD-2026-4709137",
+    sender: { name: "Marcus Delaney", email: "marcus.delaney@example.com", phone: "+1 (212) 555-0136", address: "307 W 38th Street", city: "New York", state: "NY", postcode: "10018", country: "United States" },
+    receiver: { name: "Sean O'Connor", email: "sean.oconnor@example.com", phone: "+353 85 123 4567", address: "311 Dawson Street", city: "Dublin", state: "County Dublin", postcode: "D02 XY45", country: "Ireland" },
     origin: ["United States", "New York"],
     destination: ["Ireland", "Dublin"],
+    goods: "Ceramic homeware, fragile",
+    money: { declared: 450.11, freight: 79.22, insurance: 5.4, tax: 16.92 },
     package_type: "fragile",
     weight: 9.7,
     packages: 2,
@@ -323,10 +366,13 @@ const BLUEPRINTS: ShipmentBlueprint[] = [
   },
   {
     tracking_number: "RPL-2026-845276",
-    sender: ["Lone Star Agro", "sales@lonestaragro.example", "+1 (214) 555-0159"],
-    receiver: ["Marta Silva", "marta.silva@example.com", "+351 912 345 678"],
+    order_number: "ORD-2026-5858837",
+    sender: { name: "Lone Star Agro", company: "Lone Star Agro", email: "sales@lonestaragro.example", phone: "+1 (214) 555-0159", address: "35 Ross Avenue", city: "Dallas", state: "TX", postcode: "75201", country: "United States" },
+    receiver: { name: "Marta Silva", email: "marta.silva@example.com", phone: "+351 912 345 678", address: "297 Avenida da Liberdade", city: "Lisbon", state: "Lisboa", postcode: "1250-096", country: "Portugal" },
     origin: ["United States", "Dallas"],
     destination: ["Portugal", "Lisbon"],
+    goods: "Packaged dry foodstuffs",
+    money: { declared: 14638.52, freight: 1780.5, insurance: 175.66, tax: 391.23 },
     package_type: "pallet",
     weight: 410,
     packages: 8,
@@ -345,10 +391,14 @@ const BLUEPRINTS: ShipmentBlueprint[] = [
   },
   {
     tracking_number: "RPL-2026-901488",
-    sender: ["Helvetia Parts AG", "dispatch@helvetiaparts.example", "+41 44 500 12 34"],
-    receiver: ["Thomas Keller", "thomas.keller@example.com", "+41 79 555 22 11"],
+    order_number: "ORD-2026-6175466",
+    sender: { name: "Helvetia Parts AG", email: "dispatch@helvetiaparts.example", phone: "+41 44 500 12 34", address: "226 Bahnhofstrasse", city: "Zurich", state: "Zürich", postcode: "8001", country: "Switzerland" },
+    receiver: { name: "Thomas Keller", email: "thomas.keller@example.com", phone: "+41 79 555 22 11", address: "85 Rue Garibaldi", city: "Lyon", state: "Auvergne-Rhône-Alpes", postcode: "69003", country: "France" },
     origin: ["Switzerland", "Zurich"],
     destination: ["France", "Lyon"],
+    goods: "Precision machine parts",
+    money: { declared: 675.21, freight: 104.3, insurance: 8.1, tax: 22.48 },
+    paid: true,
     package_type: "parcel",
     weight: 15.6,
     packages: 3,
@@ -367,10 +417,13 @@ const BLUEPRINTS: ShipmentBlueprint[] = [
   },
   {
     tracking_number: "RPL-2026-133705",
-    sender: ["Northline Retail", "fulfilment@northline.example", "+44 161 555 0182"],
-    receiver: ["Ingrid Bakker", "ingrid.bakker@example.com", "+31 6 1188 2200"],
+    order_number: "ORD-2026-2728987",
+    sender: { name: "Northline Retail", company: "Northline Retail", email: "fulfilment@northline.example", phone: "+44 161 555 0182", address: "298 Whitworth Street", city: "Manchester", state: "Greater Manchester", postcode: "M1 5AN", country: "United Kingdom" },
+    receiver: { name: "Ingrid Bakker", email: "ingrid.bakker@example.com", phone: "+31 6 1188 2200", address: "429 Oudegracht", city: "Utrecht", state: "Utrecht", postcode: "3511 LX", country: "Netherlands" },
     origin: ["United Kingdom", "Manchester"],
     destination: ["Netherlands", "Utrecht"],
+    goods: "Online order — apparel",
+    money: { declared: 349.5, freight: 48.2, insurance: 4.19, tax: 10.48 },
     package_type: "parcel",
     weight: 2.4,
     packages: 1,
@@ -389,10 +442,13 @@ const BLUEPRINTS: ShipmentBlueprint[] = [
   },
   {
     tracking_number: "RPL-2026-664219",
-    sender: ["Iberia Wine Co.", "export@iberiawine.example", "+34 954 22 11 00"],
-    receiver: ["Julien Girard", "julien.girard@example.com", "+33 6 55 90 12 08"],
+    order_number: "ORD-2026-7247794",
+    sender: { name: "Iberia Wine Co.", company: "Iberia Wine Co.", email: "export@iberiawine.example", phone: "+34 954 22 11 00", address: "309 Calle Sierpes", city: "Seville", state: "Andalucía", postcode: "41001", country: "Spain" },
+    receiver: { name: "Julien Girard", email: "julien.girard@example.com", phone: "+33 6 55 90 12 08", address: "304 Cours de l'Intendance", city: "Bordeaux", state: "Nouvelle-Aquitaine", postcode: "33000", country: "France" },
     origin: ["Spain", "Seville"],
     destination: ["France", "Bordeaux"],
+    goods: "Bottled wine, 60 units",
+    money: { declared: 2174.35, freight: 310.0, insurance: 26.09, tax: 67.22 },
     package_type: "fragile",
     weight: 64,
     packages: 5,
@@ -435,12 +491,28 @@ export function buildSeed(): SeedData {
     shipments.push({
       id,
       tracking_number: bp.tracking_number,
-      sender_name: bp.sender[0],
-      sender_email: bp.sender[1],
-      sender_phone: bp.sender[2],
-      receiver_name: bp.receiver[0],
-      receiver_email: bp.receiver[1],
-      receiver_phone: bp.receiver[2],
+      order_number: bp.order_number,
+
+      sender_name: bp.sender.name,
+      sender_company: bp.sender.company ?? null,
+      sender_email: bp.sender.email,
+      sender_phone: bp.sender.phone,
+      sender_address: bp.sender.address,
+      sender_city: bp.sender.city,
+      sender_state: bp.sender.state ?? null,
+      sender_postcode: bp.sender.postcode,
+      sender_country: bp.sender.country,
+
+      receiver_name: bp.receiver.name,
+      receiver_company: bp.receiver.company ?? null,
+      receiver_email: bp.receiver.email,
+      receiver_phone: bp.receiver.phone,
+      receiver_address: bp.receiver.address,
+      receiver_city: bp.receiver.city,
+      receiver_state: bp.receiver.state ?? null,
+      receiver_postcode: bp.receiver.postcode,
+      receiver_country: bp.receiver.country,
+
       origin_country: bp.origin[0],
       origin_city: bp.origin[1],
       destination_country: bp.destination[0],
@@ -449,6 +521,15 @@ export function buildSeed(): SeedData {
       weight: bp.weight,
       packages: bp.packages,
       shipping_service: bp.shipping_service,
+      goods_description: bp.goods,
+
+      currency: "USD",
+      declared_value: bp.money.declared,
+      freight_cost: bp.money.freight,
+      insurance_cost: bp.money.insurance,
+      tax_amount: bp.money.tax,
+      payment_status: bp.paid ? "paid" : "unpaid",
+
       status: bp.status,
       current_location: bp.current ? `${bp.current[0]}, ${bp.current[1]}` : null,
       latitude: current?.lat ?? null,
@@ -520,9 +601,9 @@ export function buildSeed(): SeedData {
     },
     ...BLUEPRINTS.slice(0, 8).map((bp, i) => ({
       id: `usr_${i + 1}`,
-      name: bp.sender[0],
-      email: bp.sender[1],
-      phone: bp.sender[2],
+      name: bp.sender.name,
+      email: bp.sender.email,
+      phone: bp.sender.phone,
       role: "customer" as const,
       created_at: iso(-90 + i * 7, 10),
     })),

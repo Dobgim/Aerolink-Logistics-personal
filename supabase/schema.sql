@@ -37,6 +37,10 @@ do $$ begin
   create type support_status as enum ('open', 'in_progress', 'resolved', 'closed');
 exception when duplicate_object then null; end $$;
 
+do $$ begin
+  create type payment_status as enum ('unpaid', 'paid', 'refunded');
+exception when duplicate_object then null; end $$;
+
 -- ---------------------------------------------------------------------------
 -- users — profile mirror of auth.users, and the only place role is stored
 -- ---------------------------------------------------------------------------
@@ -57,13 +61,32 @@ create index if not exists users_email_idx on public.users (lower(email));
 -- ---------------------------------------------------------------------------
 create table if not exists public.shipments (
   id                   uuid primary key default gen_random_uuid(),
+  -- Public scan reference (RPL-YYYY-NNNNNN).
   tracking_number      text            not null unique,
+  -- Commercial reference printed on the invoice (ORD-YYYY-NNNNNNN). Kept
+  -- deliberately distinct from tracking_number so the two cannot be confused.
+  order_number         text            not null unique,
+
   sender_name          text            not null,
+  sender_company       text,
   sender_email         text,
   sender_phone         text,
+  sender_address       text,
+  sender_city          text,
+  sender_state         text,
+  sender_postcode      text,
+  sender_country       text,
+
   receiver_name        text            not null,
+  receiver_company     text,
   receiver_email       text,
   receiver_phone       text,
+  receiver_address     text,
+  receiver_city        text,
+  receiver_state       text,
+  receiver_postcode    text,
+  receiver_country     text,
+
   origin_country       text            not null,
   origin_city          text            not null,
   destination_country  text            not null,
@@ -72,6 +95,15 @@ create table if not exists public.shipments (
   weight               numeric(10, 2)  not null check (weight > 0),
   packages             integer         not null default 1 check (packages > 0),
   shipping_service     shipping_service not null default 'express_international',
+  goods_description    text,
+
+  currency             text            not null default 'USD',
+  declared_value       numeric(12, 2)  not null default 0 check (declared_value >= 0),
+  freight_cost         numeric(12, 2)  not null default 0 check (freight_cost >= 0),
+  insurance_cost       numeric(12, 2)  not null default 0 check (insurance_cost >= 0),
+  tax_amount           numeric(12, 2)  not null default 0 check (tax_amount >= 0),
+  payment_status       payment_status  not null default 'unpaid',
+
   status               shipment_status not null default 'pending',
   current_location     text,
   latitude             double precision check (latitude between -90 and 90),
@@ -84,6 +116,8 @@ create table if not exists public.shipments (
 -- Tracking lookups are the hottest read path on the whole site.
 create unique index if not exists shipments_tracking_number_idx
   on public.shipments (upper(tracking_number));
+create unique index if not exists shipments_order_number_idx
+  on public.shipments (upper(order_number));
 create index if not exists shipments_status_idx       on public.shipments (status);
 create index if not exists shipments_created_at_idx   on public.shipments (created_at desc);
 create index if not exists shipments_receiver_email_idx on public.shipments (lower(receiver_email));
