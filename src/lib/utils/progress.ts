@@ -59,3 +59,55 @@ export const CARGO_ICONS: Record<CargoType, string> = {
     '<path d="M17.8 19.2 16 11l3.5-3.5a2.1 2.1 0 0 0-3-3L13 8 4.8 6.2a1 1 0 0 0-1 1.6L9 11l-2 3H4l1 3 3 1 1-3 3-2 3.2 5.2a1 1 0 0 0 1.6-1z"/>',
   ship: '<path d="M3 17c1.5 1 3 1 4.5 0S10.5 16 12 17s3 1 4.5 0S19.5 16 21 17"/><path d="M4 13V8h16v5"/><path d="M12 4v4"/><path d="m5 13 7-3 7 3"/>',
 };
+
+/**
+ * How far along the route the shipment is by the clock, 0 to 1.
+ *
+ * This is the honest position: a shipment that left on the 24th and is due on
+ * the 3rd is genuinely a third of the way there on the 27th, and creeps
+ * forward on its own as the days pass. Status only decides whether it is
+ * moving; the calendar decides where it is.
+ *
+ * Returns null when the journey has no dates to measure between, so the caller
+ * can fall back to the status-derived position.
+ */
+export function timeProgress(
+  shipDate: string | null | undefined,
+  deliveryDate: string | null | undefined,
+  now: number = Date.now(),
+): number | null {
+  if (!shipDate || !deliveryDate) return null;
+
+  const start = new Date(shipDate).getTime();
+  const end = new Date(deliveryDate).getTime();
+  if (Number.isNaN(start) || Number.isNaN(end) || end <= start) return null;
+
+  return Math.min(Math.max((now - start) / (end - start), 0), 1);
+}
+
+/**
+ * How long the marker takes to travel the *whole* route on screen, per mode.
+ *
+ * A real journey takes days, so the on-screen reveal is a compression of it —
+ * but the modes stay in proportion, and none of them are quick. A truck
+ * crossing the map should read as road haulage, not as a courier sprinting.
+ */
+const FULL_ROUTE_REVEAL_MS: Record<CargoType, number> = {
+  plane: 11_000,
+  motorbike: 16_000,
+  car: 18_000,
+  van: 19_000,
+  package: 20_000,
+  truck: 24_000,
+  ship: 30_000,
+};
+
+/**
+ * Time to animate the portion of the route actually covered. Scaling by the
+ * distance keeps the speed constant: a shipment 10% along arrives on screen
+ * quickly, one 90% along takes most of the full duration.
+ */
+export function revealDurationMs(cargoType: CargoType, progress: number): number {
+  const full = FULL_ROUTE_REVEAL_MS[cargoType] ?? FULL_ROUTE_REVEAL_MS.package;
+  return Math.max(full * Math.min(Math.max(progress, 0), 1), 1_500);
+}

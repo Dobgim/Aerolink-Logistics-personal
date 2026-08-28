@@ -37,12 +37,18 @@ export const MARKER_ICONS: Record<MapPoint["kind"], LucideIcon> = {
  * it sits, whether it should be animating, and what to draw.
  */
 export interface CargoOnRoute {
-  /** 0 at the origin, 1 at the destination. */
+  /**
+   * Position derived from the shipment's status. Used only when the journey
+   * has no dates to measure against.
+   */
   progress: number;
   moving: boolean;
   cargoType: CargoType;
   imageUrl: string | null;
   label: string;
+  /** The journey's real span, so the marker can advance with the clock. */
+  shipDate: string | null;
+  deliveryDate: string | null;
 }
 
 /**

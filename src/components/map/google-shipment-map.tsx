@@ -11,6 +11,7 @@ import {
   type CargoOnRoute,
   type MapPoint,
 } from "./map-shared";
+import { revealDurationMs, timeProgress } from "@/lib/utils/progress";
 
 interface Props {
   points: MapPoint[];
@@ -81,6 +82,7 @@ export function GoogleShipmentMap({
     let cancelled = false;
     let retryTimer: number | undefined;
     let frame: number | undefined;
+    let tick: number | undefined;
     const cleanups: (() => void)[] = [];
 
     void (async () => {
@@ -182,23 +184,46 @@ export function GoogleShipmentMap({
 
           /*
            * The package eases out from the origin to the distance it has
-           * actually covered, then holds there. A held shipment — pending,
-           * delayed, in customs — is placed without animation, because
-           * movement would misrepresent its state.
+           * actually covered, at a pace set by how it travels — a truck reads
+           * as road haulage, not as a courier sprinting across the map. A held
+           * shipment (pending, delayed, in customs) is placed without
+           * animation, because movement would misrepresent its state.
            */
+          const target = () =>
+            timeProgress(cargo.shipDate, cargo.deliveryDate) ?? cargo.progress;
+
           if (cargo.moving) {
+            const destination = target();
             const start = performance.now();
-            const durationMs = 2600;
+            const durationMs = revealDurationMs(cargo.cargoType, destination);
+
             const step = (now: number) => {
               if (cancelled) return;
               const t = Math.min((now - start) / durationMs, 1);
-              const eased = 1 - Math.pow(1 - t, 3);
-              cargoMarker.position = pointAtProgress(path, cargo.progress * eased);
-              if (t < 1) frame = requestAnimationFrame(step);
+              // Ease out only at the very end, so most of the trip is at a
+              // steady speed rather than a lunge that slows to a crawl.
+              const eased = t < 0.9 ? t : 1 - Math.pow(1 - t, 2) * 0.9;
+              cargoMarker.position = pointAtProgress(path, destination * eased);
+
+              if (t < 1) {
+                frame = requestAnimationFrame(step);
+                return;
+              }
+
+              /*
+               * Once it has arrived at "now", keep it honest: the journey
+               * spans days, so re-read the clock periodically and creep
+               * forward rather than freezing at the position it loaded with.
+               */
+              tick = window.setInterval(() => {
+                if (cancelled) return;
+                cargoMarker.position = pointAtProgress(path, target());
+              }, 30_000);
             };
+
             frame = requestAnimationFrame(step);
           } else {
-            cargoMarker.position = pointAtProgress(path, cargo.progress);
+            cargoMarker.position = pointAtProgress(path, target());
           }
 
           cleanups.push(() => {
@@ -259,6 +284,7 @@ export function GoogleShipmentMap({
       cancelled = true;
       if (retryTimer) window.clearTimeout(retryTimer);
       if (frame) cancelAnimationFrame(frame);
+      if (tick) window.clearInterval(tick);
       for (const cleanup of cleanups) cleanup();
     };
   }, [points, connect, cargo, onFailure, attempt]);
