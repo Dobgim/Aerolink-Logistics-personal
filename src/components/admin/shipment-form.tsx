@@ -110,7 +110,7 @@ export function ShipmentForm({ shipment }: Props) {
                 value={trackingNumber}
                 onChange={(e) => setTrackingNumber(e.target.value)}
                 placeholder="Leave blank to generate automatically"
-                hint={editing ? undefined : "Blank generates one in the ALX-YYYY-NNNNNN format."}
+                hint={editing ? undefined : "Blank generates one in the RPL-YYYY-NNNNNN format."}
                 error={errors.tracking_number}
                 className="font-mono"
               />

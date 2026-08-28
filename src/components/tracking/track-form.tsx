@@ -105,7 +105,7 @@ export function TrackForm({
                 value={value}
                 autoFocus={autoFocus}
                 onChange={(e) => setValue(e.target.value)}
-                placeholder={`${SAMPLE_TRACKING_NUMBER}\nALX-2026-114872`}
+                placeholder={`${SAMPLE_TRACKING_NUMBER}\nRPL-2026-114872`}
                 aria-invalid={error ? true : undefined}
                 aria-describedby={error ? "tracking-error" : "tracking-hint"}
                 className="w-full resize-y rounded-xl border border-ink-300 px-4 py-3 font-mono text-[0.9375rem] tracking-tight text-ink-900 placeholder:font-sans placeholder:text-ink-400 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"

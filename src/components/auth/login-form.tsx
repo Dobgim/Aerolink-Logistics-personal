@@ -134,11 +134,11 @@ export function LoginForm({ redirectTo = "/", adminOnly = false, showDemoHint = 
           <p className="font-bold text-ink-800">Demo accounts</p>
           <p className="mt-1.5">
             Administrator —{" "}
-            <span className="font-mono">admin@aerolink.demo</span> /{" "}
-            <span className="font-mono">AeroLink#2026</span>
+            <span className="font-mono">admin@royalprime.demo</span> /{" "}
+            <span className="font-mono">RoyalPrime#2026</span>
           </p>
           <p className="mt-1">
-            Customer — <span className="font-mono">customer@aerolink.demo</span> /{" "}
+            Customer — <span className="font-mono">customer@royalprime.demo</span> /{" "}
             <span className="font-mono">Customer#2026</span>
           </p>
           <p className="mt-2 text-ink-500">

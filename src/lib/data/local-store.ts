@@ -12,14 +12,14 @@ import { buildSeed, type SeedData } from "./seed";
  * resets on restart, so it is a development/demo backend, not a production one.
  */
 declare global {
-  var __aerolinkStore: SeedData | undefined;
+  var __royalPrimeStore: SeedData | undefined;
 }
 
 export function store(): SeedData {
-  if (!globalThis.__aerolinkStore) {
-    globalThis.__aerolinkStore = buildSeed();
+  if (!globalThis.__royalPrimeStore) {
+    globalThis.__royalPrimeStore = buildSeed();
   }
-  return globalThis.__aerolinkStore;
+  return globalThis.__royalPrimeStore;
 }
 
 export function nextId(prefix: string): string {

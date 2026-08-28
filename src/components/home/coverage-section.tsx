@@ -76,18 +76,18 @@ export function CoverageSection() {
           <Reveal delay={0.1}>
             <div className="relative aspect-4/5 overflow-hidden rounded-2xl bg-ink-900 shadow-lift sm:aspect-4/3 lg:aspect-4/5">
               <Image
-                src={IMAGES.airportCargo}
-                alt="Air cargo containers being moved across an airport ramp"
+                src={IMAGES.courierDolly}
+                alt="A courier moving a loaded hand truck of parcels along a delivery round"
                 fill
                 sizes="(max-width: 1024px) 100vw, 45vw"
                 quality={68}
                 placeholder="blur"
                 blurDataURL={BLUR_DATA_URL}
-                className="object-cover"
+                className="object-cover object-[50%_45%]"
               />
               <div className="absolute inset-0 bg-linear-to-t from-ink-950/85 via-ink-950/20 to-transparent" />
               <div className="absolute inset-x-0 bottom-0 p-6">
-                <p className="text-sm font-semibold text-brand-200">Gateway operations</p>
+                <p className="text-sm font-semibold text-brand-200">Final mile</p>
                 <p className="mt-1.5 text-lg font-bold leading-snug text-white">
                   Consignments are scanned at every hand-off, from ramp to doorstep.
                 </p>

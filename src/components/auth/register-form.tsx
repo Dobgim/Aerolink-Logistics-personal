@@ -63,7 +63,7 @@ export function RegisterForm() {
         </span>
         <h2 className="mt-4 text-lg font-bold text-ink-900">Confirm your email</h2>
         <p className="mt-2 text-sm leading-relaxed text-ink-600">
-          We have sent a confirmation link to your inbox. Open it to activate your AeroLink account,
+          We have sent a confirmation link to your inbox. Open it to activate your Royal Prime account,
           then sign in.
         </p>
       </div>

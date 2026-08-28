@@ -127,7 +127,7 @@ export function SupportForm({ defaultSubject, defaultTrackingNumber }: Props) {
             label="Tracking number"
             hint="Optional — speeds things up if your question is about a shipment."
             defaultValue={defaultTrackingNumber}
-            placeholder="ALX-2026-983456"
+            placeholder="RPL-2026-983456"
             error={errors.tracking_number}
           />
         </div>

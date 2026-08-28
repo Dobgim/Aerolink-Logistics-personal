@@ -63,39 +63,6 @@ export function Navbar({ user }: { user: NavbarUser | null }) {
 
   return (
     <>
-      {/* Utility strip — hidden on small screens to protect vertical space */}
-      <div className="hidden border-b border-ink-200 bg-ink-50 lg:block">
-        <div className="mx-auto flex w-full max-w-[85rem] items-center justify-between px-8 py-2 text-[0.8125rem]">
-          <p className="text-ink-600">
-            Worldwide express, freight and e-commerce delivery · Customer service {SITE.hours}
-          </p>
-          <div className="flex items-center gap-5">
-            <a
-              href={`tel:${SITE.phoneHref}`}
-              className="inline-flex items-center gap-1.5 font-semibold text-ink-700 transition-colors hover:text-brand-700"
-            >
-              <PhoneCall aria-hidden className="size-3.5" />
-              {SITE.phone}
-            </a>
-            {user?.role === "admin" ? (
-              <Link
-                href="/admin"
-                className="font-semibold text-ink-600 transition-colors hover:text-brand-700"
-              >
-                Admin dashboard
-              </Link>
-            ) : (
-              <Link
-                href="/tracking"
-                className="font-semibold text-ink-600 transition-colors hover:text-brand-700"
-              >
-                Track a shipment
-              </Link>
-            )}
-          </div>
-        </div>
-      </div>
-
       <header
         className={cn(
           "sticky top-0 z-50 border-b bg-white/95 backdrop-blur transition-shadow duration-300",

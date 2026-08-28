@@ -55,10 +55,10 @@ const COLUMNS: { title: string; links: { label: string; href: string }[] }[] = [
  * with plain lettermarks instead of reproducing anyone's brand assets.
  */
 const SOCIALS = [
-  { label: "AeroLink on X", href: SITE.social.x, mark: "X" },
-  { label: "AeroLink on LinkedIn", href: SITE.social.linkedin, mark: "in" },
-  { label: "AeroLink on Facebook", href: SITE.social.facebook, mark: "f" },
-  { label: "AeroLink on Instagram", href: SITE.social.instagram, mark: "ig" },
+  { label: "Royal Prime on X", href: SITE.social.x, mark: "X" },
+  { label: "Royal Prime on LinkedIn", href: SITE.social.linkedin, mark: "in" },
+  { label: "Royal Prime on Facebook", href: SITE.social.facebook, mark: "f" },
+  { label: "Royal Prime on Instagram", href: SITE.social.instagram, mark: "ig" },
 ];
 
 export function Footer() {
@@ -69,9 +69,9 @@ export function Footer() {
       <Container className="py-14 sm:py-16 lg:py-20">
         <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,2.4fr)]">
           <div className="max-w-sm">
-            <Logo tone="light" href="/" />
+            <Logo tone="light" href="/" size="lg" />
             <p className="mt-5 text-sm leading-relaxed text-ink-400">
-              AeroLink Logistics moves express parcels, freight and e-commerce orders worldwide —
+              Royal Prime Logistics moves express parcels, freight and e-commerce orders worldwide —
               with a scan-level tracking record on every consignment.
             </p>
 

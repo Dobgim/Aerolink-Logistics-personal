@@ -43,7 +43,7 @@ export default function ServicesPage() {
                   >
                     <Image
                       src={IMAGES[service.image]}
-                      alt={`${service.name} — AeroLink Logistics`}
+                      alt={`${service.name} — Royal Prime Logistics`}
                       fill
                       sizes="(max-width: 1024px) 100vw, 50vw"
                       quality={68}

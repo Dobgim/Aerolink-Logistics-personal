@@ -10,7 +10,7 @@ import { BLUR_DATA_URL, IMAGES } from "@/lib/constants/images";
 export const metadata: Metadata = {
   title: "Ship Now",
   description:
-    "Book an international collection with AeroLink Logistics — tell us the route, the contents and the weight, and we confirm the rate and a pickup window.",
+    "Book an international collection with Royal Prime Logistics — tell us the route, the contents and the weight, and we confirm the rate and a pickup window.",
   alternates: { canonical: "/shipping" },
 };
 

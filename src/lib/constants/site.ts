@@ -1,12 +1,12 @@
 export const SITE = {
-  name: "AeroLink Logistics",
-  shortName: "AeroLink",
+  name: "Royal Prime Logistics",
+  shortName: "Royal Prime",
   tagline: "Ship Anywhere. Track Everything.",
   description:
-    "Reliable international shipping with real-time shipment tracking from pickup to delivery. AeroLink Logistics moves express parcels, freight and e-commerce orders worldwide.",
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://aerolink-logistics.vercel.app",
-  email: "support@aerolink-logistics.com",
-  salesEmail: "business@aerolink-logistics.com",
+    "Reliable international shipping with real-time shipment tracking from pickup to delivery. Royal Prime Logistics moves express parcels, freight and e-commerce orders worldwide.",
+  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://royal-prime-logistics.vercel.app",
+  email: "support@royalprimelogistics.com",
+  salesEmail: "business@royalprimelogistics.com",
   /*
    * Numbers use the 555-01xx range, which is reserved for fictional use, so
    * this demo brand can never route a call to a real subscriber.
@@ -34,4 +34,4 @@ export const NAV_LINKS = [
   { label: "Support", href: "/contact" },
 ] as const;
 
-export const SAMPLE_TRACKING_NUMBER = "ALX-2026-983456";
+export const SAMPLE_TRACKING_NUMBER = "RPL-2026-983456";

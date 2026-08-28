@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from "next";
 import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import { SITE } from "@/lib/constants/site";
 import { ToastProvider } from "@/components/ui/toast";
+
+const BRAND_LOGO = process.env.NEXT_PUBLIC_BRAND_LOGO ?? "";
 import "./globals.css";
 
 const inter = Inter({
@@ -48,10 +50,24 @@ export const metadata: Metadata = {
     title: `${SITE.name} — ${SITE.tagline}`,
     description: SITE.description,
   },
-  icons: {
-    icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
-    apple: [{ url: "/icon.svg" }],
-  },
+  /*
+   * The brand artwork doubles as the favicon and touch icon once it is dropped
+   * into `public/brand/` — `next.config.ts` sets the variable only when the
+   * file actually exists, so we never ship a broken icon reference.
+   */
+  icons: BRAND_LOGO
+    ? {
+        icon: [
+          { url: BRAND_LOGO, type: "image/png" },
+          { url: "/icon.svg", type: "image/svg+xml" },
+        ],
+        shortcut: [{ url: BRAND_LOGO }],
+        apple: [{ url: BRAND_LOGO }],
+      }
+    : {
+        icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
+        apple: [{ url: "/icon.svg" }],
+      },
   robots: { index: true, follow: true },
 };
 

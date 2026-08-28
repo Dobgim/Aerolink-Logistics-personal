@@ -91,7 +91,7 @@ export async function POST(request: NextRequest) {
       description:
         shipment.status === "pending"
           ? "Shipment created. Awaiting pickup from the sender address."
-          : "Shipment created and entered into the AeroLink network.",
+          : "Shipment created and entered into the Royal Prime network.",
       event_date: new Date().toISOString(),
     });
 

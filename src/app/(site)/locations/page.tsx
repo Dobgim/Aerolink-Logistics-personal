@@ -9,7 +9,7 @@ import { BLUR_DATA_URL, IMAGES } from "@/lib/constants/images";
 export const metadata: Metadata = {
   title: "Find a Service Point",
   description:
-    "Search for the nearest AeroLink service point by city, town or address, and see how our gateway and delivery network is laid out.",
+    "Search for the nearest Royal Prime service point by city, town or address, and see how our gateway and delivery network is laid out.",
   alternates: { canonical: "/locations" },
 };
 

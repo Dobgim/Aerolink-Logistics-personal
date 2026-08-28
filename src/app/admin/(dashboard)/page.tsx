@@ -34,7 +34,7 @@ export default async function AdminOverviewPage() {
         <div>
           <h1 className="text-2xl font-extrabold text-ink-900 sm:text-3xl">Operations overview</h1>
           <p className="mt-1.5 text-sm text-ink-600">
-            Everything currently moving through the AeroLink network.
+            Everything currently moving through the Royal Prime network.
           </p>
         </div>
         <ButtonLink

@@ -6,6 +6,7 @@ import { CoverageSection } from "@/components/home/coverage-section";
 import { RouteSection } from "@/components/home/route-section";
 import { WhyChoose } from "@/components/home/why-choose";
 import { BusinessSection } from "@/components/home/business-section";
+import { BusinessResource } from "@/components/home/business-resource";
 import { SupportSection } from "@/components/home/support-section";
 import { SITE } from "@/lib/constants/site";
 
@@ -25,6 +26,7 @@ export default function HomePage() {
       <RouteSection />
       <WhyChoose />
       <BusinessSection />
+      <BusinessResource />
       <SupportSection />
     </>
   );

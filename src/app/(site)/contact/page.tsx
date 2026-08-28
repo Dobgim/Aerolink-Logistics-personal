@@ -9,7 +9,7 @@ import { SITE } from "@/lib/constants/site";
 export const metadata: Metadata = {
   title: "Contact Support",
   description:
-    "Reach the AeroLink Logistics support team about a shipment, a quote, customs paperwork or a business account.",
+    "Reach the Royal Prime Logistics support team about a shipment, a quote, customs paperwork or a business account.",
   alternates: { canonical: "/contact" },
 };
 

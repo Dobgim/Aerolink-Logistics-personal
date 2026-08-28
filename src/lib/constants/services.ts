@@ -67,7 +67,7 @@ export const SERVICES: ServiceDefinition[] = [
     tagline: "Delivery solutions for online businesses.",
     description:
       "Pick, pack and ship straight from your storefront. Branded tracking pages, delivery notifications and a returns flow your customers will actually use.",
-    image: "parcels",
+    image: "packingBox",
     transit: "3–6 business days",
     weightRange: "Up to 30 kg per parcel",
     features: [

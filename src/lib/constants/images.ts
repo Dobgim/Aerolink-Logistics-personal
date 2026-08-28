@@ -4,7 +4,7 @@
  * resolve; `next.config.ts` whitelists the host for the Image optimizer.
  *
  * No third-party courier branding, logos or copyrighted assets are used
- * anywhere in this project — the AeroLink identity is entirely original.
+ * anywhere in this project — the Royal Prime identity is entirely original.
  */
 const U = "https://images.unsplash.com/photo-";
 
@@ -33,6 +33,8 @@ export const IMAGES = {
   business: `${U}1600880292203-757bb62b4baf${SRC}`,
   handshake: `${U}1521791136064-7986c2920216${SRC}`,
   doorstep: `${U}1614018453562-77f6180ce036${SRC}`,
+  courierDolly: `${U}1622291971462-54df74f26585${SRC}`,
+  packingBox: `${U}1617909517054-64d4958be1c9${SRC}`,
 } as const;
 
 export type ImageKey = keyof typeof IMAGES;

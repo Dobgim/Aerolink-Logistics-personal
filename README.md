@@ -1,10 +1,10 @@
-# AeroLink Logistics
+# Royal Prime Logistics
 
 An international shipment tracking platform: a public marketing and tracking site, a real
 data/API layer, and a secure operations dashboard for creating shipments and posting
 tracking scans.
 
-AeroLink is an original fictional brand. No third-party courier's logo, branding, copy or
+Royal Prime is an original fictional brand. No third-party courier's logo, branding, copy or
 imagery is used anywhere in this project.
 
 ---
@@ -36,14 +36,14 @@ npm run dev
 
 Open <http://localhost:3000>.
 
-Sample tracking number: **`ALX-2026-983456`**
+Sample tracking number: **`RPL-2026-983456`**
 
 Demo admin sign-in at `/admin/login`:
 
 | Account       | Email                    | Password        |
 | ------------- | ------------------------ | --------------- |
-| Administrator | `admin@aerolink.demo`    | `AeroLink#2026` |
-| Customer      | `customer@aerolink.demo` | `Customer#2026` |
+| Administrator | `admin@royalprime.demo`    | `RoyalPrime#2026` |
+| Customer      | `customer@royalprime.demo` | `Customer#2026` |
 
 ---
 
@@ -167,7 +167,7 @@ list.
 ## How tracking works end to end
 
 1. An administrator creates a shipment (`POST /api/shipments`). A tracking number is issued
-   in the `ALX-YYYY-NNNNNN` format if one is not supplied, and the first scan is written
+   in the `RPL-YYYY-NNNNNN` format if one is not supplied, and the first scan is written
    immediately so the customer timeline is never empty.
 2. As the shipment moves, the administrator posts a scan (`POST /api/tracking-events`). That
    single request writes the event and — unless the operator opts out — advances the
@@ -178,7 +178,7 @@ list.
    layer, showing status, route, estimated delivery, the map and the full scan history.
 
 Tracking numbers are normalised before lookup, so `alx2026983456`, `ALX 2026 983456` and
-`ALX-2026-983456` all resolve to the same shipment.
+`RPL-2026-983456` all resolve to the same shipment.
 
 ---
 
@@ -220,5 +220,5 @@ npm run type-check  # tsc --noEmit
 ## Credits
 
 Photography from [Unsplash](https://unsplash.com) under the Unsplash License (free for
-commercial use, no attribution required). The AeroLink mark, wordmark, palette, typography
+commercial use, no attribution required). The Royal Prime mark, wordmark, palette, typography
 and all written copy are original to this project.

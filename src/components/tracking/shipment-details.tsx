@@ -124,7 +124,7 @@ export function ShipmentDetails({ shipment }: { shipment: Shipment }) {
             }
           />
           <p className="rounded-lg bg-ink-50 p-3 text-xs leading-relaxed text-ink-600">
-            Contact details are shown in part for privacy. Sign in to your AeroLink account to see
+            Contact details are shown in part for privacy. Sign in to your Royal Prime account to see
             the full record for shipments on your account.
           </p>
         </dl>

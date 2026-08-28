@@ -6,7 +6,7 @@ import type { UserRole } from "@/types";
 import { getServerSupabase, getAdminSupabase } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 
-export const SESSION_COOKIE = "aerolink_session";
+export const SESSION_COOKIE = "royalprime_session";
 
 export interface SessionUser {
   id: string;
@@ -21,20 +21,20 @@ export interface SessionUser {
  * verified by Supabase.
  */
 export const DEMO_ACCOUNTS: Record<string, { password: string; user: SessionUser }> = {
-  "admin@aerolink.demo": {
-    password: "AeroLink#2026",
+  "admin@royalprime.demo": {
+    password: "RoyalPrime#2026",
     user: {
       id: "usr_admin",
-      email: "admin@aerolink.demo",
-      name: "AeroLink Operations",
+      email: "admin@royalprime.demo",
+      name: "Royal Prime Operations",
       role: "admin",
     },
   },
-  "customer@aerolink.demo": {
+  "customer@royalprime.demo": {
     password: "Customer#2026",
     user: {
       id: "usr_customer",
-      email: "customer@aerolink.demo",
+      email: "customer@royalprime.demo",
       name: "Camille Moreau",
       role: "customer",
     },
@@ -42,7 +42,7 @@ export const DEMO_ACCOUNTS: Record<string, { password: string; user: SessionUser
 };
 
 function secret(): string {
-  return process.env.AUTH_SECRET ?? "aerolink-development-secret-change-me";
+  return process.env.AUTH_SECRET ?? "royalprime-development-secret-change-me";
 }
 
 function sign(payload: string): string {

@@ -1,7 +1,17 @@
+import fs from "node:fs";
 import path from "node:path";
 import type { NextConfig } from "next";
 
+/*
+ * The brand artwork is optional. Detecting it at build time means the header and
+ * footer never request a file that is not there — a missing asset would 404 on
+ * every page load and keep the network from ever going idle.
+ */
+const BRAND_LOGO = "/brand/royal-prime-logo.png";
+const brandLogoExists = fs.existsSync(path.join(process.cwd(), "public", BRAND_LOGO));
+
 const nextConfig: NextConfig = {
+  env: { NEXT_PUBLIC_BRAND_LOGO: brandLogoExists ? BRAND_LOGO : "" },
   reactStrictMode: true,
   poweredByHeader: false,
   // Pin the workspace root so Turbopack ignores unrelated lockfiles further up

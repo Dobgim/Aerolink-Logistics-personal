@@ -103,7 +103,7 @@ export function ShipmentMap({
 
           for (const point of points) {
             const el = document.createElement("div");
-            el.className = "aerolink-marker";
+            el.className = "royalprime-marker";
             el.setAttribute("aria-label", `${MARKER_LABELS[point.kind]}: ${point.label}`);
             el.style.cssText = [
               "width:20px",
@@ -112,7 +112,7 @@ export function ShipmentMap({
               "border:3px solid #fff",
               `background:${MARKER_COLORS[point.kind]}`,
               "box-shadow:0 2px 8px rgba(11,14,20,.35)",
-              point.kind === "current" ? "animation:aerolink-pulse 2.4s ease-out infinite" : "",
+              point.kind === "current" ? "animation:royalprime-pulse 2.4s ease-out infinite" : "",
             ].join(";");
 
             new mapboxgl.Marker({ element: el })
@@ -163,7 +163,7 @@ export function ShipmentMap({
 
   return (
     <div className={cn("relative overflow-hidden rounded-xl bg-ink-100", className)}>
-      <style>{`@keyframes aerolink-pulse{0%{box-shadow:0 0 0 0 rgba(251,92,17,.55)}70%{box-shadow:0 0 0 14px rgba(251,92,17,0)}100%{box-shadow:0 0 0 0 rgba(251,92,17,0)}}`}</style>
+      <style>{`@keyframes royalprime-pulse{0%{box-shadow:0 0 0 0 rgba(251,92,17,.55)}70%{box-shadow:0 0 0 14px rgba(251,92,17,0)}100%{box-shadow:0 0 0 0 rgba(251,92,17,0)}}`}</style>
       <div ref={containerRef} className={cn("w-full", heightClassName)} />
       <MapLegend className="pointer-events-none absolute bottom-3 left-3" points={points} />
     </div>

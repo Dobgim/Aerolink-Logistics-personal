@@ -1,5 +1,5 @@
 -- ============================================================================
--- AeroLink Logistics — database schema
+-- Royal Prime Logistics — database schema
 -- Run this in the Supabase SQL editor (or `supabase db push`) before setting
 -- NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_ANON_KEY in the app.
 -- ============================================================================

@@ -46,7 +46,7 @@ export async function getShipmentByTracking(
 
   const db = getAdminSupabase();
   if (db) {
-    // Compare on a normalised form so `alx2026983456` matches `ALX-2026-983456`.
+    // Compare on a normalised form so `alx2026983456` matches `RPL-2026-983456`.
     const { data, error } = await db
       .from("shipments")
       .select("*, tracking_events(*)")

@@ -133,10 +133,10 @@ export function formatWeight(kg: number): string {
   return `${kg.toLocaleString("en-US", { maximumFractionDigits: 2 })} kg`;
 }
 
-/** `ALX-2026-938456` */
+/** `RPL-2026-938456` */
 export function generateTrackingNumber(year = new Date().getUTCFullYear()): string {
   const digits = Math.floor(100000 + Math.random() * 900000);
-  return `ALX-${year}-${digits}`;
+  return `RPL-${year}-${digits}`;
 }
 
 /** Users paste `alx 2026 938456`, `alx2026938456`, etc. Normalise all of them. */
