@@ -41,6 +41,11 @@ do $$ begin
   create type payment_status as enum ('unpaid', 'paid', 'refunded');
 exception when duplicate_object then null; end $$;
 
+do $$ begin
+  create type cargo_type as enum
+    ('package', 'car', 'van', 'truck', 'motorbike', 'plane', 'ship');
+exception when duplicate_object then null; end $$;
+
 -- ---------------------------------------------------------------------------
 -- users — profile mirror of auth.users, and the only place role is stored
 -- ---------------------------------------------------------------------------
@@ -71,20 +76,16 @@ create table if not exists public.shipments (
   sender_company       text,
   sender_email         text,
   sender_phone         text,
-  sender_address       text,
   sender_city          text,
   sender_state         text,
-  sender_postcode      text,
   sender_country       text,
 
   receiver_name        text            not null,
   receiver_company     text,
   receiver_email       text,
   receiver_phone       text,
-  receiver_address     text,
   receiver_city        text,
   receiver_state       text,
-  receiver_postcode    text,
   receiver_country     text,
 
   origin_country       text            not null,
@@ -96,6 +97,11 @@ create table if not exists public.shipments (
   packages             integer         not null default 1 check (packages > 0),
   shipping_service     shipping_service not null default 'express_international',
   goods_description    text,
+  -- Drawn moving along the route. A photo wins; otherwise the vehicle icon.
+  cargo_image_url      text,
+  cargo_type           cargo_type      not null default 'package',
+
+  ship_date            timestamptz,
 
   currency             text            not null default 'USD',
   declared_value       numeric(12, 2)  not null default 0 check (declared_value >= 0),

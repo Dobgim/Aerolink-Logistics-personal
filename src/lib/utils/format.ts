@@ -123,6 +123,14 @@ export function toInputDateTime(value?: string | null): string {
   return date.toISOString().slice(0, 16);
 }
 
+/** `2026-09-02T17:00:00Z` -> `17:00` for a time input. */
+export function toInputTime(value?: string | null): string {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  return date.toISOString().slice(11, 16);
+}
+
 export function toInputDate(value?: string | null): string {
   if (!value) return "";
   const date = new Date(value);

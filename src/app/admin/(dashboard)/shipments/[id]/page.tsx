@@ -8,7 +8,7 @@ import { DeleteShipment } from "@/components/admin/delete-shipment";
 import { ShipmentForm } from "@/components/admin/shipment-form";
 import { TrackingTimeline } from "@/components/tracking/timeline";
 import { ShipmentMap } from "@/components/map/shipment-map";
-import { mapPointsFor } from "@/components/tracking/shipment-view";
+import { cargoFor, mapPointsFor } from "@/components/tracking/shipment-view";
 import { getShipment } from "@/lib/data/repository";
 import {
   SERVICE_LABELS,
@@ -37,6 +37,7 @@ export default async function AdminShipmentDetailPage({ params }: PageProps) {
   if (!shipment) notFound();
 
   const points = mapPointsFor(shipment);
+  const cargo = cargoFor(shipment, points);
 
   return (
     <div className="space-y-6">
@@ -124,6 +125,7 @@ export default async function AdminShipmentDetailPage({ params }: PageProps) {
             </div>
             <ShipmentMap
               points={points}
+              cargo={cargo}
               className="rounded-none"
               heightClassName="h-64 sm:h-72"
             />

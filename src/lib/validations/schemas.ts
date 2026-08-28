@@ -29,6 +29,16 @@ export const shippingServiceSchema = z.enum([
   "door_to_door",
 ]);
 
+export const cargoTypeSchema = z.enum([
+  "package",
+  "car",
+  "van",
+  "truck",
+  "motorbike",
+  "plane",
+  "ship",
+]);
+
 export const supportStatusSchema = z.enum(["open", "in_progress", "resolved", "closed"]);
 
 const optionalEmail = z
@@ -65,7 +75,7 @@ export const paymentStatusSchema = z.enum(["unpaid", "paid", "refunded"]);
 
 const money = z.coerce.number().min(0).max(10_000_000).default(0);
 
-export const createShipmentSchema = z.object({
+const shipmentFields = z.object({
   tracking_number: z
     .string()
     .trim()
@@ -79,20 +89,16 @@ export const createShipmentSchema = z.object({
   sender_company: optionalText,
   sender_email: optionalEmail,
   sender_phone: optionalText,
-  sender_address: optionalLongText,
   sender_city: optionalText,
   sender_state: optionalText,
-  sender_postcode: optionalText,
   sender_country: optionalText,
 
   receiver_name: z.string().trim().min(2, "Receiver name is required").max(120),
   receiver_company: optionalText,
   receiver_email: optionalEmail,
   receiver_phone: optionalText,
-  receiver_address: optionalLongText,
   receiver_city: optionalText,
   receiver_state: optionalText,
-  receiver_postcode: optionalText,
   receiver_country: optionalText,
   origin_country: z.string().trim().min(2, "Origin country is required").max(80),
   origin_city: z.string().trim().min(2, "Origin city is required").max(80),
@@ -103,6 +109,24 @@ export const createShipmentSchema = z.object({
   packages: z.coerce.number().int().min(1, "At least one package").max(10_000),
   shipping_service: shippingServiceSchema,
   goods_description: optionalLongText,
+  /* Accepts a hosted URL or a pasted data: URI from an uploaded file. */
+  cargo_image_url: z
+    .string()
+    .trim()
+    .max(2_000_000)
+    .or(z.literal(""))
+    .transform((v) => (v === "" ? null : v))
+    .nullable()
+    .optional(),
+  cargo_type: cargoTypeSchema.default("package"),
+
+  ship_date: z
+    .string()
+    .trim()
+    .or(z.literal(""))
+    .transform((v) => (v ? new Date(v).toISOString() : null))
+    .nullable()
+    .optional(),
 
   currency: z.string().trim().length(3, "Use a 3-letter currency code").default("USD"),
   declared_value: money,
@@ -118,13 +142,41 @@ export const createShipmentSchema = z.object({
   estimated_delivery: z
     .string()
     .trim()
-    .min(1, "Estimated delivery is required")
-    .transform((v) => new Date(v).toISOString()),
+    .min(1, "Expected delivery date is required"),
+  /** `HH:MM`; combined with the date above into one instant. */
+  expected_delivery_time: z
+    .string()
+    .trim()
+    .regex(/^([01]\d|2[0-3]):[0-5]\d$/, "Use a 24-hour time like 14:30")
+    .or(z.literal(""))
+    .optional(),
 });
 
-export const updateShipmentSchema = createShipmentSchema.partial().extend({
-  tracking_number: z.string().trim().min(6).max(32).optional(),
-});
+/**
+ * The form collects the expected delivery as a date and a time; the record
+ * stores one instant. `17:00` is the default close of the delivery window.
+ */
+function combineDeliveryDateAndTime<
+  T extends { estimated_delivery?: string; expected_delivery_time?: string },
+>(input: T): T {
+  if (!input.estimated_delivery) return input;
+  const time = input.expected_delivery_time || "17:00";
+  return {
+    ...input,
+    estimated_delivery: new Date(`${input.estimated_delivery}T${time}:00Z`).toISOString(),
+  };
+}
+
+export const createShipmentSchema = shipmentFields.transform(combineDeliveryDateAndTime);
+
+/*
+ * Both schemas are built from the same field set, so an update accepts exactly
+ * what a create does — just with everything optional.
+ */
+export const updateShipmentSchema = shipmentFields
+  .partial()
+  .extend({ tracking_number: z.string().trim().min(6).max(32).optional() })
+  .transform(combineDeliveryDateAndTime);
 
 export const trackingEventSchema = z.object({
   shipment_id: z.string().trim().min(1, "Shipment is required"),

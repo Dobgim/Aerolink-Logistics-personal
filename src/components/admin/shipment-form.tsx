@@ -17,13 +17,19 @@ import {
   generateOrderNumber,
   generateTrackingNumber,
   toInputDate,
+  toInputTime,
 } from "@/lib/utils/format";
-import type { PackageType, PaymentStatus, ShipmentStatus } from "@/types";
+import type { CargoType, PackageType, PaymentStatus, ShipmentStatus } from "@/types";
+import { CARGO_LABELS } from "@/lib/utils/progress";
 
 const PACKAGE_TYPES = Object.keys(PACKAGE_LABELS) as PackageType[];
 const STATUSES = Object.keys(STATUS_LABELS) as ShipmentStatus[];
 const PAYMENT_STATUSES = Object.keys(PAYMENT_STATUS_LABELS) as PaymentStatus[];
 const CURRENCIES = ["USD", "EUR", "GBP", "CAD", "AUD", "CHF"];
+const CARGO_TYPES = Object.keys(CARGO_LABELS) as CargoType[];
+
+/** Uploaded artwork is inlined as a data URI so there is no storage bucket to run. */
+const MAX_CARGO_IMAGE_BYTES = 600_000;
 
 interface Props {
   shipment?: Shipment;
@@ -50,6 +56,30 @@ export function ShipmentForm({ shipment }: Props) {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [trackingNumber, setTrackingNumber] = useState(shipment?.tracking_number ?? "");
   const [orderNumber, setOrderNumber] = useState(shipment?.order_number ?? "");
+  const [cargoImage, setCargoImage] = useState(shipment?.cargo_image_url ?? "");
+  const [cargoError, setCargoError] = useState<string | null>(null);
+
+  function onCargoFile(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      setCargoError("Choose an image file.");
+      return;
+    }
+    if (file.size > MAX_CARGO_IMAGE_BYTES) {
+      setCargoError(
+        `That image is ${(file.size / 1024 / 1024).toFixed(1)} MB. Use one under 600 KB.`,
+      );
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      setCargoError(null);
+      setCargoImage(String(reader.result ?? ""));
+    };
+    reader.onerror = () => setCargoError("That file could not be read.");
+    reader.readAsDataURL(file);
+  }
   const [originCountry, setOriginCountry] = useState(shipment?.origin_country ?? "United States");
   const [destinationCountry, setDestinationCountry] = useState(
     shipment?.destination_country ?? "France",
@@ -190,15 +220,8 @@ export function ShipmentForm({ shipment }: Props) {
               />
             </div>
 
-            <Input
-              name="sender_address"
-              label="Street address"
-              placeholder="Building number and street"
-              defaultValue={shipment?.sender_address ?? ""}
-              error={errors.sender_address}
-            />
 
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-5 sm:grid-cols-3">
               <Input
                 name="sender_city"
                 label="City"
@@ -210,12 +233,6 @@ export function ShipmentForm({ shipment }: Props) {
                 label="State / region"
                 defaultValue={shipment?.sender_state ?? ""}
                 error={errors.sender_state}
-              />
-              <Input
-                name="sender_postcode"
-                label="Postcode"
-                defaultValue={shipment?.sender_postcode ?? ""}
-                error={errors.sender_postcode}
               />
               <Input
                 name="sender_country"
@@ -261,15 +278,8 @@ export function ShipmentForm({ shipment }: Props) {
               />
             </div>
 
-            <Input
-              name="receiver_address"
-              label="Street address"
-              placeholder="Building number and street"
-              defaultValue={shipment?.receiver_address ?? ""}
-              error={errors.receiver_address}
-            />
 
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-5 sm:grid-cols-3">
               <Input
                 name="receiver_city"
                 label="City"
@@ -281,12 +291,6 @@ export function ShipmentForm({ shipment }: Props) {
                 label="State / region"
                 defaultValue={shipment?.receiver_state ?? ""}
                 error={errors.receiver_state}
-              />
-              <Input
-                name="receiver_postcode"
-                label="Postcode"
-                defaultValue={shipment?.receiver_postcode ?? ""}
-                error={errors.receiver_postcode}
               />
               <Input
                 name="receiver_country"
@@ -491,6 +495,81 @@ export function ShipmentForm({ shipment }: Props) {
             </p>
           </Fieldset>
 
+          <Fieldset legend="What is moving on the map">
+            <p className="-mt-1 text-sm text-ink-600">
+              Upload a photo of the actual goods and that image travels along the route on the
+              customer&apos;s map. With no photo, the vehicle below is used instead.
+            </p>
+
+            <div className="grid gap-5 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start">
+              <div className="grid gap-2">
+                <label
+                  htmlFor="cargo-image-file"
+                  className="text-sm font-semibold text-ink-700"
+                >
+                  Photo of the goods
+                </label>
+                <input
+                  id="cargo-image-file"
+                  type="file"
+                  accept="image/*"
+                  onChange={onCargoFile}
+                  className="block w-full rounded-xl border border-ink-300 p-2 text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-brand-50 file:px-3 file:py-1.5 file:text-sm file:font-semibold file:text-brand-800 hover:file:bg-brand-100"
+                />
+                <p className="text-xs text-ink-500">
+                  PNG or JPG under 600 KB — a photo of the exact car, machine or parcel.
+                </p>
+                {cargoError ? (
+                  <p role="alert" className="text-sm font-medium text-red-600">
+                    {cargoError}
+                  </p>
+                ) : null}
+              </div>
+
+              <div className="flex items-end gap-3">
+                <div className="flex size-24 items-center justify-center overflow-hidden rounded-xl border border-ink-200 bg-ink-50">
+                  {cargoImage ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={cargoImage}
+                      alt="Preview of the goods"
+                      className="size-full object-contain"
+                    />
+                  ) : (
+                    <span className="px-2 text-center text-xs text-ink-500">No photo</span>
+                  )}
+                </div>
+                {cargoImage ? (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setCargoImage("");
+                      setCargoError(null);
+                    }}
+                  >
+                    Remove
+                  </Button>
+                ) : null}
+              </div>
+            </div>
+
+            <input type="hidden" name="cargo_image_url" value={cargoImage} />
+
+            <Select
+              name="cargo_type"
+              label="Vehicle shown when there is no photo"
+              defaultValue={shipment?.cargo_type ?? "package"}
+              error={errors.cargo_type}
+            >
+              {CARGO_TYPES.map((c) => (
+                <option key={c} value={c}>
+                  {CARGO_LABELS[c]}
+                </option>
+              ))}
+            </Select>
+          </Fieldset>
+
           <Fieldset legend="Status and delivery">
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
               <Select
@@ -514,12 +593,28 @@ export function ShipmentForm({ shipment }: Props) {
                 error={errors.current_location}
               />
               <Input
+                name="ship_date"
+                type="date"
+                label="Ship date"
+                hint="When it leaves the origin"
+                defaultValue={toInputDate(shipment?.ship_date) || undefined}
+                error={errors.ship_date}
+              />
+              <Input
                 name="estimated_delivery"
                 type="date"
-                label="Estimated delivery"
+                label="Expected delivery date"
                 required
                 defaultValue={toInputDate(shipment?.estimated_delivery) || undefined}
                 error={errors.estimated_delivery}
+              />
+              <Input
+                name="expected_delivery_time"
+                type="time"
+                label="Expected delivery time"
+                hint="24-hour, UTC. Defaults to 17:00."
+                defaultValue={toInputTime(shipment?.estimated_delivery)}
+                error={errors.expected_delivery_time}
               />
               <div className="grid grid-cols-2 gap-3">
                 <Input

@@ -8,6 +8,8 @@ import { TrackingTimeline } from "./timeline";
 import { ShipmentDetails } from "./shipment-details";
 import { ShipmentMap, type MapPoint } from "@/components/map/shipment-map";
 import { geocodeCity } from "@/lib/constants/geo";
+import { CARGO_LABELS, isMoving, progressFor } from "@/lib/utils/progress";
+import type { CargoOnRoute } from "@/components/map/map-shared";
 
 /** Builds origin → current → destination markers, skipping anything unplaceable. */
 export function mapPointsFor(shipment: ShipmentWithEvents): MapPoint[] {
@@ -43,8 +45,32 @@ export function mapPointsFor(shipment: ShipmentWithEvents): MapPoint[] {
   return points;
 }
 
+/**
+ * What travels the route, and how far along it currently sits.
+ *
+ * When the shipment has a real current location the package is placed exactly
+ * on it, so the map agrees with the latest scan. Only when there is no such
+ * scan does it fall back to a position derived from the status.
+ */
+export function cargoFor(shipment: ShipmentWithEvents, points: MapPoint[]): CargoOnRoute {
+  const currentIndex = points.findIndex((p) => p.kind === "current");
+  const progress =
+    currentIndex > 0 && points.length > 1
+      ? currentIndex / (points.length - 1)
+      : progressFor(shipment.status);
+
+  return {
+    progress,
+    moving: isMoving(shipment.status),
+    cargoType: shipment.cargo_type,
+    imageUrl: shipment.cargo_image_url,
+    label: shipment.goods_description ?? CARGO_LABELS[shipment.cargo_type],
+  };
+}
+
 export function ShipmentView({ shipment }: { shipment: ShipmentWithEvents }) {
   const points = mapPointsFor(shipment);
+  const cargo = cargoFor(shipment, points);
 
   return (
     <div className="space-y-5">
@@ -63,7 +89,7 @@ export function ShipmentView({ shipment }: { shipment: ShipmentWithEvents }) {
               </p>
             ) : null}
           </div>
-          <ShipmentMap points={points} className="rounded-none" />
+          <ShipmentMap points={points} cargo={cargo} className="rounded-none" />
         </Card>
 
         <Card id="history" className="scroll-mt-28">

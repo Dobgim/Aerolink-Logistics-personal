@@ -41,14 +41,25 @@ export interface PartyDetails {
   company: string | null;
   email: string | null;
   phone: string | null;
-  address: string | null;
   city: string | null;
   state: string | null;
-  postcode: string | null;
   country: string | null;
 }
 
 export type PaymentStatus = "unpaid" | "paid" | "refunded";
+
+/**
+ * What is drawn moving along the route. When the admin uploads a photo of the
+ * actual goods that is used instead; otherwise this picks the vehicle icon.
+ */
+export type CargoType =
+  | "package"
+  | "car"
+  | "van"
+  | "truck"
+  | "motorbike"
+  | "plane"
+  | "ship";
 
 export interface Shipment {
   id: string;
@@ -61,20 +72,16 @@ export interface Shipment {
   sender_company: string | null;
   sender_email: string | null;
   sender_phone: string | null;
-  sender_address: string | null;
   sender_city: string | null;
   sender_state: string | null;
-  sender_postcode: string | null;
   sender_country: string | null;
 
   receiver_name: string;
   receiver_company: string | null;
   receiver_email: string | null;
   receiver_phone: string | null;
-  receiver_address: string | null;
   receiver_city: string | null;
   receiver_state: string | null;
-  receiver_postcode: string | null;
   receiver_country: string | null;
 
   origin_country: string;
@@ -86,6 +93,13 @@ export interface Shipment {
   packages: number;
   shipping_service: ShippingService;
   goods_description: string | null;
+  /** Photo of the actual goods, shown as the moving marker when set. */
+  cargo_image_url: string | null;
+  /** Fallback marker when there is no photo. */
+  cargo_type: CargoType;
+
+  /** When the shipment leaves the origin. */
+  ship_date: string | null;
 
   /* Commercial totals, all in `currency`. */
   currency: string;
@@ -99,6 +113,7 @@ export interface Shipment {
   current_location: string | null;
   latitude: number | null;
   longitude: number | null;
+  /** Expected delivery, stored as one instant; the form edits date and time. */
   estimated_delivery: string | null;
   created_at: string;
   updated_at: string;

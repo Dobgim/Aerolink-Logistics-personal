@@ -1,3 +1,4 @@
+import QRCode from "qrcode";
 import type { PartyDetails, Shipment } from "@/types";
 import { SITE } from "@/lib/constants/site";
 import {
@@ -6,9 +7,11 @@ import {
   SERVICE_LABELS,
   formatDate,
   formatMoney,
+  formatTime,
   formatWeight,
   invoiceTotal,
 } from "@/lib/utils/format";
+import { CARGO_LABELS } from "@/lib/utils/progress";
 
 /** Pulls the sender or receiver out of the flat shipment row. */
 export function partyFrom(shipment: Shipment, side: "sender" | "receiver"): PartyDetails {
@@ -17,16 +20,14 @@ export function partyFrom(shipment: Shipment, side: "sender" | "receiver"): Part
     company: shipment[`${side}_company`],
     email: shipment[`${side}_email`],
     phone: shipment[`${side}_phone`],
-    address: shipment[`${side}_address`],
     city: shipment[`${side}_city`],
     state: shipment[`${side}_state`],
-    postcode: shipment[`${side}_postcode`],
     country: shipment[`${side}_country`],
   };
 }
 
 function PartyBlock({ label, party }: { label: string; party: PartyDetails }) {
-  const locality = [party.city, party.state, party.postcode].filter(Boolean).join(", ");
+  const locality = [party.city, party.state].filter(Boolean).join(", ");
 
   return (
     <div>
@@ -40,7 +41,6 @@ function PartyBlock({ label, party }: { label: string; party: PartyDetails }) {
         ) : null}
 
         <div className="mt-2 space-y-0.5 text-sm leading-relaxed text-ink-600">
-          {party.address ? <p>{party.address}</p> : null}
           {locality ? <p>{locality}</p> : null}
           {party.country ? <p>{party.country}</p> : null}
         </div>
@@ -75,11 +75,23 @@ function Row({ label, value }: { label: string; value: React.ReactNode }) {
  * A commercial invoice / waybill for one shipment. Rendered on the server so
  * the full record is available, and styled to print cleanly on A4 or Letter.
  */
-export function InvoiceDocument({ shipment }: { shipment: Shipment }) {
+export async function InvoiceDocument({ shipment }: { shipment: Shipment }) {
   const sender = partyFrom(shipment, "sender");
   const receiver = partyFrom(shipment, "receiver");
   const total = invoiceTotal(shipment);
   const paid = shipment.payment_status === "paid";
+
+  /*
+   * Scanning the code opens this shipment's tracking page. Rendered to an
+   * inline SVG on the server so the invoice prints without a network fetch.
+   */
+  const trackingUrl = `${SITE.url}/tracking?number=${encodeURIComponent(shipment.tracking_number)}`;
+  const qrSvg = await QRCode.toString(trackingUrl, {
+    type: "svg",
+    margin: 0,
+    errorCorrectionLevel: "M",
+    color: { dark: "#151a22", light: "#00000000" },
+  });
 
   return (
     <article className="mx-auto w-full max-w-4xl bg-white p-6 text-ink-900 shadow-card print:max-w-none print:p-0 print:shadow-none sm:p-10">
@@ -116,15 +128,28 @@ export function InvoiceDocument({ shipment }: { shipment: Shipment }) {
             </div>
           </dl>
 
-          <p
-            className={`mt-4 inline-block rounded-md px-2.5 py-1 text-xs font-bold uppercase tracking-[0.1em] ring-1 ring-inset ${
-              paid
-                ? "bg-emerald-50 text-emerald-800 ring-emerald-300"
-                : "bg-amber-50 text-amber-800 ring-amber-300"
-            }`}
-          >
-            {PAYMENT_STATUS_LABELS[shipment.payment_status]}
-          </p>
+          <div className="mt-4 flex items-start gap-4 sm:justify-end">
+            <p
+              className={`inline-block rounded-md px-2.5 py-1 text-xs font-bold uppercase tracking-[0.1em] ring-1 ring-inset ${
+                paid
+                  ? "bg-emerald-50 text-emerald-800 ring-emerald-300"
+                  : "bg-amber-50 text-amber-800 ring-amber-300"
+              }`}
+            >
+              {PAYMENT_STATUS_LABELS[shipment.payment_status]}
+            </p>
+
+            <figure className="shrink-0 text-center">
+              <div
+                aria-hidden
+                className="size-24 [&>svg]:size-full"
+                dangerouslySetInnerHTML={{ __html: qrSvg }}
+              />
+              <figcaption className="mt-1 text-[0.625rem] font-semibold uppercase tracking-[0.1em] text-ink-500">
+                Scan to track
+              </figcaption>
+            </figure>
+          </div>
         </div>
       </header>
 
@@ -145,6 +170,7 @@ export function InvoiceDocument({ shipment }: { shipment: Shipment }) {
             <Row label="Package type" value={PACKAGE_LABELS[shipment.package_type]} />
             <Row label="Pieces" value={shipment.packages} />
             <Row label="Total weight" value={formatWeight(shipment.weight)} />
+            <Row label="Contents" value={CARGO_LABELS[shipment.cargo_type]} />
           </dl>
         </div>
 
@@ -161,7 +187,11 @@ export function InvoiceDocument({ shipment }: { shipment: Shipment }) {
               label="Destination"
               value={`${shipment.destination_city}, ${shipment.destination_country}`}
             />
-            <Row label="Estimated delivery" value={formatDate(shipment.estimated_delivery)} />
+            <Row label="Ship date" value={formatDate(shipment.ship_date)} />
+            <Row
+              label="Expected delivery"
+              value={`${formatDate(shipment.estimated_delivery)} · ${formatTime(shipment.estimated_delivery)}`}
+            />
             <Row
               label="Declared value"
               value={formatMoney(shipment.declared_value, shipment.currency)}

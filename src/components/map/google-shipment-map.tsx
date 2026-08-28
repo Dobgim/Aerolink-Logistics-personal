@@ -6,11 +6,15 @@ import { googleMapId, loadGoogleMaps } from "@/lib/maps/google-loader";
 import {
   MARKER_COLORS,
   MARKER_LABELS,
+  cargoMarkerElement,
+  pointAtProgress,
+  type CargoOnRoute,
   type MapPoint,
 } from "./map-shared";
 
 interface Props {
   points: MapPoint[];
+  cargo?: CargoOnRoute | null;
   className?: string;
   heightClassName?: string;
   connect?: boolean;
@@ -64,6 +68,7 @@ export function GoogleShipmentMap({
   className,
   heightClassName = "h-72 sm:h-96 lg:h-[28rem]",
   connect = true,
+  cargo = null,
   onFailure,
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -75,6 +80,7 @@ export function GoogleShipmentMap({
 
     let cancelled = false;
     let retryTimer: number | undefined;
+    let frame: number | undefined;
     const cleanups: (() => void)[] = [];
 
     void (async () => {
@@ -164,7 +170,45 @@ export function GoogleShipmentMap({
         const infoWindow = new InfoWindow();
         cleanups.push(() => infoWindow.close());
 
+        if (cargo && points.length > 1) {
+          const path = points.map((p) => ({ lat: p.lat, lng: p.lng }));
+          const cargoMarker = new AdvancedMarkerElement({
+            map,
+            position: pointAtProgress(path, 0),
+            content: cargoMarkerElement(cargo),
+            title: cargo.label,
+            zIndex: 5,
+          });
+
+          /*
+           * The package eases out from the origin to the distance it has
+           * actually covered, then holds there. A held shipment — pending,
+           * delayed, in customs — is placed without animation, because
+           * movement would misrepresent its state.
+           */
+          if (cargo.moving) {
+            const start = performance.now();
+            const durationMs = 2600;
+            const step = (now: number) => {
+              if (cancelled) return;
+              const t = Math.min((now - start) / durationMs, 1);
+              const eased = 1 - Math.pow(1 - t, 3);
+              cargoMarker.position = pointAtProgress(path, cargo.progress * eased);
+              if (t < 1) frame = requestAnimationFrame(step);
+            };
+            frame = requestAnimationFrame(step);
+          } else {
+            cargoMarker.position = pointAtProgress(path, cargo.progress);
+          }
+
+          cleanups.push(() => {
+            cargoMarker.map = null;
+          });
+        }
+
         for (const point of points) {
+          // The cargo marker already shows the current position.
+          if (cargo && point.kind === "current") continue;
           const marker = new AdvancedMarkerElement({
             map,
             position: { lat: point.lat, lng: point.lng },
@@ -214,9 +258,10 @@ export function GoogleShipmentMap({
     return () => {
       cancelled = true;
       if (retryTimer) window.clearTimeout(retryTimer);
+      if (frame) cancelAnimationFrame(frame);
       for (const cleanup of cleanups) cleanup();
     };
-  }, [points, connect, onFailure, attempt]);
+  }, [points, connect, cargo, onFailure, attempt]);
 
   return (
     <div className={cn("relative overflow-hidden bg-ink-100", className)}>

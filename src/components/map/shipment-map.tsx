@@ -9,6 +9,8 @@ import {
   MARKER_COLORS,
   MARKER_ICONS,
   MARKER_LABELS,
+  pointAtProgress,
+  type CargoOnRoute,
   type MapPoint,
 } from "./map-shared";
 
@@ -21,6 +23,8 @@ interface ShipmentMapProps {
   heightClassName?: string;
   /** Draw a route line through the points in order. Off for network views. */
   connect?: boolean;
+  /** The package itself, drawn travelling the route. */
+  cargo?: CargoOnRoute | null;
 }
 
 /**
@@ -38,6 +42,7 @@ export function ShipmentMap({
   className,
   heightClassName = "h-72 sm:h-96 lg:h-[28rem]",
   connect = true,
+  cargo = null,
 }: ShipmentMapProps) {
   const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
   const containerRef = useRef<HTMLDivElement>(null);
@@ -145,6 +150,7 @@ export function ShipmentMap({
         className={className}
         heightClassName={heightClassName}
         connect={connect}
+        cargo={cargo}
         onFailure={onGoogleFailure}
       />
     );
@@ -157,6 +163,7 @@ export function ShipmentMap({
         className={className}
         heightClassName={heightClassName}
         connect={connect}
+        cargo={cargo}
       />
     );
   }
@@ -194,10 +201,12 @@ function SchematicMap({
   className,
   heightClassName,
   connect,
+  cargo,
 }: Required<Pick<ShipmentMapProps, "points">> & {
   className?: string;
   heightClassName?: string;
   connect?: boolean;
+  cargo?: CargoOnRoute | null;
 }) {
   if (points.length === 0) {
     return (
@@ -236,7 +245,10 @@ function SchematicMap({
 
   // Too many pins to label without overlapping — show dots only.
   const dense = points.length > 8;
+  // The cargo marker already stands on the current position.
+  const pins = cargo ? points.filter((p) => p.kind !== "current") : points;
   const projected = points.map((p) => ({ ...p, ...project(p) }));
+  const projectedPins = pins.map((p) => ({ ...p, ...project(p) }));
   const path = projected
     .map((p, i) => (i === 0 ? `M${p.x},${p.y}` : `L${p.x},${p.y}`))
     .join(" ");
@@ -271,7 +283,66 @@ function SchematicMap({
           />
         ) : null}
 
-        {projected.map((p) => (
+        {cargo && projected.length > 1 ? (
+          (() => {
+            const at = pointAtProgress(
+              projected.map((p) => ({ lat: p.y, lng: p.x })),
+              cargo.progress,
+            );
+            return (
+              <g>
+                <circle cx={at.lng} cy={at.lat} r="21" fill="#fb5c11" fillOpacity="0.18">
+                  {cargo.moving ? (
+                    <animate
+                      attributeName="r"
+                      values="16;27;16"
+                      dur="2.4s"
+                      repeatCount="indefinite"
+                    />
+                  ) : null}
+                </circle>
+                <circle
+                  cx={at.lng}
+                  cy={at.lat}
+                  r="13"
+                  fill="#fb5c11"
+                  stroke="#fff"
+                  strokeWidth="3"
+                />
+                {cargo.imageUrl ? (
+                  <>
+                    <defs>
+                      <clipPath id="cargo-clip">
+                        <circle cx={at.lng} cy={at.lat} r="12" />
+                      </clipPath>
+                    </defs>
+                    <image
+                      href={cargo.imageUrl}
+                      x={at.lng - 12}
+                      y={at.lat - 12}
+                      width="24"
+                      height="24"
+                      preserveAspectRatio="xMidYMid slice"
+                      clipPath="url(#cargo-clip)"
+                    />
+                  </>
+                ) : null}
+                <text
+                  x={at.lng}
+                  y={at.lat - 26}
+                  textAnchor="middle"
+                  fill="#ffffff"
+                  fontSize="11"
+                  fontWeight="700"
+                >
+                  {cargo.label}
+                </text>
+              </g>
+            );
+          })()
+        ) : null}
+
+        {projectedPins.map((p) => (
           <g key={`${p.kind}-${p.label}-${p.x}-${p.y}`}>
             {p.kind === "current" ? (
               <circle cx={p.x} cy={p.y} r="16" fill="#fb5c11" fillOpacity="0.2">
