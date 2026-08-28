@@ -61,10 +61,15 @@ export function loadGoogleMaps(): Promise<typeof google.maps> {
       return;
     }
 
+    /*
+     * Generous, because this is a third-party script on whatever connection
+     * the visitor happens to have. Nulling the cached promise on timeout lets
+     * a later mount try again rather than failing for the rest of the session.
+     */
     const timeout = window.setTimeout(() => {
       loaderPromise = null;
-      reject(new Error("Google Maps did not initialise within 20s"));
-    }, 20_000);
+      reject(new Error("Google Maps did not initialise within 30s"));
+    }, 30_000);
 
     const settle = () => {
       window.clearTimeout(timeout);
