@@ -68,11 +68,13 @@ export function GoogleShipmentMap({
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [ready, setReady] = useState(false);
+  const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
     if (!containerRef.current || points.length === 0) return;
 
     let cancelled = false;
+    let retryTimer: number | undefined;
     const cleanups: (() => void)[] = [];
 
     void (async () => {
@@ -143,6 +145,22 @@ export function GoogleShipmentMap({
           cleanups.push(() => route.setMap(null));
         }
 
+        /*
+         * Clear the placeholder when tiles have actually painted, not when the
+         * Map object is constructed — constructing it succeeds long before
+         * anything is visible, and clearing early leaves an empty grey box.
+         * The timer is a floor, so a slow tile fetch cannot pin the overlay up
+         * over a map that is already usable.
+         */
+        const revealTimer = window.setTimeout(() => setReady(true), 8000);
+        cleanups.push(() => window.clearTimeout(revealTimer));
+
+        const tilesListener = maps.event.addListenerOnce(map, "tilesloaded", () => {
+          window.clearTimeout(revealTimer);
+          setReady(true);
+        });
+        cleanups.push(() => tilesListener.remove());
+
         const infoWindow = new InfoWindow();
         cleanups.push(() => infoWindow.close());
 
@@ -174,21 +192,31 @@ export function GoogleShipmentMap({
             marker.map = null;
           });
         }
-
-        setReady(true);
       } catch (error) {
         // Surface the reason — a silent fallback makes a bad key, a disabled
         // API and a billing problem all look identical.
-        console.warn("[map] Google Maps unavailable, falling back:", error);
-        if (!cancelled) onFailure?.();
+        console.warn("[map] Google Maps unavailable:", error);
+        if (cancelled) return;
+
+        /*
+         * Loading a third-party script is the least reliable thing this page
+         * does. One stall used to downgrade the whole session to the schematic
+         * view, so give it a second attempt before falling back.
+         */
+        if (attempt < 1) {
+          retryTimer = window.setTimeout(() => setAttempt((a) => a + 1), 1500);
+          return;
+        }
+        onFailure?.();
       }
     })();
 
     return () => {
       cancelled = true;
+      if (retryTimer) window.clearTimeout(retryTimer);
       for (const cleanup of cleanups) cleanup();
     };
-  }, [points, connect, onFailure]);
+  }, [points, connect, onFailure, attempt]);
 
   return (
     <div className={cn("relative overflow-hidden bg-ink-100", className)}>

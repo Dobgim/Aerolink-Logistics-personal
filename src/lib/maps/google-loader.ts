@@ -49,6 +49,15 @@ export function loadGoogleMaps(): Promise<typeof google.maps> {
     return Promise.reject(new Error("NEXT_PUBLIC_GOOGLE_MAPS_API_KEY is not set"));
   }
 
+  /*
+   * A failed attempt leaves its script tag behind. Clearing it means a retry
+   * injects a fresh one rather than waiting on a callback that will never
+   * fire from the dead tag.
+   */
+  const dropStaleScript = () => {
+    document.querySelectorAll("script[data-google-maps]").forEach((el) => el.remove());
+  };
+
   loaderPromise = new Promise((resolve, reject) => {
     if (typeof window === "undefined") {
       reject(new Error("Google Maps can only load in the browser"));
@@ -62,14 +71,15 @@ export function loadGoogleMaps(): Promise<typeof google.maps> {
     }
 
     /*
-     * Generous, because this is a third-party script on whatever connection
-     * the visitor happens to have. Nulling the cached promise on timeout lets
-     * a later mount try again rather than failing for the rest of the session.
+     * Kept short enough that two attempts plus the fallback still resolve in
+     * about half a minute. Nulling the cached promise on timeout lets the
+     * retry — and any later mount — try again with a fresh script tag.
      */
     const timeout = window.setTimeout(() => {
       loaderPromise = null;
-      reject(new Error("Google Maps did not initialise within 30s"));
-    }, 30_000);
+      dropStaleScript();
+      reject(new Error("Google Maps did not initialise within 15s"));
+    }, 15_000);
 
     const settle = () => {
       window.clearTimeout(timeout);
@@ -87,6 +97,7 @@ export function loadGoogleMaps(): Promise<typeof google.maps> {
       authFailed = true;
       loaderPromise = null;
       window.clearTimeout(timeout);
+      dropStaleScript();
       reject(new Error("Google Maps rejected the API key"));
     };
 
@@ -117,6 +128,7 @@ export function loadGoogleMaps(): Promise<typeof google.maps> {
     script.addEventListener("error", () => {
       loaderPromise = null;
       window.clearTimeout(timeout);
+      dropStaleScript();
       reject(new Error("Failed to load the Google Maps script"));
     });
 
