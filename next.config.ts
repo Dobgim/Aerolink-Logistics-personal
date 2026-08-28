@@ -8,10 +8,16 @@ import type { NextConfig } from "next";
  * every page load and keep the network from ever going idle.
  */
 const BRAND_LOGO = "/brand/royal-prime-logo.png";
-const brandLogoExists = fs.existsSync(path.join(process.cwd(), "public", BRAND_LOGO));
+const BRAND_EMBLEM = "/brand/emblem-64.png";
+const exists = (p: string) => fs.existsSync(path.join(process.cwd(), "public", p));
+const brandLogoExists = exists(BRAND_LOGO);
+const brandEmblemExists = exists(BRAND_EMBLEM);
 
 const nextConfig: NextConfig = {
-  env: { NEXT_PUBLIC_BRAND_LOGO: brandLogoExists ? BRAND_LOGO : "" },
+  env: {
+    NEXT_PUBLIC_BRAND_LOGO: brandLogoExists ? BRAND_LOGO : "",
+    NEXT_PUBLIC_BRAND_EMBLEM: brandEmblemExists ? BRAND_EMBLEM : "",
+  },
   reactStrictMode: true,
   poweredByHeader: false,
   // Pin the workspace root so Turbopack ignores unrelated lockfiles further up

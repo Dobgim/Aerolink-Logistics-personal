@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils/cn";
  * header and footer are never empty and nothing 404s on every page load.
  */
 const LOGO_FILE = process.env.NEXT_PUBLIC_BRAND_LOGO ?? "";
+const EMBLEM_FILE = process.env.NEXT_PUBLIC_BRAND_EMBLEM ?? "";
 
 /** Fallback mark: a departing flight path breaking through a tracking node. */
 export function LogoMark({ className }: { className?: string }) {
@@ -68,7 +69,7 @@ export function Logo({
    * keeps the wordmark beside it.
    */
   const hasArtwork = Boolean(LOGO_FILE);
-  const box = size === "lg" ? 320 : 160;
+  const hasEmblem = Boolean(EMBLEM_FILE);
 
   return (
     <Link
@@ -79,41 +80,52 @@ export function Logo({
       )}
       aria-label="Royal Prime Logistics — home"
     >
-      {hasArtwork ? (
+      {hasArtwork && size === "lg" ? (
         /*
-         * The artwork is navy-and-gold on transparency, so on a dark surface
-         * the navy lettering would disappear. A light plate keeps it legible
-         * without needing a separate reversed-out logo file.
+         * The full stacked lockup, on a light plate. The artwork is
+         * navy-and-gold on transparency, so on a dark surface the navy
+         * lettering would otherwise disappear.
          */
         <span
           className={cn(
             "inline-flex shrink-0 items-center justify-center",
-            tone === "light" && "rounded-xl bg-white/95 p-2 shadow-sm",
+            tone === "light" && "rounded-xl bg-white/95 p-2.5 shadow-sm",
           )}
         >
           <Image
             src={LOGO_FILE}
             alt="Royal Prime Logistics"
-            width={box}
-            height={box}
+            width={512}
+            height={512}
             priority
             unoptimized
-            className={cn(
-              "w-auto object-contain",
-              size === "lg" ? "h-20 sm:h-24" : "h-12 sm:h-14",
-            )}
+            className="h-24 w-auto object-contain sm:h-28"
           />
         </span>
+      ) : hasEmblem ? (
+        /*
+         * A header is horizontal, so the stacked lockup is split: the emblem
+         * carries the mark and the name is typeset beside it. Shrinking the
+         * whole lockup to nav height would render its wordmark unreadable.
+         */
+        <Image
+          src={EMBLEM_FILE}
+          alt=""
+          width={64}
+          height={64}
+          priority
+          unoptimized
+          className="size-10 shrink-0 object-contain sm:size-11"
+        />
       ) : (
         <LogoMark className={size === "lg" ? "size-16" : "size-9"} />
       )}
 
-      {showWordmark && !hasArtwork ? (
+      {showWordmark && size !== "lg" ? (
         <span className="flex flex-col leading-none">
           <span
             className={cn(
-              "font-display font-extrabold tracking-[-0.03em]",
-              size === "lg" ? "text-xl sm:text-2xl" : "text-[1.0625rem] sm:text-lg",
+              "font-display text-[1.0625rem] font-extrabold tracking-[-0.03em] sm:text-lg",
               tone === "dark" ? "text-ink-900" : "text-white",
             )}
           >

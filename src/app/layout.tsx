@@ -51,18 +51,18 @@ export const metadata: Metadata = {
     description: SITE.description,
   },
   /*
-   * The brand artwork doubles as the favicon and touch icon once it is dropped
-   * into `public/brand/` — `next.config.ts` sets the variable only when the
-   * file actually exists, so we never ship a broken icon reference.
+   * Icons use the crown-and-monogram emblem rather than the full lockup: the
+   * three lines of wordmark are unreadable at 32px. The emblem files are
+   * generated from the same artwork and only referenced when it is present.
    */
   icons: BRAND_LOGO
     ? {
         icon: [
-          { url: BRAND_LOGO, type: "image/png" },
-          { url: "/icon.svg", type: "image/svg+xml" },
+          { url: "/brand/emblem-32.png", type: "image/png", sizes: "32x32" },
+          { url: "/brand/emblem-64.png", type: "image/png", sizes: "64x64" },
         ],
-        shortcut: [{ url: BRAND_LOGO }],
-        apple: [{ url: BRAND_LOGO }],
+        shortcut: [{ url: "/brand/emblem-64.png" }],
+        apple: [{ url: "/brand/emblem-180.png", sizes: "180x180" }],
       }
     : {
         icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
