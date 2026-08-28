@@ -446,6 +446,16 @@ export function ShipmentForm({ shipment }: Props) {
                 defaultValue={shipment?.declared_value ?? 0}
                 error={errors.declared_value}
               />
+              <Input
+                name="amount_due"
+                type="number"
+                min="0"
+                step="0.01"
+                label="Amount to pay"
+                hint="What the receiver owes"
+                defaultValue={shipment?.amount_due ?? 0}
+                error={errors.amount_due}
+              />
               <Select
                 name="payment_status"
                 label="Payment status"
@@ -460,38 +470,16 @@ export function ShipmentForm({ shipment }: Props) {
               </Select>
             </div>
 
-            <div className="grid gap-5 sm:grid-cols-3">
-              <Input
-                name="freight_cost"
-                type="number"
-                min="0"
-                step="0.01"
-                label="Freight charge"
-                defaultValue={shipment?.freight_cost ?? 0}
-                error={errors.freight_cost}
-              />
-              <Input
-                name="insurance_cost"
-                type="number"
-                min="0"
-                step="0.01"
-                label="Insurance"
-                defaultValue={shipment?.insurance_cost ?? 0}
-                error={errors.insurance_cost}
-              />
-              <Input
-                name="tax_amount"
-                type="number"
-                min="0"
-                step="0.01"
-                label="Duties and taxes"
-                defaultValue={shipment?.tax_amount ?? 0}
-                error={errors.tax_amount}
-              />
-            </div>
+            <Input
+              name="payment_description"
+              label="Amount to pay — description"
+              placeholder="e.g. Balance due on delivery, payable to the courier in cash"
+              hint="Printed on the invoice under the amount, so the receiver knows what it covers"
+              defaultValue={shipment?.payment_description ?? ""}
+              error={errors.payment_description}
+            />
             <p className="text-xs text-ink-500">
-              Freight, insurance and taxes are summed into the invoice total — the invoice never
-              adds them up by hand.
+              The amount below is what the receiver sees as the invoice total.
             </p>
           </Fieldset>
 
@@ -586,13 +574,6 @@ export function ShipmentForm({ shipment }: Props) {
                 ))}
               </Select>
               <Input
-                name="current_location"
-                label="Current location"
-                placeholder="New York, United States"
-                defaultValue={shipment?.current_location ?? ""}
-                error={errors.current_location}
-              />
-              <Input
                 name="ship_date"
                 type="date"
                 label="Ship date"
@@ -616,29 +597,10 @@ export function ShipmentForm({ shipment }: Props) {
                 defaultValue={toInputTime(shipment?.estimated_delivery)}
                 error={errors.expected_delivery_time}
               />
-              <div className="grid grid-cols-2 gap-3">
-                <Input
-                  name="latitude"
-                  type="number"
-                  step="any"
-                  label="Latitude"
-                  hint="Optional"
-                  defaultValue={shipment?.latitude ?? ""}
-                  error={errors.latitude}
-                />
-                <Input
-                  name="longitude"
-                  type="number"
-                  step="any"
-                  label="Longitude"
-                  hint="Optional"
-                  defaultValue={shipment?.longitude ?? ""}
-                  error={errors.longitude}
-                />
-              </div>
             </div>
             <p className="text-xs text-ink-500">
-              Leave the coordinates blank and we place the map marker from the city name.
+              The shipment starts at its origin and moves as you post tracking scans — each scan
+              carries its own location and coordinates.
             </p>
           </Fieldset>
         </div>

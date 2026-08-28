@@ -104,9 +104,10 @@ export interface Shipment {
   /* Commercial totals, all in `currency`. */
   currency: string;
   declared_value: number;
-  freight_cost: number;
-  insurance_cost: number;
-  tax_amount: number;
+  /** What the receiver has to pay on this shipment. Shown as the invoice total. */
+  amount_due: number;
+  /** Explains to the receiver what the amount above covers. */
+  payment_description: string | null;
   payment_status: PaymentStatus;
 
   status: ShipmentStatus;

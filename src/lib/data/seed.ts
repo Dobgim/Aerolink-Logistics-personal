@@ -536,9 +536,10 @@ export function buildSeed(): SeedData {
 
       currency: "USD",
       declared_value: bp.money.declared,
-      freight_cost: bp.money.freight,
-      insurance_cost: bp.money.insurance,
-      tax_amount: bp.money.tax,
+      // The demo blueprints still carry a breakdown; the receiver is shown one figure.
+      amount_due: Number((bp.money.freight + bp.money.insurance + bp.money.tax).toFixed(2)),
+      payment_description:
+        "Freight, insurance and destination duties, payable before the shipment is released.",
       payment_status: bp.paid ? "paid" : "unpaid",
 
       status: bp.status,

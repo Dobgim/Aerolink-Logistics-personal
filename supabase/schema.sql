@@ -105,9 +105,10 @@ create table if not exists public.shipments (
 
   currency             text            not null default 'USD',
   declared_value       numeric(12, 2)  not null default 0 check (declared_value >= 0),
-  freight_cost         numeric(12, 2)  not null default 0 check (freight_cost >= 0),
-  insurance_cost       numeric(12, 2)  not null default 0 check (insurance_cost >= 0),
-  tax_amount           numeric(12, 2)  not null default 0 check (tax_amount >= 0),
+  -- What the receiver owes, and the admin's note on what it covers. Shown as
+  -- the invoice total; there is deliberately no line-item breakdown.
+  amount_due           numeric(12, 2)  not null default 0 check (amount_due >= 0),
+  payment_description  text,
   payment_status       payment_status  not null default 'unpaid',
 
   status               shipment_status not null default 'pending',

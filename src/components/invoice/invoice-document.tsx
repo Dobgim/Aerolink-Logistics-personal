@@ -235,18 +235,20 @@ export async function InvoiceDocument({ shipment }: { shipment: Shipment }) {
               </tr>
             </thead>
             <tbody>
-              {[
-                ["Freight charge", shipment.freight_cost],
-                ["Insurance", shipment.insurance_cost],
-                ["Duties and taxes", shipment.tax_amount],
-              ].map(([label, amount]) => (
-                <tr key={String(label)} className="border-b border-ink-200">
-                  <td className="py-2.5 text-sm text-ink-700">{label}</td>
-                  <td className="py-2.5 text-right text-sm font-semibold tabular-nums">
-                    {formatMoney(Number(amount), shipment.currency)}
-                  </td>
-                </tr>
-              ))}
+              <tr className="border-b border-ink-200">
+                <td className="py-2.5 text-sm text-ink-700">
+                  Amount to pay
+                  {/* The admin's own words on what this covers, when they gave any. */}
+                  {shipment.payment_description ? (
+                    <span className="mt-1 block text-xs leading-relaxed text-ink-500">
+                      {shipment.payment_description}
+                    </span>
+                  ) : null}
+                </td>
+                <td className="py-2.5 text-right align-top text-sm font-semibold tabular-nums">
+                  {formatMoney(Number(shipment.amount_due ?? 0), shipment.currency)}
+                </td>
+              </tr>
               <tr>
                 <td className="pt-3 text-base font-extrabold">Total due</td>
                 <td className="pt-3 text-right text-base font-extrabold tabular-nums">
@@ -260,9 +262,9 @@ export async function InvoiceDocument({ shipment }: { shipment: Shipment }) {
 
       <footer className="border-t border-ink-200 pt-5 text-xs leading-relaxed text-ink-500">
         <p>
-          Carriage is subject to the Royal Prime Logistics terms of carriage. Duties and taxes are
-          set by the destination authority and are payable by the receiver unless the sender
-          elected to pay them at booking.
+          Carriage is subject to the Royal Prime Logistics terms of carriage. The amount shown
+          above is the total payable on this shipment; no further charges are raised against the
+          receiver once it is settled.
         </p>
         <p className="mt-2">
           Invoice {shipment.order_number} · Tracking {shipment.tracking_number} · Generated{" "}

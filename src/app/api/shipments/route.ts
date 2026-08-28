@@ -98,9 +98,8 @@ export async function POST(request: NextRequest) {
 
       currency: input.currency,
       declared_value: input.declared_value,
-      freight_cost: input.freight_cost,
-      insurance_cost: input.insurance_cost,
-      tax_amount: input.tax_amount,
+      amount_due: input.amount_due,
+      payment_description: input.payment_description ?? null,
       payment_status: input.payment_status,
 
       status: input.status,

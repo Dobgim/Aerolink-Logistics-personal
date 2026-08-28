@@ -177,17 +177,9 @@ export function formatMoney(amount: number, currency = "USD"): string {
   }
 }
 
-/** Freight + insurance + tax. The invoice never adds these up by hand. */
-export function invoiceTotal(shipment: {
-  freight_cost: number;
-  insurance_cost: number;
-  tax_amount: number;
-}): number {
-  return (
-    Number(shipment.freight_cost ?? 0) +
-    Number(shipment.insurance_cost ?? 0) +
-    Number(shipment.tax_amount ?? 0)
-  );
+/** What the receiver owes. A single figure the admin sets on the shipment. */
+export function invoiceTotal(shipment: { amount_due: number }): number {
+  return Number(shipment.amount_due ?? 0);
 }
 
 /** Users paste `rpl 2026 938456`, `rpl2026938456`, etc. Normalise all of them. */

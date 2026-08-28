@@ -130,9 +130,8 @@ const shipmentFields = z.object({
 
   currency: z.string().trim().length(3, "Use a 3-letter currency code").default("USD"),
   declared_value: money,
-  freight_cost: money,
-  insurance_cost: money,
-  tax_amount: money,
+  amount_due: money,
+  payment_description: optionalText,
   payment_status: paymentStatusSchema.default("unpaid"),
 
   status: shipmentStatusSchema.default("pending"),
