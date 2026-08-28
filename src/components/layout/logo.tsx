@@ -1,12 +1,15 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 import { cn } from "@/lib/utils/cn";
 
 /**
  * Drop the brand artwork at `public/brand/royal-prime-logo.png` and it is used
  * automatically — `next.config.ts` checks for the file at build time and sets
- * this variable. Until the file exists the drawn mark below stands in, so the
- * header and footer are never empty and nothing 404s on every page load.
+ * these variables. Until the files exist the drawn mark below stands in, so
+ * nothing 404s on every page load.
  */
 const LOGO_FILE = process.env.NEXT_PUBLIC_BRAND_LOGO ?? "";
 const EMBLEM_FILE = process.env.NEXT_PUBLIC_BRAND_EMBLEM ?? "";
@@ -55,6 +58,30 @@ interface LogoProps {
   size?: "sm" | "lg";
 }
 
+function Wordmark({ tone }: { tone: "dark" | "light" }) {
+  return (
+    <span className="flex flex-col leading-none">
+      <span
+        className={cn(
+          "font-display text-[1.0625rem] font-extrabold tracking-[-0.03em] sm:text-lg",
+          tone === "dark" ? "text-ink-900" : "text-white",
+        )}
+      >
+        Royal
+        <span className={tone === "dark" ? "text-brand-700" : "text-brand-200"}>Prime</span>
+      </span>
+      <span
+        className={cn(
+          "mt-0.5 text-[0.6875rem] font-bold uppercase tracking-[0.2em]",
+          tone === "dark" ? "text-ink-500" : "text-brand-200/80",
+        )}
+      >
+        Logistics
+      </span>
+    </span>
+  );
+}
+
 export function Logo({
   className,
   tone = "dark",
@@ -63,13 +90,17 @@ export function Logo({
   size = "sm",
 }: LogoProps) {
   /*
-   * The supplied artwork already contains the wordmark and strapline, so when
-   * it is present it stands alone — pairing it with the text lockup would print
-   * the company name twice. The drawn fallback carries no text, so that variant
-   * keeps the wordmark beside it.
+   * A raster logo can still fail to arrive on a flaky mobile connection, and a
+   * browser will not retry it — it just leaves a broken-image icon in the
+   * layout. If that happens we fall back to the drawn mark and the typeset
+   * name, so the brand always renders as something.
    */
-  const hasArtwork = Boolean(LOGO_FILE);
-  const hasEmblem = Boolean(EMBLEM_FILE);
+  const [artworkFailed, setArtworkFailed] = useState(false);
+
+  const isFooter = size === "lg";
+  const useFullLockup = Boolean(LOGO_FILE) && isFooter && !artworkFailed;
+  const useEmblem = Boolean(EMBLEM_FILE) && !isFooter && !artworkFailed;
+  const useDrawnMark = !useFullLockup && !useEmblem;
 
   return (
     <Link
@@ -80,7 +111,7 @@ export function Logo({
       )}
       aria-label="Royal Prime Logistics — home"
     >
-      {hasArtwork && size === "lg" ? (
+      {useFullLockup ? (
         /*
          * The full stacked lockup, on a light plate. The artwork is
          * navy-and-gold on transparency, so on a dark surface the navy
@@ -95,14 +126,22 @@ export function Logo({
           <Image
             src={LOGO_FILE}
             alt="Royal Prime Logistics"
-            width={512}
-            height={512}
-            priority
+            width={288}
+            height={288}
+            /*
+             * The footer sits below the fold, so this loads lazily and is not
+             * preloaded. Marking it `priority` had a phone fetching it in
+             * competition with the hero.
+             */
+            loading="lazy"
             unoptimized
+            onError={() => setArtworkFailed(true)}
             className="h-24 w-auto object-contain sm:h-28"
           />
         </span>
-      ) : hasEmblem ? (
+      ) : null}
+
+      {useEmblem ? (
         /*
          * A header is horizontal, so the stacked lockup is split: the emblem
          * carries the mark and the name is typeset beside it. Shrinking the
@@ -115,33 +154,15 @@ export function Logo({
           height={64}
           priority
           unoptimized
+          onError={() => setArtworkFailed(true)}
           className="size-10 shrink-0 object-contain sm:size-11"
         />
-      ) : (
-        <LogoMark className={size === "lg" ? "size-16" : "size-9"} />
-      )}
-
-      {showWordmark && size !== "lg" ? (
-        <span className="flex flex-col leading-none">
-          <span
-            className={cn(
-              "font-display text-[1.0625rem] font-extrabold tracking-[-0.03em] sm:text-lg",
-              tone === "dark" ? "text-ink-900" : "text-white",
-            )}
-          >
-            Royal
-            <span className={tone === "dark" ? "text-brand-700" : "text-brand-200"}>Prime</span>
-          </span>
-          <span
-            className={cn(
-              "mt-0.5 text-[0.6875rem] font-bold uppercase tracking-[0.2em]",
-              tone === "dark" ? "text-ink-500" : "text-brand-200/80",
-            )}
-          >
-            Logistics
-          </span>
-        </span>
       ) : null}
+
+      {useDrawnMark ? <LogoMark className={isFooter ? "size-16" : "size-9"} /> : null}
+
+      {/* The full lockup already contains the name; everything else needs it. */}
+      {showWordmark && !useFullLockup ? <Wordmark tone={tone} /> : null}
     </Link>
   );
 }
