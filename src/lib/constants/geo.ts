@@ -1,3 +1,5 @@
+import { countryCoordinates } from "./countries";
+
 export interface CityGeo {
   city: string;
   lat: number;
@@ -221,7 +223,15 @@ export function geocodeCity(
     ? `${city.trim().toLowerCase()}|${country.trim().toLowerCase()}`
     : city.trim().toLowerCase();
   const hit = CITY_INDEX.get(key) ?? CITY_INDEX.get(city.trim().toLowerCase());
-  return hit ? { lat: hit.lat, lng: hit.lng } : null;
+  if (hit) return { lat: hit.lat, lng: hit.lng };
+
+  /*
+   * A shipment can name any city on earth, but the table only knows the ones
+   * on the served network. Rather than dropping the point — which would leave
+   * the route with a missing end and no distance to travel — fall back to the
+   * country itself, so the marker lands in the right place on the map.
+   */
+  return countryCoordinates(country);
 }
 
 export const COUNTRY_NAMES = ALL_MARKETS.map((c) => c.country);

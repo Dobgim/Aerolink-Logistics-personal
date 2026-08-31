@@ -9,7 +9,8 @@ import { Card } from "@/components/ui/primitives";
 import { Input, Select } from "@/components/ui/field";
 import { useToast } from "@/components/ui/toast";
 import { SERVICES } from "@/lib/constants/services";
-import { ALL_MARKETS, citiesForCountry } from "@/lib/constants/geo";
+import { citiesForCountry } from "@/lib/constants/geo";
+import { WORLD_COUNTRIES } from "@/lib/constants/countries";
 import {
   PACKAGE_LABELS,
   PAYMENT_STATUS_LABELS,
@@ -311,9 +312,9 @@ export function ShipmentForm({ shipment }: Props) {
                 onChange={(e) => setOriginCountry(e.target.value)}
                 error={errors.origin_country}
               >
-                {ALL_MARKETS.map((m) => (
-                  <option key={m.code} value={m.country}>
-                    {m.country}
+                {WORLD_COUNTRIES.map((c) => (
+                  <option key={c.code} value={c.country}>
+                    {c.country}
                   </option>
                 ))}
               </Select>
@@ -341,9 +342,9 @@ export function ShipmentForm({ shipment }: Props) {
                 onChange={(e) => setDestinationCountry(e.target.value)}
                 error={errors.destination_country}
               >
-                {ALL_MARKETS.map((m) => (
-                  <option key={m.code} value={m.country}>
-                    {m.country}
+                {WORLD_COUNTRIES.map((c) => (
+                  <option key={c.code} value={c.country}>
+                    {c.country}
                   </option>
                 ))}
               </Select>

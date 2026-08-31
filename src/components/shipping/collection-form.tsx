@@ -9,7 +9,7 @@ import { Card } from "@/components/ui/primitives";
 import { useToast } from "@/components/ui/toast";
 import { EASE } from "@/components/ui/motion";
 import { SERVICES } from "@/lib/constants/services";
-import { ALL_MARKETS } from "@/lib/constants/geo";
+import { WORLD_COUNTRIES } from "@/lib/constants/countries";
 import { PACKAGE_LABELS } from "@/lib/utils/format";
 import type { PackageType } from "@/types";
 
@@ -135,9 +135,9 @@ export function CollectionForm({ defaultService }: { defaultService?: string }) 
           </legend>
           <div className="grid gap-5 sm:grid-cols-2">
             <Select name="origin_country" label="Collection country" required defaultValue="United States">
-              {ALL_MARKETS.map((m) => (
-                <option key={m.code} value={m.country}>
-                  {m.country}
+              {WORLD_COUNTRIES.map((c) => (
+                <option key={c.code} value={c.country}>
+                  {c.country}
                 </option>
               ))}
             </Select>
@@ -145,9 +145,9 @@ export function CollectionForm({ defaultService }: { defaultService?: string }) 
           </div>
           <div className="grid gap-5 sm:grid-cols-2">
             <Select name="destination_country" label="Delivery country" required defaultValue="France">
-              {ALL_MARKETS.map((m) => (
-                <option key={m.code} value={m.country}>
-                  {m.country}
+              {WORLD_COUNTRIES.map((c) => (
+                <option key={c.code} value={c.country}>
+                  {c.country}
                 </option>
               ))}
             </Select>
