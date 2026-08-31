@@ -133,6 +133,16 @@ create index if not exists shipments_route_idx
   on public.shipments (destination_country, destination_city);
 
 -- ---------------------------------------------------------------------------
+-- Tracking numbers are looked up in a normalised form (case-folded, separators
+-- stripped) so "rpl 2026 983456" finds "RPL-2026-983456". Normalising in the
+-- database keeps both sides of the comparison in the same shape.
+alter table public.shipments
+  add column if not exists tracking_normalized text
+  generated always as (upper(regexp_replace(tracking_number, '[^A-Za-z0-9]', '', 'g'))) stored;
+
+create index if not exists shipments_tracking_normalized_idx
+  on public.shipments (tracking_normalized);
+
 -- tracking_events
 -- ---------------------------------------------------------------------------
 create table if not exists public.tracking_events (
