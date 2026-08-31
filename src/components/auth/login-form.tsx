@@ -14,10 +14,9 @@ interface Props {
   redirectTo?: string;
   /** Admin sign-in refuses customer accounts outright. */
   adminOnly?: boolean;
-  showDemoHint?: boolean;
 }
 
-export function LoginForm({ redirectTo = "/", adminOnly = false, showDemoHint = true }: Props) {
+export function LoginForm({ redirectTo = "/", adminOnly = false }: Props) {
   const router = useRouter();
   const toast = useToast();
   const reduce = useReducedMotion();
@@ -129,24 +128,6 @@ export function LoginForm({ redirectTo = "/", adminOnly = false, showDemoHint = 
         {submitting ? "Signing in" : adminOnly ? "Sign in to admin" : "Sign in"}
       </Button>
 
-      {showDemoHint ? (
-        <div className="rounded-xl border border-ink-200 bg-ink-50 p-4 text-xs leading-relaxed text-ink-600">
-          <p className="font-bold text-ink-800">Demo accounts</p>
-          <p className="mt-1.5">
-            Administrator —{" "}
-            <span className="font-mono">admin@royalprime.demo</span> /{" "}
-            <span className="font-mono">RoyalPrime#2026</span>
-          </p>
-          <p className="mt-1">
-            Customer — <span className="font-mono">customer@royalprime.demo</span> /{" "}
-            <span className="font-mono">Customer#2026</span>
-          </p>
-          <p className="mt-2 text-ink-500">
-            These work against the built-in demo backend. Once Supabase credentials are configured,
-            all sign-ins are verified by Supabase Auth instead.
-          </p>
-        </div>
-      ) : null}
     </form>
   );
 }
