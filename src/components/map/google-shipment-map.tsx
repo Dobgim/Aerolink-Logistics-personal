@@ -11,7 +11,7 @@ import {
   type CargoOnRoute,
   type MapPoint,
 } from "./map-shared";
-import { distanceProgress, timeProgress } from "@/lib/utils/progress";
+import { glideDurationMs, timeProgress, travelledProgress } from "@/lib/utils/progress";
 
 interface Props {
   points: MapPoint[];
@@ -82,6 +82,7 @@ export function GoogleShipmentMap({
     let cancelled = false;
     let retryTimer: number | undefined;
     let tick: number | undefined;
+    let frame: number | undefined;
     const cleanups: (() => void)[] = [];
 
     void (async () => {
@@ -182,33 +183,58 @@ export function GoogleShipmentMap({
           });
 
           /*
-           * The package sits where it has genuinely got to: distance covered
-           * since it shipped, at its mode's real speed. A lorry does 60 km/h,
-           * so a 5,500 km run takes about 92 hours and the marker moves a few
-           * pixels an hour — imperceptibly, because that is how fast a lorry
-           * actually crosses a continent. There is no reveal animation: any
-           * dash from the origin would be a speed the shipment never travels.
-           *
-           * A held shipment (pending, delayed, in customs) stops advancing and
-           * stands at the distance it had covered.
+           * Where the package has genuinely got to: distance covered since it
+           * departed, at its mode's real speed, and only while the status says
+           * it is actually moving. Held in customs or delayed, it stands at the
+           * distance it had reached; not yet collected, it waits at the origin.
            */
           const positionNow = () =>
-            distanceProgress(cargo.shipDate, cargo.routeKm, cargo.cargoType) ??
+            travelledProgress(
+              cargo.status,
+              cargo.shipDate,
+              cargo.routeKm,
+              cargo.cargoType,
+              cargo.heldSince,
+            ) ??
             timeProgress(cargo.shipDate, cargo.deliveryDate) ??
             cargo.progress;
 
-          cargoMarker.position = pointAtProgress(path, positionNow());
+          /*
+           * Glide across the journey already travelled instead of appearing
+           * parked on it. At a real 60 km/h the hour-to-hour creep is a
+           * fraction of a pixel, so without this the map looks broken even
+           * when it is right. The resting position is still the honest one —
+           * this only animates the way up to it.
+           */
+          const destination = positionNow();
+          const startedAt = performance.now();
+          const glideMs = glideDurationMs(cargo.cargoType, destination);
 
-          if (cargo.moving) {
+          const step = (frameTime: number) => {
+            if (cancelled) return;
+            const t = Math.min((frameTime - startedAt) / glideMs, 1);
+            // Steady for most of the run, easing only as it settles.
+            const eased = t < 0.9 ? t : 1 - Math.pow(1 - t, 2) * 0.9;
+            cargoMarker.position = pointAtProgress(path, destination * eased);
+
+            if (t < 1) {
+              frame = requestAnimationFrame(step);
+              return;
+            }
+
             /*
-             * Re-read the clock every second so it keeps creeping while the
-             * page is open rather than freezing where it loaded.
+             * Arrived at "now". Keep re-reading the clock so it carries on
+             * creeping in real time rather than freezing where it landed.
              */
-            tick = window.setInterval(() => {
-              if (cancelled) return;
-              cargoMarker.position = pointAtProgress(path, positionNow());
-            }, 1_000);
-          }
+            if (cargo.moving) {
+              tick = window.setInterval(() => {
+                if (cancelled) return;
+                cargoMarker.position = pointAtProgress(path, positionNow());
+              }, 1_000);
+            }
+          };
+
+          frame = requestAnimationFrame(step);
 
           cleanups.push(() => {
             cargoMarker.map = null;
@@ -268,6 +294,7 @@ export function GoogleShipmentMap({
       cancelled = true;
       if (retryTimer) window.clearTimeout(retryTimer);
       if (tick) window.clearInterval(tick);
+      if (frame) cancelAnimationFrame(frame);
       for (const cleanup of cleanups) cleanup();
     };
   }, [points, connect, cargo, onFailure, attempt]);

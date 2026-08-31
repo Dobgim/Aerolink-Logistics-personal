@@ -166,3 +166,74 @@ export function distanceProgress(
 export function travelHours(routeKm: number, cargoType: CargoType): number {
   return routeKm / speedKmhFor(cargoType);
 }
+
+/**
+ * How long the marker takes to glide across the *whole* route on screen.
+ *
+ * This is presentation, not a speed claim: the resting position is the honest
+ * one, and this only animates the journey already travelled so a viewer can
+ * see where the shipment has got to instead of finding the marker parked. The
+ * modes stay in proportion and none of them are quick.
+ */
+const FULL_ROUTE_GLIDE_MS: Record<CargoType, number> = {
+  plane: 11_000,
+  motorbike: 16_000,
+  car: 18_000,
+  van: 19_000,
+  package: 20_000,
+  truck: 24_000,
+  ship: 30_000,
+};
+
+/** Glide time for the fraction actually covered, so the pace stays constant. */
+export function glideDurationMs(cargoType: CargoType, progress: number): number {
+  const full = FULL_ROUTE_GLIDE_MS[cargoType] ?? FULL_ROUTE_GLIDE_MS.package;
+  return Math.max(full * Math.min(Math.max(progress, 0), 1), 1_200);
+}
+
+/**
+ * Where the shipment has actually got to, with the status deciding whether the
+ * clock is running at all.
+ *
+ * Distance alone is not enough: a consignment sitting in customs is not still
+ * covering ground, and one that has not been collected has covered none. So
+ * the clock starts at departure, and stops the moment the shipment is held —
+ * a held package stands at the distance it had reached, which is what the map
+ * is supposed to show.
+ *
+ * Returns null when there is nothing to measure, so the caller can fall back.
+ */
+export function travelledProgress(
+  status: ShipmentStatus,
+  shipDate: string | null | undefined,
+  routeKm: number,
+  cargoType: CargoType,
+  heldSince: string | null | undefined,
+  now: number = Date.now(),
+): number | null {
+  // Not collected yet: it is still standing at the origin.
+  if (status === "pending") return 0;
+  if (status === "delivered") return 1;
+
+  if (!shipDate || !(routeKm > 0)) return null;
+  const departed = new Date(shipDate).getTime();
+  if (Number.isNaN(departed)) return null;
+
+  /*
+   * A moving shipment accrues distance up to this moment. A held one stopped
+   * accruing when it was held — the last scan is when that happened.
+   */
+  let until = now;
+  if (!isMoving(status)) {
+    const held = heldSince ? new Date(heldSince).getTime() : Number.NaN;
+    until = Number.isNaN(held) ? now : held;
+  }
+
+  const hours = Math.max(until - departed, 0) / 3_600_000;
+  return Math.min((hours * speedKmhFor(cargoType)) / routeKm, 1);
+}
+
+/** Kilometres covered so far, for showing the progress in words. */
+export function kmCovered(routeKm: number, progress: number): number {
+  return Math.round(routeKm * Math.min(Math.max(progress, 0), 1));
+}

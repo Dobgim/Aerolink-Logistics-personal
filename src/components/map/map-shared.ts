@@ -1,6 +1,6 @@
 import { Flag, MapPin, Navigation, type LucideIcon } from "lucide-react";
 
-import type { CargoType } from "@/types";
+import type { CargoType, ShipmentStatus } from "@/types";
 import { CARGO_ICONS, haversineKm } from "@/lib/utils/progress";
 
 export interface MapPoint {
@@ -53,6 +53,10 @@ export interface CargoOnRoute {
   speedKmh: number;
   /** Length of the drawn route in km, used with the speed to place the marker. */
   routeKm: number;
+  /** Decides whether the clock runs: moving accrues distance, held does not. */
+  status: ShipmentStatus;
+  /** When the shipment was last scanned, i.e. when a held one stopped. */
+  heldSince: string | null;
 }
 
 /**

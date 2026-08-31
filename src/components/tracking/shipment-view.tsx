@@ -10,7 +10,7 @@ import { ShipmentMap, type MapPoint } from "@/components/map/shipment-map";
 import { geocodeCity } from "@/lib/constants/geo";
 import {
   CARGO_LABELS,
-  distanceProgress,
+  travelledProgress,
   isMoving,
   progressFor,
   routeLengthKm,
@@ -67,6 +67,8 @@ export function cargoFor(shipment: ShipmentWithEvents, points: MapPoint[]): Carg
 
   const routeKm = routeLengthKm(points);
   const cargoType = shipment.cargo_type;
+  // The newest scan is when a held shipment stopped covering ground.
+  const heldSince = shipment.tracking_events?.[0]?.event_date ?? null;
 
   return {
     /*
@@ -75,7 +77,13 @@ export function cargoFor(shipment: ShipmentWithEvents, points: MapPoint[]): Carg
      * re-derives this as the page stays open, so it is only a starting point.
      */
     progress:
-      distanceProgress(shipment.ship_date, routeKm, cargoType) ??
+      travelledProgress(
+        shipment.status,
+        shipment.ship_date,
+        routeKm,
+        cargoType,
+        heldSince,
+      ) ??
       timeProgress(shipment.ship_date, shipment.estimated_delivery) ??
       byScan ??
       progressFor(shipment.status),
@@ -83,6 +91,8 @@ export function cargoFor(shipment: ShipmentWithEvents, points: MapPoint[]): Carg
     deliveryDate: shipment.estimated_delivery,
     speedKmh: speedKmhFor(cargoType),
     routeKm,
+    status: shipment.status,
+    heldSince,
     moving: isMoving(shipment.status),
     cargoType: shipment.cargo_type,
     imageUrl: shipment.cargo_image_url,
