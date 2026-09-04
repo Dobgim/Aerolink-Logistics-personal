@@ -9,7 +9,7 @@ export const SITE = {
   salesEmail: "business@royalprimelogistics.com",
   /*
    * Numbers use the 555-01xx range, which is reserved for fictional use, so
-   * this demo brand can never route a call to a real subscriber.
+   * this fictional brand can never route a call to a real subscriber.
    */
   phone: "+1 (212) 555-0142",
   phoneHref: "+12125550142",

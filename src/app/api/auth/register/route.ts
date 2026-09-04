@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Demo backend: create the customer locally and start a session.
+    // Local backend: create the customer locally and start a session.
     const db = store();
     if (db.users.some((u) => u.email.toLowerCase() === input.email.toLowerCase())) {
       return badRequest("An account already exists for that email address");

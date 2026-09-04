@@ -1,5 +1,5 @@
 -- ============================================================================
--- AeroLink Logistics — demo seed data
+-- AeroLink Logistics — sample seed data
 -- Run AFTER schema.sql. Safe to re-run: every insert is idempotent.
 --
 -- Dates are relative to now(), so the seeded network always looks live.

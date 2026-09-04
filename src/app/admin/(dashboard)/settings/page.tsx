@@ -70,7 +70,7 @@ export default async function AdminSettingsPage() {
               detail={
                 supabase
                   ? "Reads, writes and sign-ins go to your Supabase project."
-                  : "Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to switch off the demo store."
+                  : "Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to switch off the local store."
               }
             />
             <StatusRow
@@ -88,7 +88,7 @@ export default async function AdminSettingsPage() {
               detail={
                 google
                   ? `Live Google maps with advanced markers, using ${
-                      mapId ? `Map ID ${mapId}` : "Google's DEMO_MAP_ID (development only)"
+                      mapId ? `Map ID ${mapId}` : "Google's built-in sample Map ID (development only)"
                     }.`
                   : "Set NEXT_PUBLIC_GOOGLE_MAPS_API_KEY to render live Google maps."
               }
@@ -139,7 +139,7 @@ export default async function AdminSettingsPage() {
                 Active data source
               </dt>
               <dd className="mt-1 text-sm font-semibold text-ink-900">
-                {backendName() === "supabase" ? "Supabase" : "Local demo store"}
+                {backendName() === "supabase" ? "Supabase" : "Local store"}
               </dd>
             </div>
           </dl>

@@ -112,7 +112,7 @@ export function AdminShell({ children, user, backend, openSupportCount }: Props)
         Data source
       </p>
       <p className="mt-1.5 text-xs font-semibold text-white">
-        {backend === "supabase" ? "Supabase (live)" : "Local demo store"}
+        {backend === "supabase" ? "Supabase (live)" : "Local store"}
       </p>
       {backend === "local" ? (
         <p className="mt-1 text-[0.6875rem] leading-relaxed text-ink-400">

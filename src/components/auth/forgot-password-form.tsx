@@ -52,7 +52,7 @@ export function ForgotPasswordForm() {
 
         {!sent.emailDeliveryConfigured ? (
           <p className="mt-4 rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs leading-relaxed text-amber-900">
-            <strong className="font-bold">Demo backend:</strong> no email provider is connected, so
+            <strong className="font-bold">Local backend:</strong> no email provider is connected, so
             no message was actually delivered. Connect Supabase Auth and password resets are sent
             for real.
           </p>

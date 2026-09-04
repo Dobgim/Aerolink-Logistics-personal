@@ -8,7 +8,7 @@ let cached: SupabaseClient | null = null;
 
 /**
  * Browser-side Supabase client. Returns `null` when the project has not been
- * configured yet so callers can fall back to the built-in demo auth flow
+ * configured yet so callers can fall back to the built-in local auth flow
  * instead of throwing during render.
  */
 export function getBrowserSupabase(): SupabaseClient | null {

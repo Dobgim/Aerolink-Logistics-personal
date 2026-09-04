@@ -9,7 +9,7 @@ import { buildSeed, type SeedData } from "./seed";
  * exercisable out of the box. Set the Supabase environment variables and every
  * repository call switches to the real database instead (see `repository.ts`);
  * nothing else in the app changes. The store is intentionally process-local and
- * resets on restart, so it is a development/demo backend, not a production one.
+ * resets on restart, so it is a development-only backend, not a production one.
  */
 declare global {
   var __royalPrimeStore: SeedData | undefined;

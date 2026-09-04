@@ -536,7 +536,7 @@ export function buildSeed(): SeedData {
 
       currency: "USD",
       declared_value: bp.money.declared,
-      // The demo blueprints still carry a breakdown; the receiver is shown one figure.
+      // The sample blueprints still carry a breakdown; the receiver is shown one figure.
       amount_due: Number((bp.money.freight + bp.money.insurance + bp.money.tax).toFixed(2)),
       payment_description:
         "Freight, insurance and destination duties, payable before the shipment is released.",
@@ -598,7 +598,7 @@ export function buildSeed(): SeedData {
     {
       id: "usr_admin",
       name: "Royal Prime Operations",
-      email: "admin@royalprime.demo",
+      email: "admin@royalprime.local",
       phone: "+1 (212) 555-0142",
       role: "admin",
       created_at: iso(-400, 9),
@@ -606,7 +606,7 @@ export function buildSeed(): SeedData {
     {
       id: "usr_customer",
       name: "Camille Moreau",
-      email: "customer@royalprime.demo",
+      email: "customer@royalprime.local",
       phone: "+33 6 12 88 40 21",
       role: "customer",
       created_at: iso(-120, 9),
