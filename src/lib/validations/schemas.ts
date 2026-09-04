@@ -154,15 +154,20 @@ const shipmentFields = z.object({
 /**
  * The form collects the expected delivery as a date and a time; the record
  * stores one instant. `17:00` is the default close of the delivery window.
+ *
+ * The time is dropped once it has been folded in. It is a field of the form,
+ * not a column of the table, and an update applies its parsed body to the row
+ * wholesale — so leaving it in reaches Postgres as a column that does not
+ * exist and fails the whole write.
  */
 function combineDeliveryDateAndTime<
   T extends { estimated_delivery?: string; expected_delivery_time?: string },
->(input: T): T {
-  if (!input.estimated_delivery) return input;
-  const time = input.expected_delivery_time || "17:00";
+>(input: T): Omit<T, "expected_delivery_time"> {
+  const { expected_delivery_time: time, ...rest } = input;
+  if (!rest.estimated_delivery) return rest;
   return {
-    ...input,
-    estimated_delivery: new Date(`${input.estimated_delivery}T${time}:00Z`).toISOString(),
+    ...rest,
+    estimated_delivery: new Date(`${rest.estimated_delivery}T${time || "17:00"}:00Z`).toISOString(),
   };
 }
 
