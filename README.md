@@ -38,12 +38,17 @@ Open <http://localhost:3000>.
 
 Sample tracking number: **`RPL-2026-983456`**
 
-Demo admin sign-in at `/admin/login`:
+Admin sign-in is at `/admin/login`.
 
-| Account       | Email                    | Password        |
-| ------------- | ------------------------ | --------------- |
-| Administrator | `admin@royalprime.demo`    | `RoyalPrime#2026` |
-| Customer      | `customer@royalprime.demo` | `Customer#2026` |
+While no Supabase project is configured, the app runs on the local store and
+accepts two throwaway accounts — `admin@royalprime.local` and
+`customer@royalprime.local`. Their passwords are **not** committed: set them in
+`.env.local` via `LOCAL_ADMIN_PASSWORD` and `LOCAL_CUSTOMER_PASSWORD`, or leave
+them unset and local sign-in is disabled entirely.
+
+Once `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` are set,
+these accounts are ignored completely and every credential is verified by
+Supabase Auth. Never rely on them in a deployed environment.
 
 ---
 
@@ -54,7 +59,7 @@ behind it:
 
 - **Supabase** whenever `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` are
   set. Every read and write goes to Postgres, and sign-ins are verified by Supabase Auth.
-- **A local demo store** otherwise, so the whole product — including the admin write flows —
+- **A local store** otherwise, so the whole product — including the admin write flows —
   is exercisable immediately after `npm install`. It lives in the server process and resets
   on restart. It is a development convenience, not a production backend.
 
@@ -65,7 +70,7 @@ Nothing else in the codebase branches on it.
 
 1. Create a project at [supabase.com](https://supabase.com).
 2. Run `supabase/schema.sql` in the SQL editor — tables, indexes, triggers and RLS policies.
-3. Run `supabase/seed.sql` for the demo network (service points, shipments and scan history).
+3. Run `supabase/seed.sql` for the sample network (service points, shipments and scan history).
 4. Copy the project URL, anon key and service-role key into `.env.local`.
 5. Register an account at `/register`, then promote it:
 
@@ -87,8 +92,8 @@ Nothing else in the codebase branches on it.
 3. **A schematic plot** of the same coordinates, so the page never shows an empty grey box.
 
 Advanced markers require a Map ID. `NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID` is used when set; otherwise
-Google's `DEMO_MAP_ID` is used, which is fine for development but should be replaced with your
-own cloud-styled Map ID for production.
+Google's built-in sample Map ID is used, which is fine for development but should be replaced
+with your own cloud-styled Map ID for production.
 
 > **Securing a Maps key.** The Maps JavaScript API runs in the browser, so the key is served
 > with the page by design — it cannot be kept secret. Secure it by restriction instead:
@@ -148,7 +153,7 @@ src/
                        (Next 16's renamed `middleware`)
 supabase/
   schema.sql           tables, enums, indexes, triggers, RLS policies
-  seed.sql             demo network data
+  seed.sql             sample network data
 ```
 
 ---

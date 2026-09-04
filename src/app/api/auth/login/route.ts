@@ -3,7 +3,7 @@ import { cookies } from "next/headers";
 import { loginSchema } from "@/lib/validations/schemas";
 import { handle, ok, unauthorized } from "@/lib/api/respond";
 import {
-  DEMO_ACCOUNTS,
+  LOCAL_ACCOUNTS,
   SESSION_COOKIE,
   encodeSession,
 } from "@/lib/auth/session";
@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
       return ok({ user: { email: data.user.email, role } });
     }
 
-    const account = DEMO_ACCOUNTS[email.toLowerCase()];
+    const account = LOCAL_ACCOUNTS[email.toLowerCase()];
     if (!account || account.password !== password) {
       return unauthorized("Incorrect email or password");
     }

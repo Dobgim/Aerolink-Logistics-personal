@@ -16,30 +16,36 @@ export interface SessionUser {
 }
 
 /**
- * Demo accounts used only while no Supabase project is configured. Once
+ * Local accounts used only while no Supabase project is configured. Once
  * Supabase Auth is wired up these are ignored entirely and every credential is
  * verified by Supabase.
+ *
+ * Passwords are never committed. Each is read from the environment, and an
+ * account with no password set simply does not exist — so a deployment that
+ * forgets to unset them still cannot be signed into with a published default.
  */
-export const DEMO_ACCOUNTS: Record<string, { password: string; user: SessionUser }> = {
-  "admin@royalprime.demo": {
-    password: "RoyalPrime#2026",
-    user: {
-      id: "usr_admin",
-      email: "admin@royalprime.demo",
-      name: "Royal Prime Operations",
-      role: "admin",
-    },
-  },
-  "customer@royalprime.demo": {
-    password: "Customer#2026",
-    user: {
-      id: "usr_customer",
-      email: "customer@royalprime.demo",
-      name: "Camille Moreau",
-      role: "customer",
-    },
-  },
-};
+export const LOCAL_ACCOUNTS: Record<string, { password: string; user: SessionUser }> =
+  Object.fromEntries(
+    (
+      [
+        [
+          "admin@royalprime.local",
+          process.env.LOCAL_ADMIN_PASSWORD,
+          { id: "usr_admin", name: "Royal Prime Operations", role: "admin" as const },
+        ],
+        [
+          "customer@royalprime.local",
+          process.env.LOCAL_CUSTOMER_PASSWORD,
+          { id: "usr_customer", name: "Camille Moreau", role: "customer" as const },
+        ],
+      ] as const
+    )
+      .filter(([, password]) => Boolean(password))
+      .map(([email, password, profile]) => [
+        email,
+        { password: password as string, user: { ...profile, email } },
+      ]),
+  );
 
 function secret(): string {
   return process.env.AUTH_SECRET ?? "royalprime-development-secret-change-me";
