@@ -1,7 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { glideDurationMs, timeProgress, travelledProgress } from "@/lib/utils/progress";
+import {
+  glideDurationMs,
+  glideFraction,
+  timeProgress,
+  travelledProgress,
+} from "@/lib/utils/progress";
 import type { CargoOnRoute } from "./map-shared";
 
 /**
@@ -76,9 +81,7 @@ export function useLiveCargoProgress(cargo: CargoOnRoute | null | undefined): nu
     const step = (frameTime: number) => {
       if (cancelled) return;
       const t = Math.min((frameTime - startedAt) / glideMs, 1);
-      // Steady for most of the run, easing only as it settles.
-      const eased = t < 0.9 ? t : 1 - Math.pow(1 - t, 2) * 0.9;
-      setProgress(destination * eased);
+      setProgress(destination * glideFraction(t));
 
       if (t < 1) {
         frame = requestAnimationFrame(step);

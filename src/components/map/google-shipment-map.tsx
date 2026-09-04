@@ -11,7 +11,12 @@ import {
   type CargoOnRoute,
   type MapPoint,
 } from "./map-shared";
-import { glideDurationMs, timeProgress, travelledProgress } from "@/lib/utils/progress";
+import {
+  glideDurationMs,
+  glideFraction,
+  timeProgress,
+  travelledProgress,
+} from "@/lib/utils/progress";
 
 interface Props {
   points: MapPoint[];
@@ -215,9 +220,7 @@ export function GoogleShipmentMap({
             const step = (frameTime: number) => {
               if (cancelled) return;
               const t = Math.min((frameTime - startedAt) / glideMs, 1);
-              // Steady for most of the run, easing only as it settles.
-              const eased = t < 0.9 ? t : 1 - Math.pow(1 - t, 2) * 0.9;
-              cargoMarker.position = pointAtProgress(path, destination * eased);
+              cargoMarker.position = pointAtProgress(path, destination * glideFraction(t));
 
               if (t < 1) {
                 frame = requestAnimationFrame(step);

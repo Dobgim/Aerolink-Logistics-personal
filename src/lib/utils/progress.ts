@@ -192,6 +192,19 @@ export function glideDurationMs(cargoType: CargoType, progress: number): number 
 }
 
 /**
+ * How far through the glide the marker sits, for an elapsed fraction `t`.
+ *
+ * Deliberately linear, and shared by both maps so they cannot drift apart.
+ * Easing here would have the package accelerate away from the origin and brake
+ * towards its position, which reads as a lorry speeding up and slowing down
+ * over ground it crosses at one steady speed. It covers every kilometre at the
+ * same rate, so the marker has to as well.
+ */
+export function glideFraction(t: number): number {
+  return Math.min(Math.max(t, 0), 1);
+}
+
+/**
  * Where the shipment has actually got to, with the status deciding whether the
  * clock is running at all.
  *
