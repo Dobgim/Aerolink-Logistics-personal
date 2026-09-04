@@ -10,7 +10,7 @@
  * it secret. See the README for the restriction steps.
  */
 
-const CALLBACK = "__royalprimeGoogleMapsReady";
+const CALLBACK = "__freightcargoxpressGoogleMapsReady";
 
 let loaderPromise: Promise<typeof google.maps> | null = null;
 

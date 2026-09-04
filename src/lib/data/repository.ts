@@ -47,7 +47,7 @@ export async function getShipmentByTracking(
   const db = getAdminSupabase();
   if (db) {
     /*
-     * Compare on a normalised form so `alx2026983456` matches `RPL-2026-983456`.
+     * Compare on a normalised form so `alx2026983456` matches `FCX-2026-983456`.
      * The needle has its separators stripped, so it has to be matched against
      * the column that is stripped the same way — filtering it against the raw
      * `tracking_number` never matches, because that still holds the dashes.

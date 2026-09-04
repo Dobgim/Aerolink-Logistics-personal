@@ -11,7 +11,8 @@ import { SupportSection } from "@/components/home/support-section";
 import { SITE } from "@/lib/constants/site";
 
 export const metadata: Metadata = {
-  title: `${SITE.name} — ${SITE.tagline}`,
+  // `absolute` so the layout template does not append the brand a second time.
+  title: { absolute: `${SITE.name} — ${SITE.tagline}` },
   description: SITE.description,
   alternates: { canonical: "/" },
 };

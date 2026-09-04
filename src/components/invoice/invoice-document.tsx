@@ -262,7 +262,7 @@ export async function InvoiceDocument({ shipment }: { shipment: Shipment }) {
 
       <footer className="border-t border-ink-200 pt-5 text-xs leading-relaxed text-ink-500">
         <p>
-          Carriage is subject to the Royal Prime Logistics terms of carriage. The amount shown
+          Carriage is subject to the FreightCargoXpress terms of carriage. The amount shown
           above is the total payable on this shipment; no further charges are raised against the
           receiver once it is settled.
         </p>

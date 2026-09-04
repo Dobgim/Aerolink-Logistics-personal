@@ -8,9 +8,9 @@ import { Reveal, RevealGroup, RevealItem } from "@/components/ui/motion";
 import { BLUR_DATA_URL, IMAGES } from "@/lib/constants/images";
 
 export const metadata: Metadata = {
-  title: "About Royal Prime Logistics",
+  title: "About us",
   description:
-    "Royal Prime Logistics is an international courier moving express parcels, freight and e-commerce orders worldwide, backed by scan-level tracking.",
+    "FreightCargoXpress is an international courier moving express parcels, freight and e-commerce orders worldwide, backed by scan-level tracking.",
   alternates: { canonical: "/about" },
 };
 
@@ -63,7 +63,7 @@ export default function AboutPage() {
       <PageHeader
         eyebrow="Company"
         title="A courier built for one corridor, done properly"
-        description="Royal Prime Logistics exists because international shipping was slow, opaque and full of surprises. We rebuilt it around one idea: every hand-off is visible."
+        description="FreightCargoXpress exists because international shipping was slow, opaque and full of surprises. We rebuilt it around one idea: every hand-off is visible."
         breadcrumbs={[{ label: "Company" }]}
       />
 

@@ -55,10 +55,10 @@ const COLUMNS: { title: string; links: { label: string; href: string }[] }[] = [
  * with plain lettermarks instead of reproducing anyone's brand assets.
  */
 const SOCIALS = [
-  { label: "Royal Prime on X", href: SITE.social.x, mark: "X" },
-  { label: "Royal Prime on LinkedIn", href: SITE.social.linkedin, mark: "in" },
-  { label: "Royal Prime on Facebook", href: SITE.social.facebook, mark: "f" },
-  { label: "Royal Prime on Instagram", href: SITE.social.instagram, mark: "ig" },
+  { label: "FreightCargoXpress on X", href: SITE.social.x, mark: "X" },
+  { label: "FreightCargoXpress on LinkedIn", href: SITE.social.linkedin, mark: "in" },
+  { label: "FreightCargoXpress on Facebook", href: SITE.social.facebook, mark: "f" },
+  { label: "FreightCargoXpress on Instagram", href: SITE.social.instagram, mark: "ig" },
 ];
 
 export function Footer() {
@@ -71,7 +71,7 @@ export function Footer() {
           <div className="max-w-sm">
             <Logo tone="light" href="/" size="lg" />
             <p className="mt-5 text-sm leading-relaxed text-ink-400">
-              Royal Prime Logistics moves express parcels, freight and e-commerce orders worldwide —
+              FreightCargoXpress moves express parcels, freight and e-commerce orders worldwide —
               with a scan-level tracking record on every consignment.
             </p>
 

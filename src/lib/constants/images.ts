@@ -4,7 +4,7 @@
  * resolve; `next.config.ts` whitelists the host for the Image optimizer.
  *
  * No third-party courier branding, logos or copyrighted assets are used
- * anywhere in this project — the Royal Prime identity is entirely original.
+ * anywhere in this project — the FreightCargoXpress identity is entirely original.
  */
 const U = "https://images.unsplash.com/photo-";
 

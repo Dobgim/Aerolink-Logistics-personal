@@ -14,7 +14,7 @@ import { SAMPLE_TRACKING_NUMBER } from "@/lib/constants/site";
 export const metadata: Metadata = {
   title: "Track Your Shipment",
   description:
-    "Track a Royal Prime Logistics shipment in real time — status, current location, full scan history, live map and estimated delivery date.",
+    "Track a FreightCargoXpress shipment in real time — status, current location, full scan history, live map and estimated delivery date.",
   alternates: { canonical: "/tracking" },
 };
 

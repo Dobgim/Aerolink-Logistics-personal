@@ -4,7 +4,7 @@ import { backendName, listSupportRequests } from "@/lib/data/repository";
 import { AdminShell } from "@/components/admin/admin-shell";
 
 export const metadata = {
-  title: { default: "Admin", template: "%s | Royal Prime Admin" },
+  title: { default: "Admin", template: "%s | FreightCargoXpress Admin" },
   robots: { index: false, follow: false },
 };
 

@@ -78,7 +78,7 @@ export function cargoMarkerElement(cargo: CargoOnRoute): HTMLElement {
     "align-items:center",
     "justify-content:center",
     "overflow:hidden",
-    cargo.moving ? "animation:royalprime-pulse 2.4s ease-out infinite" : "",
+    cargo.moving ? "animation:freightcargoxpress-pulse 2.4s ease-out infinite" : "",
   ]
     .filter(Boolean)
     .join(";");

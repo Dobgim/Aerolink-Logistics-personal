@@ -20,7 +20,7 @@ export function LogoMark({ className }: { className?: string }) {
     <svg
       viewBox="0 0 40 40"
       role="img"
-      aria-label="Royal Prime Logistics"
+      aria-label="FreightCargoXpress"
       className={cn("size-9 shrink-0", className)}
     >
       <defs>
@@ -109,7 +109,7 @@ export function Logo({
         "group inline-flex items-center gap-2.5 rounded-lg transition-opacity hover:opacity-90",
         className,
       )}
-      aria-label="Royal Prime Logistics — home"
+      aria-label="FreightCargoXpress — home"
     >
       {useFullLockup ? (
         /*
@@ -125,7 +125,7 @@ export function Logo({
         >
           <Image
             src={LOGO_FILE}
-            alt="Royal Prime Logistics"
+            alt="FreightCargoXpress"
             width={288}
             height={288}
             /*

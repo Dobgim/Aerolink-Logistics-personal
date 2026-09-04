@@ -14,7 +14,7 @@ const STATUSES = Object.keys(STATUS_LABELS) as ShipmentStatus[];
 /** Sensible default wording per status so operators are not typing prose. */
 const TEMPLATES: Record<ShipmentStatus, string> = {
   pending: "Shipment created. Awaiting pickup from the sender address.",
-  picked_up: "Package picked up by a Royal Prime courier.",
+  picked_up: "Package picked up by a FreightCargoXpress courier.",
   in_transit: "Departed the facility on the next scheduled linehaul.",
   customs: "Presented to customs for import clearance.",
   out_for_delivery: "On the delivery vehicle for final delivery today.",

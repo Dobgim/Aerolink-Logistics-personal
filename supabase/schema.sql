@@ -1,5 +1,5 @@
 -- ============================================================================
--- Royal Prime Logistics — database schema
+-- FreightCargoXpress — database schema
 -- Run this in the Supabase SQL editor (or `supabase db push`) before setting
 -- NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_ANON_KEY in the app.
 -- ============================================================================
@@ -66,7 +66,7 @@ create index if not exists users_email_idx on public.users (lower(email));
 -- ---------------------------------------------------------------------------
 create table if not exists public.shipments (
   id                   uuid primary key default gen_random_uuid(),
-  -- Public scan reference (RPL-YYYY-NNNNNN).
+  -- Public scan reference (FCX-YYYY-NNNNNN).
   tracking_number      text            not null unique,
   -- Commercial reference printed on the invoice (ORD-YYYY-NNNNNNN). Kept
   -- deliberately distinct from tracking_number so the two cannot be confused.
@@ -134,7 +134,7 @@ create index if not exists shipments_route_idx
 
 -- ---------------------------------------------------------------------------
 -- Tracking numbers are looked up in a normalised form (case-folded, separators
--- stripped) so "rpl 2026 983456" finds "RPL-2026-983456". Normalising in the
+-- stripped) so "rpl 2026 983456" finds "FCX-2026-983456". Normalising in the
 -- database keeps both sides of the comparison in the same shape.
 alter table public.shipments
   add column if not exists tracking_normalized text

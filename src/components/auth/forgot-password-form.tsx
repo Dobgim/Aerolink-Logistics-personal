@@ -46,7 +46,7 @@ export function ForgotPasswordForm() {
         </span>
         <h2 className="mt-4 text-lg font-bold text-ink-900">Check your inbox</h2>
         <p className="mt-2 text-sm leading-relaxed text-ink-600">
-          If a Royal Prime account exists for that address, we have sent a link to reset the
+          If a FreightCargoXpress account exists for that address, we have sent a link to reset the
           password. The link expires in one hour.
         </p>
 

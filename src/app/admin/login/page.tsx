@@ -7,7 +7,7 @@ import { getSessionUser } from "@/lib/auth/session";
 
 export const metadata: Metadata = {
   title: "Administrator sign in",
-  description: "Sign in to the Royal Prime Logistics operations dashboard.",
+  description: "Sign in to the FreightCargoXpress operations dashboard.",
   robots: { index: false, follow: false },
 };
 
@@ -24,7 +24,7 @@ export default async function AdminLoginPage() {
       aside={{
         quote:
           "Post the scan, and the customer's timeline, map and delivery estimate all move with it.",
-        attribution: "Royal Prime operations dashboard",
+        attribution: "FreightCargoXpress operations dashboard",
       }}
       footer={
         <p>

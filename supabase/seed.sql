@@ -1,5 +1,5 @@
 -- ============================================================================
--- AeroLink Logistics — sample seed data
+-- FreightCargoXpress — sample seed data
 -- Run AFTER schema.sql. Safe to re-run: every insert is idempotent.
 --
 -- Dates are relative to now(), so the seeded network always looks live.
@@ -98,7 +98,7 @@ insert into public.shipments (
   currency, declared_value, amount_due, payment_description, payment_status,
   status, current_location, latitude, longitude, estimated_delivery, created_at, updated_at
 ) values
-  ('RPL-2026-845276', 'ORD-2026-5858837',
+  ('FCX-2026-845276', 'ORD-2026-5858837',
    'Lone Star Agro', 'Lone Star Agro', 'sales@lonestaragro.example', '+1 (214) 555-0159',
    'Dallas', 'TX', 'United States',
    'Marta Silva', null, 'marta.silva@example.com', '+351 912 345 678',
@@ -108,7 +108,7 @@ insert into public.shipments (
    'van', (date_trunc('day', now()) + interval '1 days' + interval '9 hours'),
    'USD', 14638.52, 2347.39, 'Freight, insurance and destination duties, payable before the shipment is released.', 'unpaid',
    'pending', null, null, null, (date_trunc('day', now()) + interval '9 days' + interval '17 hours'), (date_trunc('day', now()) + interval '0 days' + interval '8 hours'), (date_trunc('day', now()) + interval '0 days' + interval '12 hours')),
-  ('RPL-2026-728104', 'ORD-2026-4709137',
+  ('FCX-2026-728104', 'ORD-2026-4709137',
    'Marcus Delaney', null, 'marcus.delaney@example.com', '+1 (212) 555-0136',
    'New York', 'NY', 'United States',
    'Sean O''Connor', null, 'sean.oconnor@example.com', '+353 85 123 4567',
@@ -118,7 +118,7 @@ insert into public.shipments (
    'car', (date_trunc('day', now()) + interval '0 days' + interval '9 hours'),
    'USD', 450.11, 101.54, 'Freight, insurance and destination duties, payable before the shipment is released.', 'unpaid',
    'picked_up', 'New York, United States', 40.7128, -74.006, (date_trunc('day', now()) + interval '7 days' + interval '17 hours'), (date_trunc('day', now()) + interval '-1 days' + interval '8 hours'), (date_trunc('day', now()) + interval '0 days' + interval '12 hours')),
-  ('RPL-2026-664219', 'ORD-2026-7247794',
+  ('FCX-2026-664219', 'ORD-2026-7247794',
    'Iberia Wine Co.', 'Iberia Wine Co.', 'export@iberiawine.example', '+34 954 22 11 00',
    'Seville', 'Andalucía', 'Spain',
    'Julien Girard', null, 'julien.girard@example.com', '+33 6 55 90 12 08',
@@ -128,7 +128,7 @@ insert into public.shipments (
    'ship', (date_trunc('day', now()) + interval '-1 days' + interval '9 hours'),
    'USD', 2174.35, 403.31, 'Freight, insurance and destination duties, payable before the shipment is released.', 'unpaid',
    'in_transit', 'Bilbao, Spain', 43.263, -2.935, (date_trunc('day', now()) + interval '3 days' + interval '17 hours'), (date_trunc('day', now()) + interval '-2 days' + interval '8 hours'), (date_trunc('day', now()) + interval '0 days' + interval '12 hours')),
-  ('RPL-2026-619355', 'ORD-2026-2037872',
+  ('FCX-2026-619355', 'ORD-2026-2037872',
    'Beacon Coffee Roasters', 'Beacon Coffee Roasters', 'export@beaconcoffee.example', '+1 (617) 555-0182',
    'Boston', 'MA', 'United States',
    'Elise Janssens', null, 'elise.janssens@example.com', '+32 470 55 66 77',
@@ -138,7 +138,7 @@ insert into public.shipments (
    'motorbike', (date_trunc('day', now()) + interval '-2 days' + interval '9 hours'),
    'USD', 35883.04, 6937.32, 'Freight, insurance and destination duties, payable before the shipment is released.', 'paid',
    'in_transit', 'Brussels, Belgium', 50.8503, 4.3517, (date_trunc('day', now()) + interval '5 days' + interval '17 hours'), (date_trunc('day', now()) + interval '-3 days' + interval '8 hours'), (date_trunc('day', now()) + interval '-1 days' + interval '12 hours')),
-  ('RPL-2026-472018', 'ORD-2026-4745328',
+  ('FCX-2026-472018', 'ORD-2026-4745328',
    'Nova Commerce', 'Nova Commerce', 'ship@novacommerce.example', '+1 (646) 555-0175',
    'New York', 'NY', 'United States',
    'Diego Fernández', null, 'diego.fernandez@example.com', '+34 611 22 33 44',
@@ -148,7 +148,7 @@ insert into public.shipments (
    'package', (date_trunc('day', now()) + interval '-3 days' + interval '9 hours'),
    'USD', 213.94, 64.49, 'Freight, insurance and destination duties, payable before the shipment is released.', 'unpaid',
    'in_transit', 'Madrid, Spain', 40.4168, -3.7038, (date_trunc('day', now()) + interval '4 days' + interval '17 hours'), (date_trunc('day', now()) + interval '-4 days' + interval '8 hours'), (date_trunc('day', now()) + interval '-2 days' + interval '12 hours')),
-  ('RPL-2026-983456', 'ORD-2026-1810111',
+  ('FCX-2026-983456', 'ORD-2026-1810111',
    'Daniel Whitfield', null, 'daniel.whitfield@example.com', '+1 (212) 555-0117',
    'New York', 'NY', 'United States',
    'Camille Moreau', null, 'camille.moreau@example.com', '+33 6 12 88 40 21',
@@ -158,7 +158,7 @@ insert into public.shipments (
    'car', (date_trunc('day', now()) + interval '-4 days' + interval '9 hours'),
    'USD', 514.41, 116.24, 'Freight, insurance and destination duties, payable before the shipment is released.', 'paid',
    'in_transit', 'Lyon, France', 45.764, 4.8357, (date_trunc('day', now()) + interval '6 days' + interval '17 hours'), (date_trunc('day', now()) + interval '-5 days' + interval '8 hours'), (date_trunc('day', now()) + interval '-3 days' + interval '12 hours')),
-  ('RPL-2026-550193', 'ORD-2026-4602037',
+  ('FCX-2026-550193', 'ORD-2026-4602037',
    'Atlas Textiles Inc.', 'Atlas Textiles Inc.', 'export@atlastextiles.example', '+1 (212) 555-0193',
    'New York', 'NY', 'United States',
    'Sofia Rossi', null, 'sofia.rossi@example.com', '+39 340 118 2277',
@@ -168,7 +168,7 @@ insert into public.shipments (
    'truck', (date_trunc('day', now()) + interval '-5 days' + interval '9 hours'),
    'USD', 8996.57, 1399.15, 'Freight, insurance and destination duties, payable before the shipment is released.', 'unpaid',
    'customs', 'Milan, Italy', 45.4642, 9.19, (date_trunc('day', now()) + interval '3 days' + interval '17 hours'), (date_trunc('day', now()) + interval '-6 days' + interval '8 hours'), (date_trunc('day', now()) + interval '-4 days' + interval '12 hours')),
-  ('RPL-2026-206741', 'ORD-2026-2171979',
+  ('FCX-2026-206741', 'ORD-2026-2171979',
    'Rachel Adeyemi', null, 'rachel.adeyemi@example.com', '+1 (404) 555-0148',
    'Atlanta', 'GA', 'United States',
    'Lukas Weber', null, 'lukas.weber@example.com', '+49 151 2233 4455',
@@ -178,7 +178,7 @@ insert into public.shipments (
    'plane', (date_trunc('day', now()) + interval '-6 days' + interval '9 hours'),
    'USD', 378.7, 82.67, 'Freight, insurance and destination duties, payable before the shipment is released.', 'paid',
    'out_for_delivery', 'Berlin, Germany', 52.52, 13.405, (date_trunc('day', now()) + interval '0 days' + interval '17 hours'), (date_trunc('day', now()) + interval '-7 days' + interval '8 hours'), (date_trunc('day', now()) + interval '-5 days' + interval '12 hours')),
-  ('RPL-2026-338920', 'ORD-2026-1991709',
+  ('FCX-2026-338920', 'ORD-2026-1991709',
    'Harborline Seafoods', 'Harborline Seafoods', 'logistics@harborlineseafoods.example', '+1 (617) 555-0129',
    'New York', 'NY', 'United States',
    'Anne de Vries', null, 'anne.devries@example.com', '+31 6 2244 8899',
@@ -188,7 +188,7 @@ insert into public.shipments (
    'ship', (date_trunc('day', now()) + interval '-8 days' + interval '9 hours'),
    'USD', 2704.52, 535.88, 'Freight, insurance and destination duties, payable before the shipment is released.', 'unpaid',
    'delayed', 'Amsterdam, Netherlands', 52.3676, 4.9041, (date_trunc('day', now()) + interval '2 days' + interval '17 hours'), (date_trunc('day', now()) + interval '-9 days' + interval '8 hours'), (date_trunc('day', now()) + interval '-7 days' + interval '12 hours')),
-  ('RPL-2026-901488', 'ORD-2026-6175466',
+  ('FCX-2026-901488', 'ORD-2026-6175466',
    'Helvetia Parts AG', null, 'dispatch@helvetiaparts.example', '+41 44 500 12 34',
    'Zurich', 'Zürich', 'Switzerland',
    'Thomas Keller', null, 'thomas.keller@example.com', '+41 79 555 22 11',
@@ -198,7 +198,7 @@ insert into public.shipments (
    'truck', (date_trunc('day', now()) + interval '-9 days' + interval '9 hours'),
    'USD', 675.21, 134.88, 'Freight, insurance and destination duties, payable before the shipment is released.', 'paid',
    'delivered', 'Lyon, France', 45.764, 4.8357, (date_trunc('day', now()) + interval '-6 days' + interval '17 hours'), (date_trunc('day', now()) + interval '-10 days' + interval '8 hours'), (date_trunc('day', now()) + interval '-8 days' + interval '12 hours')),
-  ('RPL-2026-114872', 'ORD-2026-7135241',
+  ('FCX-2026-114872', 'ORD-2026-7135241',
    'Brightline Logistics LLC', 'Brightline Logistics LLC', 'ops@brightlinelogistics.example', '+1 (312) 555-0164',
    'Chicago', 'IL', 'United States',
    'Oliver Bennett', null, 'oliver.bennett@example.com', '+44 7700 900211',
@@ -208,7 +208,7 @@ insert into public.shipments (
    'van', (date_trunc('day', now()) + interval '-11 days' + interval '9 hours'),
    'USD', 266.92, 53.52, 'Freight, insurance and destination duties, payable before the shipment is released.', 'unpaid',
    'delivered', 'London, United Kingdom', 51.5072, -0.1276, (date_trunc('day', now()) + interval '-8 days' + interval '17 hours'), (date_trunc('day', now()) + interval '-12 days' + interval '8 hours'), (date_trunc('day', now()) + interval '-10 days' + interval '12 hours')),
-  ('RPL-2026-133705', 'ORD-2026-2728987',
+  ('FCX-2026-133705', 'ORD-2026-2728987',
    'Northline Retail', 'Northline Retail', 'fulfilment@northline.example', '+44 161 555 0182',
    'Manchester', 'Greater Manchester', 'United Kingdom',
    'Ingrid Bakker', null, 'ingrid.bakker@example.com', '+31 6 1188 2200',
@@ -229,7 +229,7 @@ from public.shipments s
 cross join (values
   ('pending', 'Dallas, United States', 32.7767::double precision, -96.797::double precision, 'Shipment created. Awaiting pickup from the sender address.', (date_trunc('day', now()) + interval '0 days' + interval '8 hours'))
 ) as v(status, location, latitude, longitude, description, event_date)
-where s.tracking_number = 'RPL-2026-845276'
+where s.tracking_number = 'FCX-2026-845276'
   and not exists (select 1 from public.tracking_events te where te.shipment_id = s.id);
 
 insert into public.tracking_events (shipment_id, status, location, latitude, longitude, description, event_date)
@@ -237,9 +237,9 @@ select s.id, v.status::shipment_status, v.location, v.latitude, v.longitude, v.d
 from public.shipments s
 cross join (values
   ('pending', 'New York, United States', 40.7128::double precision, -74.006::double precision, 'Shipment created. Awaiting pickup from the sender address.', (date_trunc('day', now()) + interval '-1 days' + interval '8 hours')),
-  ('picked_up', 'New York, United States', 40.7128::double precision, -74.006::double precision, 'Package picked up by a Royal Prime courier.', (date_trunc('day', now()) + interval '-1 days' + interval '14 hours'))
+  ('picked_up', 'New York, United States', 40.7128::double precision, -74.006::double precision, 'Package picked up by a FreightCargoXpress courier.', (date_trunc('day', now()) + interval '-1 days' + interval '14 hours'))
 ) as v(status, location, latitude, longitude, description, event_date)
-where s.tracking_number = 'RPL-2026-728104'
+where s.tracking_number = 'FCX-2026-728104'
   and not exists (select 1 from public.tracking_events te where te.shipment_id = s.id);
 
 insert into public.tracking_events (shipment_id, status, location, latitude, longitude, description, event_date)
@@ -247,13 +247,13 @@ select s.id, v.status::shipment_status, v.location, v.latitude, v.longitude, v.d
 from public.shipments s
 cross join (values
   ('pending', 'Seville, Spain', 37.3891::double precision, -5.9845::double precision, 'Shipment created. Awaiting pickup from the sender address.', (date_trunc('day', now()) + interval '-2 days' + interval '8 hours')),
-  ('picked_up', 'Seville, Spain', 37.3891::double precision, -5.9845::double precision, 'Package picked up by a Royal Prime courier.', (date_trunc('day', now()) + interval '-2 days' + interval '14 hours')),
+  ('picked_up', 'Seville, Spain', 37.3891::double precision, -5.9845::double precision, 'Package picked up by a FreightCargoXpress courier.', (date_trunc('day', now()) + interval '-2 days' + interval '14 hours')),
   ('in_transit', 'Seville, Spain', 37.3891::double precision, -5.9845::double precision, 'Departed origin facility on international air freight.', (date_trunc('day', now()) + interval '-1 days' + interval '3 hours')),
   ('in_transit', 'Madrid, Spain', 40.4168::double precision, -3.7038::double precision, 'Arrived at the Madrid sorting hub.', (date_trunc('day', now()) + interval '0 days' + interval '6 hours')),
   ('customs', 'Madrid, Spain', 40.4168::double precision, -3.7038::double precision, 'Presented to customs for import clearance.', (date_trunc('day', now()) + interval '0 days' + interval '11 hours')),
   ('in_transit', 'Bordeaux, France', 44.8378::double precision, -0.5792::double precision, 'Cleared customs and forwarded to the Bordeaux delivery station.', (date_trunc('day', now()) + interval '1 days' + interval '7 hours'))
 ) as v(status, location, latitude, longitude, description, event_date)
-where s.tracking_number = 'RPL-2026-664219'
+where s.tracking_number = 'FCX-2026-664219'
   and not exists (select 1 from public.tracking_events te where te.shipment_id = s.id);
 
 insert into public.tracking_events (shipment_id, status, location, latitude, longitude, description, event_date)
@@ -261,13 +261,13 @@ select s.id, v.status::shipment_status, v.location, v.latitude, v.longitude, v.d
 from public.shipments s
 cross join (values
   ('pending', 'Boston, United States', 42.3601::double precision, -71.0589::double precision, 'Shipment created. Awaiting pickup from the sender address.', (date_trunc('day', now()) + interval '-3 days' + interval '8 hours')),
-  ('picked_up', 'Boston, United States', 42.3601::double precision, -71.0589::double precision, 'Package picked up by a Royal Prime courier.', (date_trunc('day', now()) + interval '-3 days' + interval '14 hours')),
+  ('picked_up', 'Boston, United States', 42.3601::double precision, -71.0589::double precision, 'Package picked up by a FreightCargoXpress courier.', (date_trunc('day', now()) + interval '-3 days' + interval '14 hours')),
   ('in_transit', 'Boston, United States', 42.3601::double precision, -71.0589::double precision, 'Departed origin facility on international air freight.', (date_trunc('day', now()) + interval '-2 days' + interval '3 hours')),
   ('in_transit', 'Brussels, Belgium', 50.8503::double precision, 4.3517::double precision, 'Arrived at the Brussels sorting hub.', (date_trunc('day', now()) + interval '-1 days' + interval '6 hours')),
   ('customs', 'Brussels, Belgium', 50.8503::double precision, 4.3517::double precision, 'Presented to customs for import clearance.', (date_trunc('day', now()) + interval '-1 days' + interval '11 hours')),
   ('in_transit', 'Antwerp, Belgium', 51.2194::double precision, 4.4025::double precision, 'Cleared customs and forwarded to the Antwerp delivery station.', (date_trunc('day', now()) + interval '0 days' + interval '7 hours'))
 ) as v(status, location, latitude, longitude, description, event_date)
-where s.tracking_number = 'RPL-2026-619355'
+where s.tracking_number = 'FCX-2026-619355'
   and not exists (select 1 from public.tracking_events te where te.shipment_id = s.id);
 
 insert into public.tracking_events (shipment_id, status, location, latitude, longitude, description, event_date)
@@ -275,12 +275,12 @@ select s.id, v.status::shipment_status, v.location, v.latitude, v.longitude, v.d
 from public.shipments s
 cross join (values
   ('pending', 'New York, United States', 40.7128::double precision, -74.006::double precision, 'Shipment created. Awaiting pickup from the sender address.', (date_trunc('day', now()) + interval '-4 days' + interval '8 hours')),
-  ('picked_up', 'New York, United States', 40.7128::double precision, -74.006::double precision, 'Package picked up by a Royal Prime courier.', (date_trunc('day', now()) + interval '-4 days' + interval '14 hours')),
+  ('picked_up', 'New York, United States', 40.7128::double precision, -74.006::double precision, 'Package picked up by a FreightCargoXpress courier.', (date_trunc('day', now()) + interval '-4 days' + interval '14 hours')),
   ('in_transit', 'New York, United States', 40.7128::double precision, -74.006::double precision, 'Departed origin facility on international air freight.', (date_trunc('day', now()) + interval '-3 days' + interval '3 hours')),
   ('in_transit', 'Madrid, Spain', 40.4168::double precision, -3.7038::double precision, 'Arrived at the Madrid sorting hub.', (date_trunc('day', now()) + interval '-2 days' + interval '6 hours')),
   ('customs', 'Madrid, Spain', 40.4168::double precision, -3.7038::double precision, 'Presented to customs for import clearance.', (date_trunc('day', now()) + interval '-2 days' + interval '11 hours'))
 ) as v(status, location, latitude, longitude, description, event_date)
-where s.tracking_number = 'RPL-2026-472018'
+where s.tracking_number = 'FCX-2026-472018'
   and not exists (select 1 from public.tracking_events te where te.shipment_id = s.id);
 
 insert into public.tracking_events (shipment_id, status, location, latitude, longitude, description, event_date)
@@ -288,13 +288,13 @@ select s.id, v.status::shipment_status, v.location, v.latitude, v.longitude, v.d
 from public.shipments s
 cross join (values
   ('pending', 'New York, United States', 40.7128::double precision, -74.006::double precision, 'Shipment created. Awaiting pickup from the sender address.', (date_trunc('day', now()) + interval '-5 days' + interval '8 hours')),
-  ('picked_up', 'New York, United States', 40.7128::double precision, -74.006::double precision, 'Package picked up by a Royal Prime courier.', (date_trunc('day', now()) + interval '-5 days' + interval '14 hours')),
+  ('picked_up', 'New York, United States', 40.7128::double precision, -74.006::double precision, 'Package picked up by a FreightCargoXpress courier.', (date_trunc('day', now()) + interval '-5 days' + interval '14 hours')),
   ('in_transit', 'New York, United States', 40.7128::double precision, -74.006::double precision, 'Departed origin facility on international air freight.', (date_trunc('day', now()) + interval '-4 days' + interval '3 hours')),
   ('in_transit', 'Paris, France', 48.8566::double precision, 2.3522::double precision, 'Arrived at the Paris sorting hub.', (date_trunc('day', now()) + interval '-3 days' + interval '6 hours')),
   ('customs', 'Paris, France', 48.8566::double precision, 2.3522::double precision, 'Presented to customs for import clearance.', (date_trunc('day', now()) + interval '-3 days' + interval '11 hours')),
   ('in_transit', 'Lyon, France', 45.764::double precision, 4.8357::double precision, 'Departed the Lyon linehaul facility en route to Paris.', (date_trunc('day', now()) + interval '-1 days' + interval '4 hours'))
 ) as v(status, location, latitude, longitude, description, event_date)
-where s.tracking_number = 'RPL-2026-983456'
+where s.tracking_number = 'FCX-2026-983456'
   and not exists (select 1 from public.tracking_events te where te.shipment_id = s.id);
 
 insert into public.tracking_events (shipment_id, status, location, latitude, longitude, description, event_date)
@@ -302,12 +302,12 @@ select s.id, v.status::shipment_status, v.location, v.latitude, v.longitude, v.d
 from public.shipments s
 cross join (values
   ('pending', 'New York, United States', 40.7128::double precision, -74.006::double precision, 'Shipment created. Awaiting pickup from the sender address.', (date_trunc('day', now()) + interval '-6 days' + interval '8 hours')),
-  ('picked_up', 'New York, United States', 40.7128::double precision, -74.006::double precision, 'Package picked up by a Royal Prime courier.', (date_trunc('day', now()) + interval '-6 days' + interval '14 hours')),
+  ('picked_up', 'New York, United States', 40.7128::double precision, -74.006::double precision, 'Package picked up by a FreightCargoXpress courier.', (date_trunc('day', now()) + interval '-6 days' + interval '14 hours')),
   ('in_transit', 'New York, United States', 40.7128::double precision, -74.006::double precision, 'Departed origin facility on international air freight.', (date_trunc('day', now()) + interval '-5 days' + interval '3 hours')),
   ('in_transit', 'Milan, Italy', 45.4642::double precision, 9.19::double precision, 'Arrived at the Milan sorting hub.', (date_trunc('day', now()) + interval '-4 days' + interval '6 hours')),
   ('customs', 'Milan, Italy', 45.4642::double precision, 9.19::double precision, 'Presented to customs for import clearance.', (date_trunc('day', now()) + interval '-4 days' + interval '11 hours'))
 ) as v(status, location, latitude, longitude, description, event_date)
-where s.tracking_number = 'RPL-2026-550193'
+where s.tracking_number = 'FCX-2026-550193'
   and not exists (select 1 from public.tracking_events te where te.shipment_id = s.id);
 
 insert into public.tracking_events (shipment_id, status, location, latitude, longitude, description, event_date)
@@ -315,14 +315,14 @@ select s.id, v.status::shipment_status, v.location, v.latitude, v.longitude, v.d
 from public.shipments s
 cross join (values
   ('pending', 'Atlanta, United States', 33.749::double precision, -84.388::double precision, 'Shipment created. Awaiting pickup from the sender address.', (date_trunc('day', now()) + interval '-7 days' + interval '8 hours')),
-  ('picked_up', 'Atlanta, United States', 33.749::double precision, -84.388::double precision, 'Package picked up by a Royal Prime courier.', (date_trunc('day', now()) + interval '-7 days' + interval '14 hours')),
+  ('picked_up', 'Atlanta, United States', 33.749::double precision, -84.388::double precision, 'Package picked up by a FreightCargoXpress courier.', (date_trunc('day', now()) + interval '-7 days' + interval '14 hours')),
   ('in_transit', 'Atlanta, United States', 33.749::double precision, -84.388::double precision, 'Departed origin facility on international air freight.', (date_trunc('day', now()) + interval '-6 days' + interval '3 hours')),
   ('in_transit', 'Frankfurt, Germany', 50.1109::double precision, 8.6821::double precision, 'Arrived at the Frankfurt sorting hub.', (date_trunc('day', now()) + interval '-5 days' + interval '6 hours')),
   ('customs', 'Frankfurt, Germany', 50.1109::double precision, 8.6821::double precision, 'Presented to customs for import clearance.', (date_trunc('day', now()) + interval '-5 days' + interval '11 hours')),
   ('in_transit', 'Berlin, Germany', 52.52::double precision, 13.405::double precision, 'Cleared customs and forwarded to the Berlin delivery station.', (date_trunc('day', now()) + interval '-4 days' + interval '7 hours')),
   ('out_for_delivery', 'Berlin, Germany', 52.52::double precision, 13.405::double precision, 'On the delivery vehicle for final delivery today.', (date_trunc('day', now()) + interval '-3 days' + interval '7 hours'))
 ) as v(status, location, latitude, longitude, description, event_date)
-where s.tracking_number = 'RPL-2026-206741'
+where s.tracking_number = 'FCX-2026-206741'
   and not exists (select 1 from public.tracking_events te where te.shipment_id = s.id);
 
 insert into public.tracking_events (shipment_id, status, location, latitude, longitude, description, event_date)
@@ -330,14 +330,14 @@ select s.id, v.status::shipment_status, v.location, v.latitude, v.longitude, v.d
 from public.shipments s
 cross join (values
   ('pending', 'New York, United States', 40.7128::double precision, -74.006::double precision, 'Shipment created. Awaiting pickup from the sender address.', (date_trunc('day', now()) + interval '-9 days' + interval '8 hours')),
-  ('picked_up', 'New York, United States', 40.7128::double precision, -74.006::double precision, 'Package picked up by a Royal Prime courier.', (date_trunc('day', now()) + interval '-9 days' + interval '14 hours')),
+  ('picked_up', 'New York, United States', 40.7128::double precision, -74.006::double precision, 'Package picked up by a FreightCargoXpress courier.', (date_trunc('day', now()) + interval '-9 days' + interval '14 hours')),
   ('in_transit', 'New York, United States', 40.7128::double precision, -74.006::double precision, 'Departed origin facility on international air freight.', (date_trunc('day', now()) + interval '-8 days' + interval '3 hours')),
   ('in_transit', 'Amsterdam, Netherlands', 52.3676::double precision, 4.9041::double precision, 'Arrived at the Amsterdam sorting hub.', (date_trunc('day', now()) + interval '-7 days' + interval '6 hours')),
   ('customs', 'Amsterdam, Netherlands', 52.3676::double precision, 4.9041::double precision, 'Presented to customs for import clearance.', (date_trunc('day', now()) + interval '-7 days' + interval '11 hours')),
   ('in_transit', 'Rotterdam, Netherlands', 51.9244::double precision, 4.4777::double precision, 'Cleared customs and forwarded to the Rotterdam delivery station.', (date_trunc('day', now()) + interval '-6 days' + interval '7 hours')),
   ('delayed', 'Amsterdam, Netherlands', 52.3676::double precision, 4.9041::double precision, 'Delivery rescheduled — the connecting flight was held by severe weather at the hub.', (date_trunc('day', now()) + interval '-6 days' + interval '18 hours'))
 ) as v(status, location, latitude, longitude, description, event_date)
-where s.tracking_number = 'RPL-2026-338920'
+where s.tracking_number = 'FCX-2026-338920'
   and not exists (select 1 from public.tracking_events te where te.shipment_id = s.id);
 
 insert into public.tracking_events (shipment_id, status, location, latitude, longitude, description, event_date)
@@ -345,7 +345,7 @@ select s.id, v.status::shipment_status, v.location, v.latitude, v.longitude, v.d
 from public.shipments s
 cross join (values
   ('pending', 'Zurich, Switzerland', 47.3769::double precision, 8.5417::double precision, 'Shipment created. Awaiting pickup from the sender address.', (date_trunc('day', now()) + interval '-10 days' + interval '8 hours')),
-  ('picked_up', 'Zurich, Switzerland', 47.3769::double precision, 8.5417::double precision, 'Package picked up by a Royal Prime courier.', (date_trunc('day', now()) + interval '-10 days' + interval '14 hours')),
+  ('picked_up', 'Zurich, Switzerland', 47.3769::double precision, 8.5417::double precision, 'Package picked up by a FreightCargoXpress courier.', (date_trunc('day', now()) + interval '-10 days' + interval '14 hours')),
   ('in_transit', 'Zurich, Switzerland', 47.3769::double precision, 8.5417::double precision, 'Departed origin facility on international air freight.', (date_trunc('day', now()) + interval '-9 days' + interval '3 hours')),
   ('in_transit', 'Paris, France', 48.8566::double precision, 2.3522::double precision, 'Arrived at the Paris sorting hub.', (date_trunc('day', now()) + interval '-8 days' + interval '6 hours')),
   ('customs', 'Paris, France', 48.8566::double precision, 2.3522::double precision, 'Presented to customs for import clearance.', (date_trunc('day', now()) + interval '-8 days' + interval '11 hours')),
@@ -353,7 +353,7 @@ cross join (values
   ('out_for_delivery', 'Lyon, France', 45.764::double precision, 4.8357::double precision, 'On the delivery vehicle for final delivery today.', (date_trunc('day', now()) + interval '-6 days' + interval '7 hours')),
   ('delivered', 'Lyon, France', 45.764::double precision, 4.8357::double precision, 'Delivered and signed for at the receiver address.', (date_trunc('day', now()) + interval '-6 days' + interval '15 hours'))
 ) as v(status, location, latitude, longitude, description, event_date)
-where s.tracking_number = 'RPL-2026-901488'
+where s.tracking_number = 'FCX-2026-901488'
   and not exists (select 1 from public.tracking_events te where te.shipment_id = s.id);
 
 insert into public.tracking_events (shipment_id, status, location, latitude, longitude, description, event_date)
@@ -361,7 +361,7 @@ select s.id, v.status::shipment_status, v.location, v.latitude, v.longitude, v.d
 from public.shipments s
 cross join (values
   ('pending', 'Chicago, United States', 41.8781::double precision, -87.6298::double precision, 'Shipment created. Awaiting pickup from the sender address.', (date_trunc('day', now()) + interval '-12 days' + interval '8 hours')),
-  ('picked_up', 'Chicago, United States', 41.8781::double precision, -87.6298::double precision, 'Package picked up by a Royal Prime courier.', (date_trunc('day', now()) + interval '-12 days' + interval '14 hours')),
+  ('picked_up', 'Chicago, United States', 41.8781::double precision, -87.6298::double precision, 'Package picked up by a FreightCargoXpress courier.', (date_trunc('day', now()) + interval '-12 days' + interval '14 hours')),
   ('in_transit', 'Chicago, United States', 41.8781::double precision, -87.6298::double precision, 'Departed origin facility on international air freight.', (date_trunc('day', now()) + interval '-11 days' + interval '3 hours')),
   ('in_transit', 'London, United Kingdom', 51.5072::double precision, -0.1276::double precision, 'Arrived at the London sorting hub.', (date_trunc('day', now()) + interval '-10 days' + interval '6 hours')),
   ('customs', 'London, United Kingdom', 51.5072::double precision, -0.1276::double precision, 'Presented to customs for import clearance.', (date_trunc('day', now()) + interval '-10 days' + interval '11 hours')),
@@ -369,7 +369,7 @@ cross join (values
   ('out_for_delivery', 'London, United Kingdom', 51.5072::double precision, -0.1276::double precision, 'On the delivery vehicle for final delivery today.', (date_trunc('day', now()) + interval '-8 days' + interval '7 hours')),
   ('delivered', 'London, United Kingdom', 51.5072::double precision, -0.1276::double precision, 'Delivered and signed for at the receiver address.', (date_trunc('day', now()) + interval '-8 days' + interval '15 hours'))
 ) as v(status, location, latitude, longitude, description, event_date)
-where s.tracking_number = 'RPL-2026-114872'
+where s.tracking_number = 'FCX-2026-114872'
   and not exists (select 1 from public.tracking_events te where te.shipment_id = s.id);
 
 insert into public.tracking_events (shipment_id, status, location, latitude, longitude, description, event_date)
@@ -377,7 +377,7 @@ select s.id, v.status::shipment_status, v.location, v.latitude, v.longitude, v.d
 from public.shipments s
 cross join (values
   ('pending', 'Manchester, United Kingdom', 53.4808::double precision, -2.2426::double precision, 'Shipment created. Awaiting pickup from the sender address.', (date_trunc('day', now()) + interval '-14 days' + interval '8 hours')),
-  ('picked_up', 'Manchester, United Kingdom', 53.4808::double precision, -2.2426::double precision, 'Package picked up by a Royal Prime courier.', (date_trunc('day', now()) + interval '-14 days' + interval '14 hours')),
+  ('picked_up', 'Manchester, United Kingdom', 53.4808::double precision, -2.2426::double precision, 'Package picked up by a FreightCargoXpress courier.', (date_trunc('day', now()) + interval '-14 days' + interval '14 hours')),
   ('in_transit', 'Manchester, United Kingdom', 53.4808::double precision, -2.2426::double precision, 'Departed origin facility on international air freight.', (date_trunc('day', now()) + interval '-13 days' + interval '3 hours')),
   ('in_transit', 'Brussels, Belgium', 50.8503::double precision, 4.3517::double precision, 'Arrived at the Brussels sorting hub.', (date_trunc('day', now()) + interval '-12 days' + interval '6 hours')),
   ('customs', 'Brussels, Belgium', 50.8503::double precision, 4.3517::double precision, 'Presented to customs for import clearance.', (date_trunc('day', now()) + interval '-12 days' + interval '11 hours')),
@@ -385,7 +385,7 @@ cross join (values
   ('out_for_delivery', 'Utrecht, Netherlands', 52.0907::double precision, 5.1214::double precision, 'On the delivery vehicle for final delivery today.', (date_trunc('day', now()) + interval '-10 days' + interval '7 hours')),
   ('delivered', 'Utrecht, Netherlands', 52.0907::double precision, 5.1214::double precision, 'Delivered and signed for at the receiver address.', (date_trunc('day', now()) + interval '-10 days' + interval '15 hours'))
 ) as v(status, location, latitude, longitude, description, event_date)
-where s.tracking_number = 'RPL-2026-133705'
+where s.tracking_number = 'FCX-2026-133705'
   and not exists (select 1 from public.tracking_events te where te.shipment_id = s.id);
 
 -- ---------------------------------------------------------------------------

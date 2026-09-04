@@ -49,8 +49,8 @@ export function WhyChoose() {
     <Section tone="muted">
       <Container>
         <SectionHeading
-          eyebrow="Why Royal Prime"
-          title="Why Choose Royal Prime?"
+          eyebrow="Why FreightCargoXpress"
+          title="Why Choose FreightCargoXpress?"
           description="International freight is unforgiving. These are the things we refuse to get wrong."
           align="center"
         />

@@ -142,10 +142,10 @@ export function formatWeight(kg: number): string {
   return `${kg.toLocaleString("en-US", { maximumFractionDigits: 2 })} kg`;
 }
 
-/** `RPL-2026-938456` */
+/** `FCX-2026-938456` */
 export function generateTrackingNumber(year = new Date().getUTCFullYear()): string {
   const digits = Math.floor(100000 + Math.random() * 900000);
-  return `RPL-${year}-${digits}`;
+  return `FCX-${year}-${digits}`;
 }
 
 /**

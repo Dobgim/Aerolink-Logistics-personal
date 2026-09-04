@@ -14,7 +14,7 @@ const DOCS: Record<string, LegalDoc> = {
   privacy: {
     title: "Privacy Policy",
     summary:
-      "How Royal Prime Logistics collects, uses and protects personal data when you ship with us or track a shipment.",
+      "How FreightCargoXpress collects, uses and protects personal data when you ship with us or track a shipment.",
     sections: [
       {
         heading: "What we collect",
@@ -58,12 +58,12 @@ const DOCS: Record<string, LegalDoc> = {
   terms: {
     title: "Terms of Carriage",
     summary:
-      "The terms on which Royal Prime Logistics accepts, carries and delivers shipments.",
+      "The terms on which FreightCargoXpress accepts, carries and delivers shipments.",
     sections: [
       {
         heading: "Acceptance",
         body: [
-          "By handing a shipment to Royal Prime you agree to these terms on behalf of yourself and anyone else with an interest in the shipment.",
+          "By handing a shipment to FreightCargoXpress you agree to these terms on behalf of yourself and anyone else with an interest in the shipment.",
           "We may open and inspect any shipment for security or customs purposes without notice.",
         ],
       },

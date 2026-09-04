@@ -63,7 +63,7 @@ export type CargoType =
 
 export interface Shipment {
   id: string;
-  /** Scan-level tracking reference shown to the public: RPL-YYYY-NNNNNN. */
+  /** Scan-level tracking reference shown to the public: FCX-YYYY-NNNNNN. */
   tracking_number: string;
   /** Commercial order reference printed on the invoice: ORD-YYYY-NNNNNNN. */
   order_number: string;

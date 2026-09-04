@@ -84,7 +84,7 @@ function chain(
       status: "picked_up",
       location: `${oCity}, ${oCountry}`,
       country: oCountry,
-      description: "Package picked up by a Royal Prime courier.",
+      description: "Package picked up by a FreightCargoXpress courier.",
       offsetDays: startOffset,
       hour: 14,
     },
@@ -168,7 +168,7 @@ function chain(
 
 const BLUEPRINTS: ShipmentBlueprint[] = [
   {
-    tracking_number: "RPL-2026-983456",
+    tracking_number: "FCX-2026-983456",
     order_number: "ORD-2026-1810111",
     sender: { name: "Daniel Whitfield", email: "daniel.whitfield@example.com", phone: "+1 (212) 555-0117", city: "New York", state: "NY", country: "United States" },
     receiver: { name: "Camille Moreau", email: "camille.moreau@example.com", phone: "+33 6 12 88 40 21", city: "Paris", state: "Île-de-France", country: "France" },
@@ -199,7 +199,7 @@ const BLUEPRINTS: ShipmentBlueprint[] = [
     ],
   },
   {
-    tracking_number: "RPL-2026-114872",
+    tracking_number: "FCX-2026-114872",
     order_number: "ORD-2026-7135241",
     sender: { name: "Brightline Logistics LLC", company: "Brightline Logistics LLC", email: "ops@brightlinelogistics.example", phone: "+1 (312) 555-0164", city: "Chicago", state: "IL", country: "United States" },
     receiver: { name: "Oliver Bennett", email: "oliver.bennett@example.com", phone: "+44 7700 900211", city: "London", state: "Greater London", country: "United Kingdom" },
@@ -225,7 +225,7 @@ const BLUEPRINTS: ShipmentBlueprint[] = [
     ),
   },
   {
-    tracking_number: "RPL-2026-550193",
+    tracking_number: "FCX-2026-550193",
     order_number: "ORD-2026-4602037",
     sender: { name: "Atlas Textiles Inc.", company: "Atlas Textiles Inc.", email: "export@atlastextiles.example", phone: "+1 (212) 555-0193", city: "New York", state: "NY", country: "United States" },
     receiver: { name: "Sofia Rossi", email: "sofia.rossi@example.com", phone: "+39 340 118 2277", city: "Milan", state: "Lombardia", country: "Italy" },
@@ -245,7 +245,7 @@ const BLUEPRINTS: ShipmentBlueprint[] = [
     events: chain(["United States", "New York"], ["Italy", "Milan"], ["Italy", "Milan"], -6, "customs"),
   },
   {
-    tracking_number: "RPL-2026-206741",
+    tracking_number: "FCX-2026-206741",
     order_number: "ORD-2026-2171979",
     sender: { name: "Rachel Adeyemi", email: "rachel.adeyemi@example.com", phone: "+1 (404) 555-0148", city: "Atlanta", state: "GA", country: "United States" },
     receiver: { name: "Lukas Weber", email: "lukas.weber@example.com", phone: "+49 151 2233 4455", city: "Berlin", state: "Berlin", country: "Germany" },
@@ -272,7 +272,7 @@ const BLUEPRINTS: ShipmentBlueprint[] = [
     ),
   },
   {
-    tracking_number: "RPL-2026-338920",
+    tracking_number: "FCX-2026-338920",
     order_number: "ORD-2026-1991709",
     sender: { name: "Harborline Seafoods", company: "Harborline Seafoods", email: "logistics@harborlineseafoods.example", phone: "+1 (617) 555-0129", city: "New York", state: "NY", country: "United States" },
     receiver: { name: "Anne de Vries", email: "anne.devries@example.com", phone: "+31 6 2244 8899", city: "Rotterdam", state: "Zuid-Holland", country: "Netherlands" },
@@ -299,7 +299,7 @@ const BLUEPRINTS: ShipmentBlueprint[] = [
     ),
   },
   {
-    tracking_number: "RPL-2026-472018",
+    tracking_number: "FCX-2026-472018",
     order_number: "ORD-2026-4745328",
     sender: { name: "Nova Commerce", company: "Nova Commerce", email: "ship@novacommerce.example", phone: "+1 (646) 555-0175", city: "New York", state: "NY", country: "United States" },
     receiver: { name: "Diego Fernández", email: "diego.fernandez@example.com", phone: "+34 611 22 33 44", city: "Madrid", state: "Comunidad de Madrid", country: "Spain" },
@@ -319,7 +319,7 @@ const BLUEPRINTS: ShipmentBlueprint[] = [
     events: chain(["United States", "New York"], ["Spain", "Madrid"], ["Spain", "Madrid"], -4, "customs"),
   },
   {
-    tracking_number: "RPL-2026-619355",
+    tracking_number: "FCX-2026-619355",
     order_number: "ORD-2026-2037872",
     sender: { name: "Beacon Coffee Roasters", company: "Beacon Coffee Roasters", email: "export@beaconcoffee.example", phone: "+1 (617) 555-0182", city: "Boston", state: "MA", country: "United States" },
     receiver: { name: "Elise Janssens", email: "elise.janssens@example.com", phone: "+32 470 55 66 77", city: "Antwerp", state: "Antwerpen", country: "Belgium" },
@@ -346,7 +346,7 @@ const BLUEPRINTS: ShipmentBlueprint[] = [
     ),
   },
   {
-    tracking_number: "RPL-2026-728104",
+    tracking_number: "FCX-2026-728104",
     order_number: "ORD-2026-4709137",
     sender: { name: "Marcus Delaney", email: "marcus.delaney@example.com", phone: "+1 (212) 555-0136", city: "New York", state: "NY", country: "United States" },
     receiver: { name: "Sean O'Connor", email: "sean.oconnor@example.com", phone: "+353 85 123 4567", city: "Dublin", state: "County Dublin", country: "Ireland" },
@@ -372,7 +372,7 @@ const BLUEPRINTS: ShipmentBlueprint[] = [
     ),
   },
   {
-    tracking_number: "RPL-2026-845276",
+    tracking_number: "FCX-2026-845276",
     order_number: "ORD-2026-5858837",
     sender: { name: "Lone Star Agro", company: "Lone Star Agro", email: "sales@lonestaragro.example", phone: "+1 (214) 555-0159", city: "Dallas", state: "TX", country: "United States" },
     receiver: { name: "Marta Silva", email: "marta.silva@example.com", phone: "+351 912 345 678", city: "Lisbon", state: "Lisboa", country: "Portugal" },
@@ -398,7 +398,7 @@ const BLUEPRINTS: ShipmentBlueprint[] = [
     ),
   },
   {
-    tracking_number: "RPL-2026-901488",
+    tracking_number: "FCX-2026-901488",
     order_number: "ORD-2026-6175466",
     sender: { name: "Helvetia Parts AG", email: "dispatch@helvetiaparts.example", phone: "+41 44 500 12 34", city: "Zurich", state: "Zürich", country: "Switzerland" },
     receiver: { name: "Thomas Keller", email: "thomas.keller@example.com", phone: "+41 79 555 22 11", city: "Lyon", state: "Auvergne-Rhône-Alpes", country: "France" },
@@ -425,7 +425,7 @@ const BLUEPRINTS: ShipmentBlueprint[] = [
     ),
   },
   {
-    tracking_number: "RPL-2026-133705",
+    tracking_number: "FCX-2026-133705",
     order_number: "ORD-2026-2728987",
     sender: { name: "Northline Retail", company: "Northline Retail", email: "fulfilment@northline.example", phone: "+44 161 555 0182", city: "Manchester", state: "Greater Manchester", country: "United Kingdom" },
     receiver: { name: "Ingrid Bakker", email: "ingrid.bakker@example.com", phone: "+31 6 1188 2200", city: "Utrecht", state: "Utrecht", country: "Netherlands" },
@@ -451,7 +451,7 @@ const BLUEPRINTS: ShipmentBlueprint[] = [
     ),
   },
   {
-    tracking_number: "RPL-2026-664219",
+    tracking_number: "FCX-2026-664219",
     order_number: "ORD-2026-7247794",
     sender: { name: "Iberia Wine Co.", company: "Iberia Wine Co.", email: "export@iberiawine.example", phone: "+34 954 22 11 00", city: "Seville", state: "Andalucía", country: "Spain" },
     receiver: { name: "Julien Girard", email: "julien.girard@example.com", phone: "+33 6 55 90 12 08", city: "Bordeaux", state: "Nouvelle-Aquitaine", country: "France" },
@@ -597,8 +597,8 @@ export function buildSeed(): SeedData {
   const users: AppUser[] = [
     {
       id: "usr_admin",
-      name: "Royal Prime Operations",
-      email: "admin@royalprime.local",
+      name: "FreightCargoXpress Operations",
+      email: "admin@freightcargoxpress.local",
       phone: "+1 (212) 555-0142",
       role: "admin",
       created_at: iso(-400, 9),
@@ -606,7 +606,7 @@ export function buildSeed(): SeedData {
     {
       id: "usr_customer",
       name: "Camille Moreau",
-      email: "customer@royalprime.local",
+      email: "customer@freightcargoxpress.local",
       phone: "+33 6 12 88 40 21",
       role: "customer",
       created_at: iso(-120, 9),
@@ -627,7 +627,7 @@ export function buildSeed(): SeedData {
       name: "Camille Moreau",
       email: "camille.moreau@example.com",
       phone: "+33 6 12 88 40 21",
-      tracking_number: "RPL-2026-983456",
+      tracking_number: "FCX-2026-983456",
       subject: "Change of delivery address",
       message:
         "I have moved apartments this week. Can the delivery be redirected to the 11th arrondissement?",
@@ -639,7 +639,7 @@ export function buildSeed(): SeedData {
       name: "Anne de Vries",
       email: "anne.devries@example.com",
       phone: "+31 6 2244 8899",
-      tracking_number: "RPL-2026-338920",
+      tracking_number: "FCX-2026-338920",
       subject: "Cold chain confirmation",
       message:
         "Please confirm the reefer temperature log for this consignment before it clears customs.",
@@ -651,7 +651,7 @@ export function buildSeed(): SeedData {
       name: "Oliver Bennett",
       email: "oliver.bennett@example.com",
       phone: "+44 7700 900211",
-      tracking_number: "RPL-2026-114872",
+      tracking_number: "FCX-2026-114872",
       subject: "Proof of delivery copy",
       message: "Could you email the signed proof of delivery for our records?",
       status: "resolved",

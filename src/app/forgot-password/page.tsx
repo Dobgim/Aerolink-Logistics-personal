@@ -5,7 +5,7 @@ import { ForgotPasswordForm } from "@/components/auth/forgot-password-form";
 
 export const metadata: Metadata = {
   title: "Reset your password",
-  description: "Request a password reset link for your Royal Prime Logistics account.",
+  description: "Request a password reset link for your FreightCargoXpress account.",
   robots: { index: false, follow: false },
 };
 
@@ -16,7 +16,7 @@ export default function ForgotPasswordPage() {
       description="Enter the email address on your account and we will send a link to set a new password."
       aside={{
         quote: "Account security is handled by Supabase Auth — we never store your password.",
-        attribution: "Royal Prime Logistics",
+        attribution: "FreightCargoXpress",
       }}
       footer={
         <p>

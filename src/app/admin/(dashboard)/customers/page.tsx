@@ -24,7 +24,7 @@ export default async function AdminCustomersPage() {
       <div>
         <h1 className="text-2xl font-extrabold text-ink-900 sm:text-3xl">Customers</h1>
         <p className="mt-1.5 text-sm text-ink-600">
-          {users.length} {users.length === 1 ? "account" : "accounts"} registered with Royal Prime.
+          {users.length} {users.length === 1 ? "account" : "accounts"} registered with FreightCargoXpress.
         </p>
       </div>
 

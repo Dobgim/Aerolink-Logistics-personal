@@ -6,7 +6,7 @@ import type { UserRole } from "@/types";
 import { getServerSupabase, getAdminSupabase } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 
-export const SESSION_COOKIE = "royalprime_session";
+export const SESSION_COOKIE = "freightcargoxpress_session";
 
 export interface SessionUser {
   id: string;
@@ -29,12 +29,12 @@ export const LOCAL_ACCOUNTS: Record<string, { password: string; user: SessionUse
     (
       [
         [
-          "admin@royalprime.local",
+          "admin@freightcargoxpress.local",
           process.env.LOCAL_ADMIN_PASSWORD,
-          { id: "usr_admin", name: "Royal Prime Operations", role: "admin" as const },
+          { id: "usr_admin", name: "FreightCargoXpress Operations", role: "admin" as const },
         ],
         [
-          "customer@royalprime.local",
+          "customer@freightcargoxpress.local",
           process.env.LOCAL_CUSTOMER_PASSWORD,
           { id: "usr_customer", name: "Camille Moreau", role: "customer" as const },
         ],
@@ -48,7 +48,7 @@ export const LOCAL_ACCOUNTS: Record<string, { password: string; user: SessionUse
   );
 
 function secret(): string {
-  return process.env.AUTH_SECRET ?? "royalprime-development-secret-change-me";
+  return process.env.AUTH_SECRET ?? "freightcargoxpress-development-secret-change-me";
 }
 
 function sign(payload: string): string {

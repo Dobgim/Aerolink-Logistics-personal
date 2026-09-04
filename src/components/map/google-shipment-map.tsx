@@ -23,13 +23,13 @@ interface Props {
   onFailure?: () => void;
 }
 
-const PULSE_STYLE_ID = "royalprime-marker-pulse";
+const PULSE_STYLE_ID = "freightcargoxpress-marker-pulse";
 
 function ensurePulseKeyframes() {
   if (document.getElementById(PULSE_STYLE_ID)) return;
   const style = document.createElement("style");
   style.id = PULSE_STYLE_ID;
-  style.textContent = `@keyframes royalprime-pulse{0%{box-shadow:0 0 0 0 rgba(251,92,17,.55)}70%{box-shadow:0 0 0 16px rgba(251,92,17,0)}100%{box-shadow:0 0 0 0 rgba(251,92,17,0)}}`;
+  style.textContent = `@keyframes freightcargoxpress-pulse{0%{box-shadow:0 0 0 0 rgba(251,92,17,.55)}70%{box-shadow:0 0 0 16px rgba(251,92,17,0)}100%{box-shadow:0 0 0 0 rgba(251,92,17,0)}}`;
   document.head.appendChild(style);
 }
 
@@ -45,7 +45,7 @@ function markerElement(point: MapPoint): HTMLElement {
     `background:${MARKER_COLORS[point.kind]}`,
     "box-shadow:0 2px 8px rgba(11,14,20,.4)",
     "cursor:pointer",
-    point.kind === "current" ? "animation:royalprime-pulse 2.4s ease-out infinite" : "",
+    point.kind === "current" ? "animation:freightcargoxpress-pulse 2.4s ease-out infinite" : "",
   ]
     .filter(Boolean)
     .join(";");
