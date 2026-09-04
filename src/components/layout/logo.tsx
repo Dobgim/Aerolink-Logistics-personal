@@ -73,29 +73,19 @@ interface LogoProps {
 
 function Wordmark({ tone }: { tone: "dark" | "light" }) {
   return (
-    <span className="flex flex-col leading-none">
-      {/*
-        The name is nearly twice the length of a short wordmark, so it is set a
-        step smaller and tracked tighter to keep the lockup inside a phone's
-        header without wrapping.
-      */}
-      <span
-        className={cn(
-          "font-display text-[0.9375rem] font-extrabold tracking-[-0.035em] sm:text-[1.0625rem]",
-          tone === "dark" ? "text-ink-900" : "text-white",
-        )}
-      >
-        FreightCargo
-        <span className={tone === "dark" ? "text-brand-700" : "text-brand-200"}>Xpress</span>
-      </span>
-      <span
-        className={cn(
-          "mt-0.5 text-[0.6875rem] font-bold uppercase tracking-[0.2em]",
-          tone === "dark" ? "text-ink-500" : "text-brand-200/80",
-        )}
-      >
-        Logistics
-      </span>
+    /*
+      One line, so the name carries the lockup on its own. It is nearly twice
+      the length of a short wordmark, so it is tracked tighter and steps up only
+      from `sm` to keep it inside a phone's header without wrapping.
+    */
+    <span
+      className={cn(
+        "font-display text-base font-extrabold leading-none tracking-[-0.035em] sm:text-lg",
+        tone === "dark" ? "text-ink-900" : "text-white",
+      )}
+    >
+      FreightCargo
+      <span className={tone === "dark" ? "text-brand-700" : "text-brand-200"}>Xpress</span>
     </span>
   );
 }
