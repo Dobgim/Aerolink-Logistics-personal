@@ -36,7 +36,7 @@ npm run dev
 
 Open <http://localhost:3000>.
 
-Sample tracking number: **`FCX-2026-983456`**
+Tracking numbers take the form `FCX-YYYY-NNNNNN`.
 
 Admin sign-in is at `/admin/login`.
 
@@ -70,7 +70,9 @@ Nothing else in the codebase branches on it.
 
 1. Create a project at [supabase.com](https://supabase.com).
 2. Run `supabase/schema.sql` in the SQL editor — tables, indexes, triggers and RLS policies.
-3. Run `supabase/seed.sql` for the sample network (service points, shipments and scan history).
+3. Run `supabase/seed.sql` for the service-point network. It also inserts sample
+   shipments and scan history — skip it, or delete those rows afterwards, on a
+   live deployment, because public tracking will serve them to real visitors.
 4. Copy the project URL, anon key and service-role key into `.env.local`.
 5. Register an account at `/register`, then promote it:
 

@@ -179,20 +179,14 @@ export function TrackForm({
         </div>
       </div>
 
+      {/*
+        No "try this one" shortcut: it can only point at a real consignment,
+        and offering a stranger someone else's is not ours to do. The format is
+        shown in the field's placeholder instead.
+      */}
       {isCard ? (
         <p className="mt-4 border-t border-ink-200 pt-4 text-xs text-ink-500">
-          Try the sample shipment{" "}
-          <button
-            type="button"
-            onClick={() => {
-              setMulti(false);
-              setValue(SAMPLE_TRACKING_NUMBER);
-              setError(null);
-            }}
-            className="font-mono font-semibold text-brand-700 underline underline-offset-2 hover:text-brand-900"
-          >
-            {SAMPLE_TRACKING_NUMBER}
-          </button>
+          Your tracking number is on the confirmation email and the shipping label.
         </p>
       ) : null}
     </form>

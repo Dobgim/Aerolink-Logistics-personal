@@ -155,14 +155,10 @@ function EmptyState() {
         Enter a tracking number to get started
       </h2>
       <p className="mt-2 max-w-2xl text-sm leading-relaxed text-ink-600 sm:text-base">
-        Tracking is open to everyone — no account needed. Try the sample shipment{" "}
-        <Link
-          href={`/tracking?number=${encodeURIComponent(SAMPLE_TRACKING_NUMBER)}`}
-          className="font-mono font-semibold text-brand-700 underline underline-offset-2 hover:text-brand-900"
-        >
-          {SAMPLE_TRACKING_NUMBER}
-        </Link>{" "}
-        to see a live record end to end.
+        Tracking is open to everyone — no account needed. Enter the number from your
+        confirmation email or shipping label, in the form{" "}
+        <span className="font-mono font-semibold text-ink-800">{SAMPLE_TRACKING_NUMBER}</span>, and
+        you will see every scan from collection to delivery.
       </p>
 
       <ol className="mt-8 grid gap-6 sm:grid-cols-3">
