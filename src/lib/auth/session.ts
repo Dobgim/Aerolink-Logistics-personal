@@ -93,12 +93,19 @@ export async function getSessionUser(): Promise<SessionUser | null> {
     if (!authUser) return null;
 
     // Role lives in the `users` table, not in client-editable metadata.
-    const admin = getAdminSupabase();
     let role: UserRole = "customer";
     let name = (authUser.user_metadata?.name as string) ?? authUser.email ?? "Customer";
 
-    if (admin) {
-      const { data: profile } = await admin
+    /*
+     * The service-role client when configured, otherwise the caller's own
+     * session — RLS lets a signed-in user read their own profile row, so the
+     * role resolves either way. Without this fallback a missing service-role
+     * key would quietly demote every administrator to a customer and lock them
+     * out of the dashboard.
+     */
+    const reader = getAdminSupabase() ?? supabase;
+    if (reader) {
+      const { data: profile } = await reader
         .from("users")
         .select("name, role")
         .eq("id", authUser.id)

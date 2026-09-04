@@ -32,16 +32,21 @@ export async function POST(request: NextRequest) {
         return unauthorized("Incorrect email or password");
       }
 
-      let role: UserRole = "customer";
-      const admin = getAdminSupabase();
-      if (admin) {
-        const { data: profile } = await admin
-          .from("users")
-          .select("role")
-          .eq("id", data.user.id)
-          .maybeSingle();
-        role = (profile?.role as UserRole) ?? "customer";
-      }
+      /*
+       * Read the role with the service-role client when there is one, and
+       * otherwise with the caller's own session: RLS lets a signed-in user read
+       * their own profile row, so the answer is the same either way.
+       *
+       * Falling back matters. Treating a missing service-role key as "this
+       * person is a customer" silently locks an administrator out of their own
+       * dashboard and blames their account for a configuration gap.
+       */
+      const { data: profile } = await (getAdminSupabase() ?? supabase!)
+        .from("users")
+        .select("role")
+        .eq("id", data.user.id)
+        .maybeSingle();
+      const role: UserRole = (profile?.role as UserRole) ?? "customer";
 
       return ok({ user: { email: data.user.email, role } });
     }
