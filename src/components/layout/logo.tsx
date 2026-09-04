@@ -14,7 +14,13 @@ import { cn } from "@/lib/utils/cn";
 const LOGO_FILE = process.env.NEXT_PUBLIC_BRAND_LOGO ?? "";
 const EMBLEM_FILE = process.env.NEXT_PUBLIC_BRAND_EMBLEM ?? "";
 
-/** Fallback mark: a departing flight path breaking through a tracking node. */
+/**
+ * The FreightCargoXpress mark: motion lines running into a forward chevron,
+ * with the accent chevron carrying the "Xpress". Drawn rather than raster so
+ * it stays crisp from a 16px favicon up to the footer lockup.
+ *
+ * Kept in step with `public/icon.svg`, which is the same artwork.
+ */
 export function LogoMark({ className }: { className?: string }) {
   return (
     <svg
@@ -24,27 +30,34 @@ export function LogoMark({ className }: { className?: string }) {
       className={cn("size-9 shrink-0", className)}
     >
       <defs>
-        <linearGradient id="rp-mark" x1="0" y1="0" x2="1" y2="1">
+        <linearGradient id="fcx-mark" x1="0" y1="0" x2="1" y2="1">
           <stop offset="0%" stopColor="#3161f7" />
           <stop offset="55%" stopColor="#1c3fd8" />
           <stop offset="100%" stopColor="#0f2166" />
         </linearGradient>
       </defs>
-      <rect width="40" height="40" rx="11" fill="url(#rp-mark)" />
+      <rect width="40" height="40" rx="11" fill="url(#fcx-mark)" />
+      <g stroke="#ffffff" strokeOpacity="0.38" strokeWidth="2" strokeLinecap="round">
+        <path d="M7 14h6" />
+        <path d="M5.5 20h5" />
+        <path d="M7 26h6" />
+      </g>
       <path
-        d="M8.5 25.5c5.2-1.4 9.6-4.2 13.2-8.4"
-        stroke="#ffffff"
-        strokeOpacity="0.45"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeDasharray="0.5 4"
+        d="M16.5 11.5 25 20l-8.5 8.5"
         fill="none"
+        stroke="#ffffff"
+        strokeWidth="4.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
-        d="M13.8 27.4 31.6 9.9c.9-.9 2.4-.1 2.2 1.1l-3 17.4c-.2 1.1-1.5 1.5-2.3.8l-5.2-4.6-4.9 4.1c-.7.6-1.8.5-2.4-.2-.6-.7-.5-1.7.2-2.3z"
-        fill="#ffffff"
+        d="M26 14.5 31.5 20 26 25.5"
+        fill="none"
+        stroke="#fb5c11"
+        strokeWidth="3.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
-      <circle cx="24.4" cy="24.6" r="2.6" fill="#fb5c11" />
     </svg>
   );
 }
@@ -61,14 +74,19 @@ interface LogoProps {
 function Wordmark({ tone }: { tone: "dark" | "light" }) {
   return (
     <span className="flex flex-col leading-none">
+      {/*
+        The name is nearly twice the length of a short wordmark, so it is set a
+        step smaller and tracked tighter to keep the lockup inside a phone's
+        header without wrapping.
+      */}
       <span
         className={cn(
-          "font-display text-[1.0625rem] font-extrabold tracking-[-0.03em] sm:text-lg",
+          "font-display text-[0.9375rem] font-extrabold tracking-[-0.035em] sm:text-[1.0625rem]",
           tone === "dark" ? "text-ink-900" : "text-white",
         )}
       >
-        Royal
-        <span className={tone === "dark" ? "text-brand-700" : "text-brand-200"}>Prime</span>
+        FreightCargo
+        <span className={tone === "dark" ? "text-brand-700" : "text-brand-200"}>Xpress</span>
       </span>
       <span
         className={cn(

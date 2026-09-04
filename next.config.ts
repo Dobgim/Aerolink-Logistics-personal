@@ -7,7 +7,7 @@ import type { NextConfig } from "next";
  * footer never request a file that is not there — a missing asset would 404 on
  * every page load and keep the network from ever going idle.
  */
-const BRAND_LOGO = "/brand/royal-prime-logo.png";
+const BRAND_LOGO = "/brand/freightcargoxpress-logo.png";
 const BRAND_EMBLEM = "/brand/emblem-64.png";
 const exists = (p: string) => fs.existsSync(path.join(process.cwd(), "public", p));
 const brandLogoExists = exists(BRAND_LOGO);

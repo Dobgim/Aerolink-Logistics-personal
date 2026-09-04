@@ -51,9 +51,10 @@ export const metadata: Metadata = {
     description: SITE.description,
   },
   /*
-   * Icons use the crown-and-monogram emblem rather than the full lockup: the
-   * three lines of wordmark are unreadable at 32px. The emblem files are
-   * generated from the same artwork and only referenced when it is present.
+   * The drawn SVG mark is the icon by default — one file, sharp at every size.
+   * Raster emblems are only referenced when optional artwork has been dropped
+   * into `public/brand`, and then the emblem is used rather than the full
+   * lockup, whose wordmark is unreadable at 32px.
    */
   icons: BRAND_LOGO
     ? {
