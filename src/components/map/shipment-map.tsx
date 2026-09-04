@@ -13,6 +13,7 @@ import {
   type CargoOnRoute,
   type MapPoint,
 } from "./map-shared";
+import { useLiveCargoProgress } from "./use-live-progress";
 
 export type { MapPoint } from "./map-shared";
 
@@ -208,6 +209,9 @@ function SchematicMap({
   connect?: boolean;
   cargo?: CargoOnRoute | null;
 }) {
+  // Called before any early return so the hook order never changes.
+  const liveProgress = useLiveCargoProgress(cargo);
+
   if (points.length === 0) {
     return (
       <div
@@ -287,7 +291,7 @@ function SchematicMap({
           (() => {
             const at = pointAtProgress(
               projected.map((p) => ({ lat: p.y, lng: p.x })),
-              cargo.progress,
+              liveProgress,
             );
             return (
               <g>

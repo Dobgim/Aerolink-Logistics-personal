@@ -199,42 +199,51 @@ export function GoogleShipmentMap({
             timeProgress(cargo.shipDate, cargo.deliveryDate) ??
             cargo.progress;
 
-          /*
-           * Glide across the journey already travelled instead of appearing
-           * parked on it. At a real 60 km/h the hour-to-hour creep is a
-           * fraction of a pixel, so without this the map looks broken even
-           * when it is right. The resting position is still the honest one —
-           * this only animates the way up to it.
-           */
           const destination = positionNow();
-          const startedAt = performance.now();
-          const glideMs = glideDurationMs(cargo.cargoType, destination);
 
-          const step = (frameTime: number) => {
-            if (cancelled) return;
-            const t = Math.min((frameTime - startedAt) / glideMs, 1);
-            // Steady for most of the run, easing only as it settles.
-            const eased = t < 0.9 ? t : 1 - Math.pow(1 - t, 2) * 0.9;
-            cargoMarker.position = pointAtProgress(path, destination * eased);
-
-            if (t < 1) {
-              frame = requestAnimationFrame(step);
-              return;
-            }
-
+          if (cargo.moving) {
             /*
-             * Arrived at "now". Keep re-reading the clock so it carries on
-             * creeping in real time rather than freezing where it landed.
+             * Glide across the journey already travelled instead of appearing
+             * parked on it. At a real 60 km/h the hour-to-hour creep is a
+             * fraction of a pixel, so without this the map looks broken even
+             * when it is right. The resting position is still the honest one —
+             * this only animates the way up to it.
              */
-            if (cargo.moving) {
+            const startedAt = performance.now();
+            const glideMs = glideDurationMs(cargo.cargoType, destination);
+
+            const step = (frameTime: number) => {
+              if (cancelled) return;
+              const t = Math.min((frameTime - startedAt) / glideMs, 1);
+              // Steady for most of the run, easing only as it settles.
+              const eased = t < 0.9 ? t : 1 - Math.pow(1 - t, 2) * 0.9;
+              cargoMarker.position = pointAtProgress(path, destination * eased);
+
+              if (t < 1) {
+                frame = requestAnimationFrame(step);
+                return;
+              }
+
+              /*
+               * Arrived at "now". Keep re-reading the clock so it carries on
+               * creeping in real time rather than freezing where it landed.
+               */
               tick = window.setInterval(() => {
                 if (cancelled) return;
                 cargoMarker.position = pointAtProgress(path, positionNow());
               }, 1_000);
-            }
-          };
+            };
 
-          frame = requestAnimationFrame(step);
+            frame = requestAnimationFrame(step);
+          } else {
+            /*
+             * Held — in customs, delayed, on exception, or not yet collected.
+             * It stands at the distance it had already covered rather than
+             * being animated over ground it is not covering, and never snaps
+             * back to the origin.
+             */
+            cargoMarker.position = pointAtProgress(path, destination);
+          }
 
           cleanups.push(() => {
             cargoMarker.map = null;
