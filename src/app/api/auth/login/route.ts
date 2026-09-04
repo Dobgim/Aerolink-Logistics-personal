@@ -8,7 +8,7 @@ import {
   encodeSession,
 } from "@/lib/auth/session";
 import { getAdminSupabase, getServerSupabase } from "@/lib/supabase/server";
-import { isSupabaseConfigured } from "@/lib/supabase/env";
+import { isSupabaseConfigured, missingSupabaseEnv } from "@/lib/supabase/env";
 import type { UserRole } from "@/types";
 
 export const dynamic = "force-dynamic";
@@ -53,8 +53,15 @@ export async function POST(request: NextRequest) {
      * in a credential that was never going to work; the fault is configuration.
      */
     if (Object.keys(LOCAL_ACCOUNTS).length === 0) {
+      const missing = missingSupabaseEnv();
+      const names = missing.join(" and ");
+      const verb = missing.length === 1 ? "is" : "are";
+      const them = missing.length === 1 ? "it" : "them";
       return serverError(
-        "Sign-in is not configured on this deployment. Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY, then restart the server.",
+        `Sign-in is not configured: ${names} ${verb} not visible to the server. ` +
+          `Check the spelling exactly — a variable saved under a different name cannot be read. ` +
+          `On Vercel, set ${them} and then redeploy: NEXT_PUBLIC_ values are baked in at build time, ` +
+          `so an existing deployment will not pick ${them} up.`,
       );
     }
 
