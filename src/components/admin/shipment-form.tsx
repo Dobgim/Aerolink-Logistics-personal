@@ -13,20 +13,17 @@ import { citiesForCountry } from "@/lib/constants/geo";
 import { WORLD_COUNTRIES } from "@/lib/constants/countries";
 import {
   PACKAGE_LABELS,
-  PAYMENT_STATUS_LABELS,
   STATUS_LABELS,
   generateOrderNumber,
   generateTrackingNumber,
   toInputDate,
   toInputTime,
 } from "@/lib/utils/format";
-import type { CargoType, PackageType, PaymentStatus, ShipmentStatus } from "@/types";
+import type { CargoType, PackageType, ShipmentStatus } from "@/types";
 import { CARGO_LABELS } from "@/lib/utils/progress";
 
 const PACKAGE_TYPES = Object.keys(PACKAGE_LABELS) as PackageType[];
 const STATUSES = Object.keys(STATUS_LABELS) as ShipmentStatus[];
-const PAYMENT_STATUSES = Object.keys(PAYMENT_STATUS_LABELS) as PaymentStatus[];
-const CURRENCIES = ["USD", "EUR", "GBP", "CAD", "AUD", "CHF"];
 const CARGO_TYPES = Object.keys(CARGO_LABELS) as CargoType[];
 
 /** Uploaded artwork is inlined as a data URI so there is no storage bucket to run. */
@@ -415,69 +412,13 @@ export function ShipmentForm({ shipment }: Props) {
             </div>
           </Fieldset>
 
-          <Fieldset legend="Goods and charges">
+          <Fieldset legend="Goods">
             <Input
               name="goods_description"
               label="Description of goods"
-              placeholder="What is inside the shipment — printed on the invoice"
+              placeholder="What is inside the shipment"
               defaultValue={shipment?.goods_description ?? ""}
               error={errors.goods_description}
-            />
-
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              <Select
-                name="currency"
-                label="Currency"
-                defaultValue={shipment?.currency ?? "USD"}
-                error={errors.currency}
-              >
-                {CURRENCIES.map((c) => (
-                  <option key={c} value={c}>
-                    {c}
-                  </option>
-                ))}
-              </Select>
-              <Input
-                name="declared_value"
-                type="number"
-                min="0"
-                step="0.01"
-                label="Declared value"
-                hint="Customs value of the goods"
-                defaultValue={shipment?.declared_value ?? 0}
-                error={errors.declared_value}
-              />
-              <Input
-                name="amount_due"
-                type="number"
-                min="0"
-                step="0.01"
-                label="Amount to pay"
-                hint="What the receiver owes"
-                defaultValue={shipment?.amount_due ?? 0}
-                error={errors.amount_due}
-              />
-              <Select
-                name="payment_status"
-                label="Payment status"
-                defaultValue={shipment?.payment_status ?? "unpaid"}
-                error={errors.payment_status}
-              >
-                {PAYMENT_STATUSES.map((p) => (
-                  <option key={p} value={p}>
-                    {PAYMENT_STATUS_LABELS[p]}
-                  </option>
-                ))}
-              </Select>
-            </div>
-
-            <Input
-              name="payment_description"
-              label="Amount to pay — description"
-              placeholder="e.g. Balance due on delivery, payable to the courier in cash"
-              hint="Printed on the invoice under the amount, so the receiver knows what it covers"
-              defaultValue={shipment?.payment_description ?? ""}
-              error={errors.payment_description}
             />
           </Fieldset>
 

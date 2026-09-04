@@ -3,13 +3,10 @@ import type { PartyDetails, Shipment } from "@/types";
 import { SITE } from "@/lib/constants/site";
 import {
   PACKAGE_LABELS,
-  PAYMENT_STATUS_LABELS,
   SERVICE_LABELS,
   formatDate,
-  formatMoney,
   formatTime,
   formatWeight,
-  invoiceTotal,
 } from "@/lib/utils/format";
 import { CARGO_LABELS } from "@/lib/utils/progress";
 
@@ -78,8 +75,6 @@ function Row({ label, value }: { label: string; value: React.ReactNode }) {
 export async function InvoiceDocument({ shipment }: { shipment: Shipment }) {
   const sender = partyFrom(shipment, "sender");
   const receiver = partyFrom(shipment, "receiver");
-  const total = invoiceTotal(shipment);
-  const paid = shipment.payment_status === "paid";
 
   /*
    * Scanning the code opens this shipment's tracking page. Rendered to an
@@ -129,16 +124,6 @@ export async function InvoiceDocument({ shipment }: { shipment: Shipment }) {
           </dl>
 
           <div className="mt-4 flex items-start gap-4 sm:justify-end">
-            <p
-              className={`inline-block rounded-md px-2.5 py-1 text-xs font-bold uppercase tracking-[0.1em] ring-1 ring-inset ${
-                paid
-                  ? "bg-emerald-50 text-emerald-800 ring-emerald-300"
-                  : "bg-amber-50 text-amber-800 ring-amber-300"
-              }`}
-            >
-              {PAYMENT_STATUS_LABELS[shipment.payment_status]}
-            </p>
-
             <figure className="shrink-0 text-center">
               <div
                 aria-hidden
@@ -192,10 +177,6 @@ export async function InvoiceDocument({ shipment }: { shipment: Shipment }) {
               label="Expected delivery"
               value={`${formatDate(shipment.estimated_delivery)} · ${formatTime(shipment.estimated_delivery)}`}
             />
-            <Row
-              label="Declared value"
-              value={formatMoney(shipment.declared_value, shipment.currency)}
-            />
           </dl>
         </div>
       </section>
@@ -212,59 +193,11 @@ export async function InvoiceDocument({ shipment }: { shipment: Shipment }) {
         </section>
       ) : null}
 
-      {/* Charges */}
-      <section className="py-6">
-        <h2 className="text-[0.6875rem] font-bold uppercase tracking-[0.14em] text-ink-500">
-          Charges
-        </h2>
-
-        <div className="mt-3">
-          <table className="w-full border-collapse text-left">
-            <caption className="sr-only">Invoice charges</caption>
-            <thead>
-              <tr className="border-b border-ink-300">
-                <th scope="col" className="py-2 text-xs font-bold uppercase tracking-[0.08em] text-ink-500">
-                  Item
-                </th>
-                <th
-                  scope="col"
-                  className="py-2 text-right text-xs font-bold uppercase tracking-[0.08em] text-ink-500"
-                >
-                  Amount
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr className="border-b border-ink-200">
-                <td className="py-2.5 text-sm text-ink-700">
-                  Amount to pay
-                  {/* The admin's own words on what this covers, when they gave any. */}
-                  {shipment.payment_description ? (
-                    <span className="mt-1 block text-xs leading-relaxed text-ink-500">
-                      {shipment.payment_description}
-                    </span>
-                  ) : null}
-                </td>
-                <td className="py-2.5 text-right align-top text-sm font-semibold tabular-nums">
-                  {formatMoney(Number(shipment.amount_due ?? 0), shipment.currency)}
-                </td>
-              </tr>
-              <tr>
-                <td className="pt-3 text-base font-extrabold">Total due</td>
-                <td className="pt-3 text-right text-base font-extrabold tabular-nums">
-                  {formatMoney(total, shipment.currency)}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
       <footer className="border-t border-ink-200 pt-5 text-xs leading-relaxed text-ink-500">
         <p>
-          Carriage is subject to the FreightCargoXpress terms of carriage. The amount shown
-          above is the total payable on this shipment; no further charges are raised against the
-          receiver once it is settled.
+          Carriage is subject to the FreightCargoXpress terms of carriage. This document is a
+          waybill recording the consignment and its route; it is not a demand for payment and
+          raises no charge against the receiver.
         </p>
         <p className="mt-2">
           Invoice {shipment.order_number} · Tracking {shipment.tracking_number} · Generated{" "}

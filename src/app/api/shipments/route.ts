@@ -96,11 +96,6 @@ export async function POST(request: NextRequest) {
       cargo_type: input.cargo_type,
       ship_date: input.ship_date ?? null,
 
-      currency: input.currency,
-      declared_value: input.declared_value,
-      amount_due: input.amount_due,
-      payment_description: input.payment_description ?? null,
-      payment_status: input.payment_status,
 
       status: input.status,
       current_location:

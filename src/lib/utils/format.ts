@@ -1,6 +1,5 @@
 import type {
   PackageType,
-  PaymentStatus,
   ShipmentStatus,
   ShippingService,
   SupportStatus,
@@ -15,6 +14,21 @@ export const STATUS_LABELS: Record<ShipmentStatus, string> = {
   delivered: "Delivered",
   delayed: "Delayed",
   exception: "Exception",
+};
+
+/**
+ * What the customer reads on the scan a status change writes, when the admin
+ * changes the status on the shipment itself rather than posting a scan by hand.
+ */
+export const STATUS_SCAN_DESCRIPTION: Record<ShipmentStatus, string> = {
+  pending: "Shipment registered. Awaiting collection from the sender address.",
+  picked_up: "Collected from the sender and received into the network.",
+  in_transit: "In transit towards the destination.",
+  customs: "Held at customs for clearance.",
+  out_for_delivery: "Out for delivery with the local courier.",
+  delivered: "Delivered to the receiver.",
+  delayed: "Held. The shipment is stopped and is not currently moving.",
+  exception: "Exception raised. The shipment is stopped pending resolution.",
 };
 
 export const STATUS_ORDER: ShipmentStatus[] = [
@@ -156,30 +170,6 @@ export function generateTrackingNumber(year = new Date().getUTCFullYear()): stri
 export function generateOrderNumber(year = new Date().getUTCFullYear()): string {
   const digits = Math.floor(1_000_000 + Math.random() * 9_000_000);
   return `ORD-${year}-${digits}`;
-}
-
-export const PAYMENT_STATUS_LABELS: Record<PaymentStatus, string> = {
-  unpaid: "Unpaid",
-  paid: "Paid",
-  refunded: "Refunded",
-};
-
-/** Money on the invoice. Falls back gracefully on an unknown currency code. */
-export function formatMoney(amount: number, currency = "USD"): string {
-  try {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency,
-      minimumFractionDigits: 2,
-    }).format(amount);
-  } catch {
-    return `${currency} ${amount.toFixed(2)}`;
-  }
-}
-
-/** What the receiver owes. A single figure the admin sets on the shipment. */
-export function invoiceTotal(shipment: { amount_due: number }): number {
-  return Number(shipment.amount_due ?? 0);
 }
 
 /** Users paste `rpl 2026 938456`, `rpl2026938456`, etc. Normalise all of them. */

@@ -46,8 +46,6 @@ export interface PartyDetails {
   country: string | null;
 }
 
-export type PaymentStatus = "unpaid" | "paid" | "refunded";
-
 /**
  * What is drawn moving along the route. When the admin uploads a photo of the
  * actual goods that is used instead; otherwise this picks the vehicle icon.
@@ -101,14 +99,12 @@ export interface Shipment {
   /** When the shipment leaves the origin. */
   ship_date: string | null;
 
-  /* Commercial totals, all in `currency`. */
-  currency: string;
-  declared_value: number;
-  /** What the receiver has to pay on this shipment. Shown as the invoice total. */
-  amount_due: number;
-  /** Explains to the receiver what the amount above covers. */
-  payment_description: string | null;
-  payment_status: PaymentStatus;
+  /*
+   * The site carries no charges. The table still holds currency, declared
+   * value, amount due and payment status columns, all with defaults, so the
+   * record is unchanged and nothing has to be migrated — they are simply not
+   * part of what the application reads or writes.
+   */
 
   status: ShipmentStatus;
   current_location: string | null;

@@ -71,10 +71,6 @@ const optionalLongText = z
 const latitude = z.coerce.number().min(-90).max(90).nullable().optional();
 const longitude = z.coerce.number().min(-180).max(180).nullable().optional();
 
-export const paymentStatusSchema = z.enum(["unpaid", "paid", "refunded"]);
-
-const money = z.coerce.number().min(0).max(10_000_000).default(0);
-
 const shipmentFields = z.object({
   tracking_number: z
     .string()
@@ -127,12 +123,6 @@ const shipmentFields = z.object({
     .transform((v) => (v ? new Date(v).toISOString() : null))
     .nullable()
     .optional(),
-
-  currency: z.string().trim().length(3, "Use a 3-letter currency code").default("USD"),
-  declared_value: money,
-  amount_due: money,
-  payment_description: optionalText,
-  payment_status: paymentStatusSchema.default("unpaid"),
 
   status: shipmentStatusSchema.default("pending"),
   current_location: optionalText,
