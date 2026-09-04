@@ -479,9 +479,6 @@ export function ShipmentForm({ shipment }: Props) {
               defaultValue={shipment?.payment_description ?? ""}
               error={errors.payment_description}
             />
-            <p className="text-xs text-ink-500">
-              The amount below is what the receiver sees as the invoice total.
-            </p>
           </Fieldset>
 
           <Fieldset legend="What is moving on the map">
