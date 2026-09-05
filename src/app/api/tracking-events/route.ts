@@ -7,7 +7,7 @@ import {
 } from "@/lib/data/repository";
 import { trackingEventSchema } from "@/lib/validations/schemas";
 import { handle, isResponse, notFound, ok, requireAdmin } from "@/lib/api/respond";
-import { geocodeCity } from "@/lib/constants/geo";
+import { resolvePlace } from "@/lib/geo/resolve-place";
 
 export const dynamic = "force-dynamic";
 
@@ -41,7 +41,10 @@ export async function POST(request: NextRequest) {
     const coords =
       input.latitude != null && input.longitude != null
         ? { lat: input.latitude, lng: input.longitude }
-        : geocodeCity(input.location.split(",")[0]?.trim());
+        : await resolvePlace(
+            input.location.split(",")[0]?.trim(),
+            input.location.split(",")[1]?.trim(),
+          );
 
     const event = await addTrackingEvent({
       shipment_id: input.shipment_id,

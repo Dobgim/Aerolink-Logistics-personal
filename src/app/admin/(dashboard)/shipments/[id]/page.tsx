@@ -36,7 +36,7 @@ export default async function AdminShipmentDetailPage({ params }: PageProps) {
   const shipment = await getShipment(id);
   if (!shipment) notFound();
 
-  const points = mapPointsFor(shipment);
+  const points = await mapPointsFor(shipment);
   const cargo = cargoFor(shipment, points);
 
   return (

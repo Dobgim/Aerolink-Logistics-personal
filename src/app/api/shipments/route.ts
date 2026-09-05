@@ -8,7 +8,7 @@ import {
 import { createShipmentSchema } from "@/lib/validations/schemas";
 import { badRequest, handle, isResponse, ok, requireAdmin } from "@/lib/api/respond";
 import { generateOrderNumber, generateTrackingNumber } from "@/lib/utils/format";
-import { geocodeCity } from "@/lib/constants/geo";
+import { resolvePlace } from "@/lib/geo/resolve-place";
 import type { ShipmentStatus } from "@/types";
 
 export const dynamic = "force-dynamic";
@@ -52,9 +52,9 @@ export async function POST(request: NextRequest) {
     const coords =
       input.latitude != null && input.longitude != null
         ? { lat: input.latitude, lng: input.longitude }
-        : geocodeCity(
+        : await resolvePlace(
             input.current_location?.split(",")[0] ?? input.origin_city,
-            input.origin_country,
+            input.current_location?.split(",")[1] ?? input.origin_country,
           );
 
     /*

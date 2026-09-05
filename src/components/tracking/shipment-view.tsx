@@ -7,7 +7,7 @@ import { StatusHeader } from "./status-header";
 import { TrackingTimeline } from "./timeline";
 import { ShipmentDetails } from "./shipment-details";
 import { ShipmentMap, type MapPoint } from "@/components/map/shipment-map";
-import { geocodeCity } from "@/lib/constants/geo";
+import { resolvePlace } from "@/lib/geo/resolve-place";
 import {
   CARGO_LABELS,
   travelledProgress,
@@ -20,10 +20,10 @@ import {
 import type { CargoOnRoute } from "@/components/map/map-shared";
 
 /** Builds origin → current → destination markers, skipping anything unplaceable. */
-export function mapPointsFor(shipment: ShipmentWithEvents): MapPoint[] {
+export async function mapPointsFor(shipment: ShipmentWithEvents): Promise<MapPoint[]> {
   const points: MapPoint[] = [];
 
-  const origin = geocodeCity(shipment.origin_city, shipment.origin_country);
+  const origin = await resolvePlace(shipment.origin_city, shipment.origin_country);
   if (origin) {
     points.push({
       kind: "origin",
@@ -33,15 +33,19 @@ export function mapPointsFor(shipment: ShipmentWithEvents): MapPoint[] {
   }
 
   const currentCity = shipment.current_location?.split(",")[0]?.trim();
+  const currentCountry = shipment.current_location?.split(",")[1]?.trim();
   const current =
     shipment.latitude != null && shipment.longitude != null
       ? { lat: shipment.latitude, lng: shipment.longitude }
-      : geocodeCity(currentCity);
+      : await resolvePlace(currentCity, currentCountry);
   if (current && shipment.current_location) {
     points.push({ kind: "current", label: shipment.current_location, ...current });
   }
 
-  const destination = geocodeCity(shipment.destination_city, shipment.destination_country);
+  const destination = await resolvePlace(
+    shipment.destination_city,
+    shipment.destination_country,
+  );
   if (destination) {
     points.push({
       kind: "destination",
@@ -100,8 +104,8 @@ export function cargoFor(shipment: ShipmentWithEvents, points: MapPoint[]): Carg
   };
 }
 
-export function ShipmentView({ shipment }: { shipment: ShipmentWithEvents }) {
-  const points = mapPointsFor(shipment);
+export async function ShipmentView({ shipment }: { shipment: ShipmentWithEvents }) {
+  const points = await mapPointsFor(shipment);
   const cargo = cargoFor(shipment, points);
 
   return (
