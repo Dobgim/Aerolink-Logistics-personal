@@ -168,43 +168,6 @@ export function travelHours(routeKm: number, cargoType: CargoType): number {
 }
 
 /**
- * How long the marker takes to glide across the *whole* route on screen.
- *
- * This is presentation, not a speed claim: the resting position is the honest
- * one, and this only animates the journey already travelled so a viewer can
- * see where the shipment has got to instead of finding the marker parked. The
- * modes stay in proportion and none of them are quick.
- */
-const FULL_ROUTE_GLIDE_MS: Record<CargoType, number> = {
-  plane: 11_000,
-  motorbike: 16_000,
-  car: 18_000,
-  van: 19_000,
-  package: 20_000,
-  truck: 24_000,
-  ship: 30_000,
-};
-
-/** Glide time for the fraction actually covered, so the pace stays constant. */
-export function glideDurationMs(cargoType: CargoType, progress: number): number {
-  const full = FULL_ROUTE_GLIDE_MS[cargoType] ?? FULL_ROUTE_GLIDE_MS.package;
-  return Math.max(full * Math.min(Math.max(progress, 0), 1), 1_200);
-}
-
-/**
- * How far through the glide the marker sits, for an elapsed fraction `t`.
- *
- * Deliberately linear, and shared by both maps so they cannot drift apart.
- * Easing here would have the package accelerate away from the origin and brake
- * towards its position, which reads as a lorry speeding up and slowing down
- * over ground it crosses at one steady speed. It covers every kilometre at the
- * same rate, so the marker has to as well.
- */
-export function glideFraction(t: number): number {
-  return Math.min(Math.max(t, 0), 1);
-}
-
-/**
  * Where the shipment has actually got to, with the status deciding whether the
  * clock is running at all.
  *

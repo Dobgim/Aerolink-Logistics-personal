@@ -11,12 +11,7 @@ import {
   type CargoOnRoute,
   type MapPoint,
 } from "./map-shared";
-import {
-  glideDurationMs,
-  glideFraction,
-  timeProgress,
-  travelledProgress,
-} from "@/lib/utils/progress";
+import { timeProgress, travelledProgress } from "@/lib/utils/progress";
 
 interface Props {
   points: MapPoint[];
@@ -206,46 +201,22 @@ export function GoogleShipmentMap({
 
           const destination = positionNow();
 
+          /*
+           * The position is the honest one and nothing else. There is
+           * deliberately no glide up to it: animating the journey already
+           * travelled crossed a couple of hundred kilometres in a few seconds,
+           * which is not a speed any lorry makes and reads as obviously false.
+           * A package that barely appears to move is the correct depiction of
+           * one that is barely moving.
+           */
+          cargoMarker.position = pointAtProgress(path, destination);
+
           if (cargo.moving) {
-            /*
-             * Glide across the journey already travelled instead of appearing
-             * parked on it. At a real 60 km/h the hour-to-hour creep is a
-             * fraction of a pixel, so without this the map looks broken even
-             * when it is right. The resting position is still the honest one —
-             * this only animates the way up to it.
-             */
-            const startedAt = performance.now();
-            const glideMs = glideDurationMs(cargo.cargoType, destination);
-
-            const step = (frameTime: number) => {
+            // Re-read the clock so it advances at the rate the thing advances.
+            tick = window.setInterval(() => {
               if (cancelled) return;
-              const t = Math.min((frameTime - startedAt) / glideMs, 1);
-              cargoMarker.position = pointAtProgress(path, destination * glideFraction(t));
-
-              if (t < 1) {
-                frame = requestAnimationFrame(step);
-                return;
-              }
-
-              /*
-               * Arrived at "now". Keep re-reading the clock so it carries on
-               * creeping in real time rather than freezing where it landed.
-               */
-              tick = window.setInterval(() => {
-                if (cancelled) return;
-                cargoMarker.position = pointAtProgress(path, positionNow());
-              }, 1_000);
-            };
-
-            frame = requestAnimationFrame(step);
-          } else {
-            /*
-             * Held — in customs, delayed, on exception, or not yet collected.
-             * It stands at the distance it had already covered rather than
-             * being animated over ground it is not covering, and never snaps
-             * back to the origin.
-             */
-            cargoMarker.position = pointAtProgress(path, destination);
+              cargoMarker.position = pointAtProgress(path, positionNow());
+            }, 1_000);
           }
 
           cleanups.push(() => {
