@@ -1,16 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { timeProgress, travelledProgress } from "@/lib/utils/progress";
+import { timeProgress, travelledProgressFromScans } from "@/lib/utils/progress";
 import type { CargoOnRoute } from "./map-shared";
 
 /**
  * How far along the route the package sits right now, 0 to 1, kept live.
  *
- * The position is the honest one and nothing else: distance covered since
- * departure at the mode's real speed — 60 km/h on the road — and only while the
- * status says it is actually moving. It is read from the clock on a timer, so
- * the package advances at exactly the rate the thing itself advances.
+ * The position is the honest one and nothing else: the distance covered across
+ * the stretches the shipment was actually moving, at the mode's real speed —
+ * 60 km/h on the road. It is re-read from the clock on a timer, so the package
+ * advances at exactly the rate the thing itself advances.
  *
  * There is deliberately no glide up to that position. Animating the journey
  * already travelled crossed a couple of hundred kilometres in a few seconds,
@@ -19,9 +19,9 @@ import type { CargoOnRoute } from "./map-shared";
  * barely moving: over a minute it covers a kilometre, and over an hour it
  * covers sixty, which is visible on the map exactly as it is on the road.
  *
- * A held shipment stops at the distance it had already covered — it never snaps
- * back to the origin, because `travelledProgress` stops accruing at `heldSince`
- * rather than resetting.
+ * A held shipment stops at the distance it had already covered and never snaps
+ * back to the origin — including one put back to pending, which stands where it
+ * had reached rather than returning to the sender's door it left hours ago.
  */
 export function useLiveCargoProgress(cargo: CargoOnRoute | null | undefined): number {
   /*
@@ -32,7 +32,7 @@ export function useLiveCargoProgress(cargo: CargoOnRoute | null | undefined): nu
   const cargoType = cargo?.cargoType;
   const shipDate = cargo?.shipDate ?? null;
   const deliveryDate = cargo?.deliveryDate ?? null;
-  const heldSince = cargo?.heldSince ?? null;
+  const scans = cargo?.scans;
   const routeKm = cargo?.routeKm ?? 0;
   const moving = cargo?.moving ?? false;
   const fallback = cargo?.progress ?? 0;
@@ -43,7 +43,9 @@ export function useLiveCargoProgress(cargo: CargoOnRoute | null | undefined): nu
     if (!status || !cargoType) return;
 
     const positionNow = () =>
-      travelledProgress(status, shipDate, routeKm, cargoType, heldSince) ??
+      (status === "delivered"
+        ? 1
+        : travelledProgressFromScans(scans ?? [], routeKm, cargoType)) ??
       timeProgress(shipDate, deliveryDate) ??
       fallback;
 
@@ -63,7 +65,7 @@ export function useLiveCargoProgress(cargo: CargoOnRoute | null | undefined): nu
       cancelAnimationFrame(frame);
       if (tick !== undefined) window.clearInterval(tick);
     };
-  }, [status, cargoType, shipDate, deliveryDate, heldSince, routeKm, moving, fallback]);
+  }, [status, cargoType, shipDate, deliveryDate, scans, routeKm, moving, fallback]);
 
   return cargo ? progress : 0;
 }

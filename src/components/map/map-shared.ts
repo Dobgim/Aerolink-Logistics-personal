@@ -1,7 +1,7 @@
 import { Flag, MapPin, Navigation, type LucideIcon } from "lucide-react";
 
 import type { CargoType, ShipmentStatus } from "@/types";
-import { CARGO_ICONS, haversineKm } from "@/lib/utils/progress";
+import { CARGO_ICONS, haversineKm, type ScanLeg } from "@/lib/utils/progress";
 
 export interface MapPoint {
   kind: "origin" | "current" | "destination" | "hub";
@@ -55,8 +55,11 @@ export interface CargoOnRoute {
   routeKm: number;
   /** Decides whether the clock runs: moving accrues distance, held does not. */
   status: ShipmentStatus;
-  /** When the shipment was last scanned, i.e. when a held one stopped. */
-  heldSince: string | null;
+  /**
+   * The status changes, oldest first. Distance is accrued across the stretches
+   * the shipment was moving, so a hold keeps the ground it had covered.
+   */
+  scans: ScanLeg[];
 }
 
 /**

@@ -11,7 +11,7 @@ import {
   type CargoOnRoute,
   type MapPoint,
 } from "./map-shared";
-import { timeProgress, travelledProgress } from "@/lib/utils/progress";
+import { timeProgress, travelledProgressFromScans } from "@/lib/utils/progress";
 
 interface Props {
   points: MapPoint[];
@@ -189,13 +189,9 @@ export function GoogleShipmentMap({
            * distance it had reached; not yet collected, it waits at the origin.
            */
           const positionNow = () =>
-            travelledProgress(
-              cargo.status,
-              cargo.shipDate,
-              cargo.routeKm,
-              cargo.cargoType,
-              cargo.heldSince,
-            ) ??
+            (cargo.status === "delivered"
+              ? 1
+              : travelledProgressFromScans(cargo.scans, cargo.routeKm, cargo.cargoType)) ??
             timeProgress(cargo.shipDate, cargo.deliveryDate) ??
             cargo.progress;
 

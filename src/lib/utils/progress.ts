@@ -167,46 +167,54 @@ export function travelHours(routeKm: number, cargoType: CargoType): number {
   return routeKm / speedKmhFor(cargoType);
 }
 
+/** One status change on the shipment's timeline. */
+export interface ScanLeg {
+  status: ShipmentStatus;
+  at: string;
+}
+
 /**
- * Where the shipment has actually got to, with the status deciding whether the
- * clock is running at all.
+ * Where the shipment has got to, read from its own history: distance accrues
+ * only across the stretches it was actually moving, at the mode's real speed.
  *
- * Distance alone is not enough: a consignment sitting in customs is not still
- * covering ground, and one that has not been collected has covered none. So
- * the clock starts at departure, and stops the moment the shipment is held —
- * a held package stands at the distance it had reached, which is what the map
- * is supposed to show.
+ * Integrating the timeline rather than measuring from departure is what makes a
+ * hold behave. Ground already covered is covered whatever happens next, so a
+ * shipment put back to pending — or into customs, or delayed — stands exactly
+ * where it had reached at the moment the status changed, and carries on from
+ * there when it resumes. It can be stopped and restarted any number of times
+ * and never loses its place, because each stretch is counted once, when it
+ * happened.
  *
- * Returns null when there is nothing to measure, so the caller can fall back.
+ * One that was never collected has no moving stretch at all, so it correctly
+ * sits at the origin.
+ *
+ * `scans` must be oldest first. Returns null when there is nothing to measure.
  */
-export function travelledProgress(
-  status: ShipmentStatus,
-  shipDate: string | null | undefined,
+export function travelledProgressFromScans(
+  scans: ScanLeg[],
   routeKm: number,
   cargoType: CargoType,
-  heldSince: string | null | undefined,
   now: number = Date.now(),
 ): number | null {
-  // Not collected yet: it is still standing at the origin.
-  if (status === "pending") return 0;
-  if (status === "delivered") return 1;
+  if (!(routeKm > 0) || scans.length === 0) return null;
 
-  if (!shipDate || !(routeKm > 0)) return null;
-  const departed = new Date(shipDate).getTime();
-  if (Number.isNaN(departed)) return null;
+  const speed = speedKmhFor(cargoType);
+  let km = 0;
 
-  /*
-   * A moving shipment accrues distance up to this moment. A held one stopped
-   * accruing when it was held — the last scan is when that happened.
-   */
-  let until = now;
-  if (!isMoving(status)) {
-    const held = heldSince ? new Date(heldSince).getTime() : Number.NaN;
-    until = Number.isNaN(held) ? now : held;
+  for (let i = 0; i < scans.length; i += 1) {
+    if (!isMoving(scans[i].status)) continue;
+
+    const from = new Date(scans[i].at).getTime();
+    if (Number.isNaN(from)) continue;
+
+    // This stretch runs until the next scan, or until now if it is the latest.
+    const nextAt = scans[i + 1] ? new Date(scans[i + 1].at).getTime() : now;
+    const to = Number.isNaN(nextAt) ? now : nextAt;
+
+    km += (Math.max(to - from, 0) / 3_600_000) * speed;
   }
 
-  const hours = Math.max(until - departed, 0) / 3_600_000;
-  return Math.min((hours * speedKmhFor(cargoType)) / routeKm, 1);
+  return Math.min(km / routeKm, 1);
 }
 
 /** Kilometres covered so far, for showing the progress in words. */

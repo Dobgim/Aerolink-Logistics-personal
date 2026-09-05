@@ -10,7 +10,8 @@ import { ShipmentMap, type MapPoint } from "@/components/map/shipment-map";
 import { resolvePlace } from "@/lib/geo/resolve-place";
 import {
   CARGO_LABELS,
-  travelledProgress,
+  travelledProgressFromScans,
+  type ScanLeg,
   isMoving,
   progressFor,
   routeLengthKm,
@@ -71,8 +72,14 @@ export function cargoFor(shipment: ShipmentWithEvents, points: MapPoint[]): Carg
 
   const routeKm = routeLengthKm(points);
   const cargoType = shipment.cargo_type;
-  // The newest scan is when a held shipment stopped covering ground.
-  const heldSince = shipment.tracking_events?.[0]?.event_date ?? null;
+  /*
+   * Oldest first: the distance covered is accrued across the stretches between
+   * status changes, so the order they happened in is the whole point. The
+   * repository hands them back newest first for the timeline.
+   */
+  const scans: ScanLeg[] = [...(shipment.tracking_events ?? [])]
+    .map((event) => ({ status: event.status, at: event.event_date }))
+    .reverse();
 
   return {
     /*
@@ -81,13 +88,9 @@ export function cargoFor(shipment: ShipmentWithEvents, points: MapPoint[]): Carg
      * re-derives this as the page stays open, so it is only a starting point.
      */
     progress:
-      travelledProgress(
-        shipment.status,
-        shipment.ship_date,
-        routeKm,
-        cargoType,
-        heldSince,
-      ) ??
+      (shipment.status === "delivered"
+        ? 1
+        : travelledProgressFromScans(scans, routeKm, cargoType)) ??
       timeProgress(shipment.ship_date, shipment.estimated_delivery) ??
       byScan ??
       progressFor(shipment.status),
@@ -96,7 +99,7 @@ export function cargoFor(shipment: ShipmentWithEvents, points: MapPoint[]): Carg
     speedKmh: speedKmhFor(cargoType),
     routeKm,
     status: shipment.status,
-    heldSince,
+    scans,
     moving: isMoving(shipment.status),
     cargoType: shipment.cargo_type,
     imageUrl: shipment.cargo_image_url,
